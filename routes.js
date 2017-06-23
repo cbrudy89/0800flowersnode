@@ -4,6 +4,10 @@ var userController = require('./api/controllers/user-controller');
 module.exports = {
   configure: function(app, router) {
 
+    app.get('/', function (req, res) {
+        res.sendFile(__dirname + '/api-docs/index.html');
+    });    
+
     app.post('/api/user/register', function(req, res) {
         userController.register(req, res);
     });
