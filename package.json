@@ -12,7 +12,11 @@
     "nodemon": "^1.11.0"
   },
   "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "mongoose": "^4.10.7"
+    "jsonwebtoken": "^7.4.1",
+    "mongoose": "^4.10.7",
+    "mysql": "^2.13.0"
   }
 }
