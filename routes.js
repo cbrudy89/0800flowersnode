@@ -12,11 +12,11 @@ module.exports = {
         userController.login(req, res);
     });
 
-    app.get('/api/user/:id/', authenticateController.isAuthenticated, function(req, res) {
+    app.get('/api/user/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
       userController.getUser(req.params.id, res);
     });
 
-    router.get('/api/dashboard', authenticateController.isAuthenticated, function(req,res){
+    app.get('/api/dashboard', authenticateController.isAuthenticated, function(req,res){
         res.send('Token Verified')
     });
 
