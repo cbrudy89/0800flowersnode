@@ -6,7 +6,7 @@
       "description":"All APIs related to the user controller",
       "termsOfService":"#"
    },
-   "basePath":"/api/user",
+   "basePath":"/",
    "tags":[
       {
          "name":"User",
@@ -14,7 +14,7 @@
       }
    ],
    "schemes":[
-      "https"
+      "http"
    ],
    "consumes":[
       "application/json"
@@ -35,22 +35,34 @@
             ],
             "parameters":[
                {
-                  "name":"Job Parameters",
-                  "in":"body",
-                  "description":"Job to add to the database",
+                  "name":"email",
+                  "in":"formData",
+                  "description":"The email for user",
                   "required":true,
-                  "schema":{
-                     "$ref":"#/definitions/create"
-                  }
-               }
+                  "type": "string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"The Password for user",
+                  "required":true,
+                  "type":"string",
+                  "format":"pasword"
+               }               
             ],
             "responses":{
                "200":{
-                  "description":"create response",
+                  "description":"Logged in successfully!",
                   "schema":{
-                     "$ref":"#/definitions/response"
+                      "$ref":"#/definitions/response"
                   }
-               }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
             }
          }
       },
@@ -67,7 +79,7 @@
             "parameters":[
                {
                   "name":"someVariable",
-                  "in":"path",
+                  "in":"formData",
                   "description":"ID to delete",
                   "required":true,
                   "type":"string"
@@ -146,10 +158,23 @@
       },
       "response":{
          "properties":{
-            "jobID":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "email":{
                "required":true,
                "type":"string",
-               "example":"12321432423"
+               "example":"abc@mobikasa.com"
+            },
+            "password":{
+               "required":true,
+               "type":"string",
+               "example":"123456"
             }
          }
       },
@@ -169,6 +194,14 @@
       },
       "400error":{
          "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
             "message":{
                "type":"string",
                "example":"400 Bad Request"
