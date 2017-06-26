@@ -23,28 +23,34 @@ function UserController() {
       bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {
         if (err) {
           console.log(err);
-          res.send({status: false, message: 'Unable to register user!' + err});
+          res.send({status: config.ERROR, code : config.HTTP_SERVER_ERROR, message: 'Unable to register user!'});
         }else{
-/*          var isExist = isUserExist(req, res, email);
-          if(isExist)
-            console.log(isExist);*/
 
-        /*if(userHelper.isUserExist(req, res, email)){
-            res.send({status: false, message : 'User already registered with this email!'});
-          }else{*/
-            var hashedPassword = hash;
-            //var data = [name,email,hashedPassword,country_id,province_id,address,phone_no,1,1,type];
-
-            // Store hash in your password DB.
-            con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,1,1,type,''], function (err, results, fields) {
-              if (err) {
-                console.log(err);
-                res.send({status: false, message: 'Unable to register user!' + err});
+          // Checking if user email already exist in database
+          con.query('SELECT id FROM users WHERE email = ?', [email], function(err, result){
+            if (err) {
+              res.send({status: config.ERROR, code : config.HTTP_SERVER_ERROR, message : "Unable to register user!", errors : err});
+            }else{
+              if(result.length > 0 && result[0].id > 0){
+                  res.send({status: config.ERROR, code : config.HTTP_ALREADY_EXISTS, message: "The specified account already exists."});
               }else{
-                res.send({status: true, message: 'User register successfully!'});
+                  
+                var hashedPassword = hash;
+                //var data = [name,email,hashedPassword,country_id,province_id,address,phone_no,1,1,type];
+
+                // Store hash in your password DB.
+                con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,1,1,type,''], function (err, results, fields) {
+                  if (err) {
+                    console.log(err);
+                    res.send({status: config.ERROR, code : config.HTTP_ALREADY_EXISTS, message: 'Unable to register user!'});
+                  }else{
+                    res.send({status: config.SUCCESS, code : config.HTTP_SUCCESS, message: 'User register successfully!'});
+                  }
+                });
+
               }
-            });
-          /*}*/
+            }
+          });
 
         }        
       });
@@ -62,7 +68,8 @@ function UserController() {
       con.query('SELECT * FROM users WHERE email = ?',[email], function (error, results, fields) {
         if (error) {
             res.send({
-              status:false,
+              status:config.ERROR,
+              code: config.HTTP_SERVER_ERROR
               message:'there are some error with query'
               })
         }else{
@@ -71,7 +78,8 @@ function UserController() {
                 // res == true 
                 if(err) {
                   res.send({
-                    status:false,                  
+                    status:config.ERROR,
+                    code: config.HTTP_BAD_REQUEST             
                     message:"Email and password does not match"
                    });                    
                 }else{
@@ -82,12 +90,14 @@ function UserController() {
                         expiresIn:5000
                     });
                     res.send({
-                        status:true,
+                        status:config.SUCCESS,
+                        code: config.HTTP_BAD_REQUEST,
+                        message:"Logged in successfully!"
                         token:token
                     });
 
                   }else{
-                    res.send({status:false, message:"Email and password does not match"});                          
+                    res.send({status:config.ERROR, code: config.HTTP_BAD_REQUEST, message:"Email and password does not match"});                          
                   }
 
                 }
@@ -96,7 +106,8 @@ function UserController() {
           }
           else{
             res.send({
-                status:false,
+              status:config.ERROR,
+              code:config.ERROR
               message:"Email does not exits"
             });
           }
