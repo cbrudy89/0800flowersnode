@@ -1,6 +1,7 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
 var userController = require('./api/controllers/user-controller');
+var commonController = require('./api/controllers/common-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -37,6 +38,12 @@ module.exports = {
         console.log(req.decoded.id);
         res.send(req.decoded);
         //res.send('Token Verified');
+    });
+    app.get('/api/common/countries/', function(req, res) {
+        commonController.countries(req, res);
+    });
+    app.post('/api/common/province/', function(req, res) {
+        commonController.province(req, res);
     });
 
   }
