@@ -17,6 +17,14 @@ module.exports = {
         adminController.login(req, res);
     });
 
+    app.post('/api/admin/forget', function(req, res) {
+        adminController.forgetPassword(req, res);
+    });    
+
+    app.post('/api/admin/reset/:key', function(req, res) {
+        adminController.resetPassword(req, res);
+    });        
+
     /*app.post('/api/vendor/login', function(req, res) {
         userController.login(req, res);
     });
@@ -38,6 +46,7 @@ module.exports = {
         res.send(req.decoded);
         //res.send('Token Verified');
     });
+
 
   }
 };

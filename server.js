@@ -34,7 +34,7 @@ else
     console.log('No --domain=xxx specified, taking default hostname "localhost".')
 
 // Configure the API port
-var port = 8080;
+var port = 8006;
 if(argv.port !== undefined)
     port = argv.port;
 else
