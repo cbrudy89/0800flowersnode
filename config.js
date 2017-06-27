@@ -8,7 +8,7 @@ function Config() {
   this.HTTP_FORBIDDEN = 403; // Unauthorized access or no premission
   this.HTTP_NOT_FOUND = 404; // Not Found
   this.HTTP_ALREADY_EXISTS = 409; // User already exist
-  this.HTTP_SERVER_ERROR = 500; // Server Error
+  this.HTTP_SERVER_ERROR = 500; // Server Error 
 }
 
 module.exports = new Config();
