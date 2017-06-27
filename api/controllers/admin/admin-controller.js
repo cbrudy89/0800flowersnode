@@ -85,11 +85,9 @@ function AdminController() {
             });
           }        
         });
-      });
-      
-    }
-    
-  }  
+      });      
+    }    
+  }
 
   // Authenticate Admin User in DB
   this.login=function(req,res){
