@@ -10,6 +10,7 @@ var subpath = express();
 var router=express.Router();
 
 app.use(bodyParser.urlencoded({extended:true}));
+
 app.use(bodyParser.json());
 
 var swagger = require("swagger-node-express").createNew(subpath);
@@ -19,7 +20,6 @@ var db = require('./database');
 var routes = require('./routes');
 
 process.env.SECRET_KEY="thisismysecretkey";
-
 
 routes.configure(app, router);
 
