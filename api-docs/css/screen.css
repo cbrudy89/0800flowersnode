@@ -1411,7 +1411,7 @@
   cursor: pointer;
 }
 .swagger-section #header {
-  background-color: #89bf04;
+  background-color: #7e83a7;
   padding: 9px 14px 19px 14px;
   height: 23px;
   min-width: 775px;
@@ -1466,7 +1466,6 @@
 .swagger-section #header #logo .logo__img {
   display: block;
   float: left;
-  margin-top: 2px;
 }
 .swagger-section #header #logo .logo__title {
   display: inline-block;

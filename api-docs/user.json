@@ -23,7 +23,7 @@
       "application/json"
    ],
    "paths":{
-      "/api/user/login":{
+      "/api/admin/login":{
          "post":{
             "tags":[
                "User"
@@ -66,62 +66,125 @@
             }
          }
       },
-      "/api/user/register/{someVariable}":{
-         "delete":{
+      "/api/admin/create":{
+         "post":{
             "tags":[
                "User"
             ],
-            "description":"Deletes a something",
-            "operationId":"delete",
+            "description":"Create new admin user",
+            "operationId":"create",
             "produces":[
                "application/json"
             ],
             "parameters":[
                {
-                  "name":"someVariable",
+                  "name":"token",
                   "in":"formData",
-                  "description":"ID to delete",
+                  "description":"Token get on login api response",
                   "required":true,
                   "type":"string"
-               }
-            ],
-            "responses":{
-               "200":{
-                  "description":"delete response",
-                  "schema":{
-                     "$ref":"#/definitions/deleteRes"
-                  }
-               }
-            }
-         },
-         "get":{
-            "tags":[
-               "User"
-            ],
-            "description":"Returns the status of something",
-            "operationId":"findById",
-            "produces":[
-               "application/json"
-            ],
-            "parameters":[
+               },               
                {
-                  "name":"ID",
-                  "in":"path",
-                  "description":"ID to fetch",
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of User",
                   "required":true,
                   "type":"string"
-               }
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of user",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"User password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"province_id",
+                  "in":"formData",
+                  "description":"Country province id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"address",
+                  "in":"formData",
+                  "description":"Address of User",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"phone_no",
+                  "in":"formData",
+                  "description":"Phone number of user",
+                  "required":false,
+                  "type":"string"
+               }                                                                 
             ],
             "responses":{
                "200":{
-                  "description":"response",
+                  "description":"Create response",
                   "schema":{
-                     "$ref":"#/definitions/response1"
+                     "$ref":"#/definitions/createSuccess"
                   }
                }
             }
          }
-      }
+      },
+      "/api/admin/forget":{
+         "post":{
+            "tags":[
+               "User"
+            ],
+            "description":"Forget password API for admin User",
+            "operationId":"forget",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of user",
+                  "required":true,
+                  "type":"string"
+               }                                                            
+            ],
+            "responses":{
+               "200":{
+                  "description":"Forget password response",
+                  "schema":{
+                     "$ref":"#/definitions/forget200"
+                  }
+               },
+               "404":{
+                  "description":"Email does not exist.",
+                  "schema":{
+                     "$ref":"#/definitions/forget404"
+                  }
+               },               
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/forget500"
+                  }
+               }        
+            }
+         }
+      }      
    },
    "definitions":{
       "create":{
@@ -166,32 +229,80 @@
                "type":"integer",
                "example":"200"
             },            
-            "email":{
-               "required":true,
+            "message":{
                "type":"string",
-               "example":"abc@mobikasa.com"
+               "example":"Logged in successfully!"
             },
-            "password":{
-               "required":true,
+            "token":{
                "type":"string",
-               "example":"123456"
+               "example":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwicm9sZSI6MSwiaWF0Ijox"
             }
          }
       },
-      "delete":{
+      "createSuccess":{
          "properties":{
-            "jobID":{
-               "required":true,
-               "type":"string",
-               "example":"234344234234"
-            },
             "status":{
-               "required":true,
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
                "type":"string",
-               "example":"deleted"
+               "example":"User register successfully!"
             }
          }
       },
+      "forget200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Check your inbox for a password reset message!"
+            }
+         }
+      },  
+      "forget404":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Email does not exist."
+            }
+         }
+      },  
+      "forget500":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },                  
       "400error":{
          "properties":{
             "status":{

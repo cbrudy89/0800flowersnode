@@ -1,10 +1,17 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+var handlebars = require('handlebars');
+var fs = require('fs');
+
 var config = require('./../../../config');
 var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
 //var userModel = require('./../../../user-model');
+
+var confirmed = status = 1;
 
 function AdminController() {
 
@@ -27,8 +34,8 @@ function AdminController() {
       var address = req.body.address;
       var phone_no = req.body.phone_no;
       var type = 2; // 2 For Sub admin
-      var confirmed = 1;
-      var status = 1;
+      /*var confirmed = 1;
+      var status = 1;*/
       var confirmation_code = crypto.createHash('sha512').update(email).digest('hex');
 
       connection.acquire(function(err, con) {
@@ -53,11 +60,11 @@ function AdminController() {
                 });
               }else{
                 if(result.length > 0 && result[0].id > 0){
-                    res.status(config.HTTP_ALREADY_EXISTS).send({
-                      status: config.ERROR, 
-                      code : config.HTTP_ALREADY_EXISTS, 
-                      message: "The specified account already exists."
-                    });
+                  res.status(config.HTTP_ALREADY_EXISTS).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_ALREADY_EXISTS, 
+                    message: "The specified account already exists."
+                  });
                 }else{
                     
                   var hashedPassword = hash;
@@ -97,58 +104,56 @@ function AdminController() {
     var type=req.body.type;
 
     connection.acquire(function(err, con) {
-      con.query('SELECT * FROM users WHERE email = ? AND confirmed = ? AND status = ?',[email,1,1], function (error, results, fields) {
+      con.query('SELECT * FROM users WHERE email = ? AND confirmed = ? AND status = ?',[email, confirmed, status], function (error, results, fields) {
         if (error) {
-            res.status(config.HTTP_SERVER_ERROR).send({
-              status:config.ERROR,
-              code: config.HTTP_SERVER_ERROR,
-              message:'There are some error with query'
-            })
+          res.status(config.HTTP_SERVER_ERROR).send({
+            status:config.ERROR,
+            code: config.HTTP_SERVER_ERROR,
+            message:'Unable to login!'
+          });
         }else{
           if(results.length >0){
             bcrypt.compare(password, results[0].password, function(err, response) {
                 // res == true 
-                if(err) {
+              if(err) {
+                res.status(config.HTTP_BAD_REQUEST).send({
+                  status:config.ERROR,
+                  code: config.HTTP_BAD_REQUEST,             
+                  message:"Email and password does not match"
+                 });                    
+              }else{
+
+                // Password Matched
+                if(response == true){
+                  var token=jwt.sign({id: results[0].id, role : config.ROLE_ADMIN},process.env.SECRET_KEY,{
+                      expiresIn:1440
+                  });
+                  res.status(config.HTTP_SUCCESS).send({
+                      status: config.SUCCESS,
+                      code: config.HTTP_SUCCESS,
+                      message:"Logged in successfully!",
+                      token: token,
+                      data:{
+                        userId : results[0].id,
+                        name: results[0].name,
+                        email: results[0].email,
+                        country_id: results[0].country_id,
+                        province_id : results[0].province_id,
+                        address : results[0].address,
+                        phone_number : results[0].phone_number,
+                        profile_image : results[0].profile_image
+                      }
+                  });
+
+                }else{
                   res.status(config.HTTP_BAD_REQUEST).send({
                     status:config.ERROR,
-                    code: config.HTTP_BAD_REQUEST,             
+                    code: config.HTTP_BAD_REQUEST, 
                     message:"Email and password does not match"
-                   });                    
-                }else{
-
-                  // Password Matched
-                  if(response == true){
-                    var token=jwt.sign({id: results[0].id, role : config.ROLE_ADMIN},process.env.SECRET_KEY,{
-                        expiresIn:1440
-                    });
-                    res.status(config.HTTP_SUCCESS).send({
-                        status: config.SUCCESS,
-                        code: config.HTTP_SUCCESS,
-                        message:"Logged in successfully!",
-                        token: token,
-                        data:{
-                          userId : results[0].id,
-                          name: results[0].name,
-                          email: results[0].email,
-                          country_id: results[0].country_id,
-                          province_id : results[0].province_id,
-                          address : results[0].address,
-                          phone_number : results[0].phone_number,
-                          profile_image : results[0].profile_image
-                        }
-                    });
-
-                  }else{
-                    res.status(config.HTTP_BAD_REQUEST).send({
-                      status:config.ERROR,
-                      code: config.HTTP_BAD_REQUEST, 
-                      message:"Email and password does not match"
-                    });                          
-                  }
-
+                  });                          
                 }
-            });
-           
+              }
+            });           
           }
           else{
             res.status(config.HTTP_NOT_FOUND).send({
@@ -183,6 +188,100 @@ function AdminController() {
       });
     });
   };
+
+  // Forget Password
+  this.forgetPassword = function(req, res){
+    var email=req.body.email;
+    connection.acquire(function(err, con) {
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+            status: config.ERROR, 
+            code : config.HTTP_SERVER_ERROR,          
+            message: "Unable to process request!",
+            errors : err
+        });
+      } else {
+        con.query('SELECT id,name FROM users WHERE email = ? AND confirmed = ? AND status = ?', [email, confirmed, status], function(err, result){
+          if (err) {
+            res.status(config.HTTP_SERVER_ERROR).send({
+              status: config.ERROR, 
+              code : config.HTTP_SERVER_ERROR, 
+              message : "Unable to process request!", 
+              errors : err
+            });
+          }else{
+            if(result.length > 0 && result[0].id > 0){
+              smtpTransport = nodemailer.createTransport(smtpTransport({
+                  host: 'smtp.gmail.com',
+                  secure: 'tls',
+                  port: '465',
+                  auth: {
+                      user: 'test@mobikasa.com',
+                      pass: '123456'
+                  }
+              }));              
+              
+              // Send Password Reset Link
+              fs.readFile(config.PROJECT_DIR + '/templates/forgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
+                  if (err) {
+                      res.status(config.HTTP_SERVER_ERROR).send({
+                          status: config.ERROR, 
+                          code : config.HTTP_SERVER_ERROR,          
+                          message: "Unable to process request!",
+                          errors : err
+                      });
+                  } else {
+                      
+                      var confirmation_code = crypto.randomBytes(64).toString('hex');
+                      console.log(smtpTransport);
+
+                      var template = handlebars.compile(html);
+                      var replacements = {
+                           userName: result[0].name,
+                           resetLink : "http://localhost::8006/api/admin/reset/"+confirmation_code,
+                      };
+
+                      var htmlToSend = template(replacements);
+                      var mailOptions = {
+                          from: 'dinesh@mobikasa.com',
+                          to : email,
+                          subject : 'Your password reset link to change password.',
+                          html : htmlToSend
+                       };
+                      smtpTransport.sendMail(mailOptions, function (error, response) {
+                          if (error) {
+                              //console.log(error);
+                              res.status(config.HTTP_SERVER_ERROR).send({
+                                  status: config.ERROR, 
+                                  code : config.HTTP_SERVER_ERROR,          
+                                  message: "Unable to process request!",
+                                  errors : error
+                              });                                
+                          }else{
+                            // Update databse to save reset token.
+                            res.status(config.HTTP_SUCCESS).send({
+                              status: config.SUCCESS, 
+                              code : config.HTTP_SUCCESS, 
+                              message: "Check your inbox for a password reset message!"
+                            });
+                          }
+                      });
+                  }
+              });
+            }else{
+              res.status(config.HTTP_NOT_FOUND).send({
+                status: config.ERROR, 
+                code : config.HTTP_NOT_FOUND, 
+                message: "Email does not exist."
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
+
 
 /*  this.create = function(users, res, colu) {    
     address = colu.hdwallet.getAddress();

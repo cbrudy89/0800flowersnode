@@ -1,0 +1,201 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Common APIs",
+      "description":"All APIs related to the common controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Common",
+         "description":"API for common usage"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/api/common/countries":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"How to get countries",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Countries Found!",
+                  "schema":{
+                      "$ref":"#/definitions/countryresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/api/common/province":{
+         "post":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get country specific province",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country ID",
+                  "required":true,
+                  "type":"string"
+               }             
+            ],
+            "responses":{
+               "200":{
+                  "description":"province response",
+                  "schema":{
+                     "$ref":"#/definitions/provinceresponse"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "create":{
+         "properties":{
+            "eventId":{
+               "required":true,
+               "type":"string",
+               "example":"mathmaticial"
+            },
+            "numberRequired":{
+               "required":true,
+               "type":"integer",
+               "format":"int64",
+               "example":500
+            }
+         }
+      },
+      "response1":{
+         "properties":{
+            "jobID":{
+               "required":true,
+               "type":"string",
+               "example":"23423456543"
+            },
+            "request":{
+               "required":true,
+               "type":"schema",
+               "example":{
+                  "eventId":"mathmaticial",
+                  "numberRequired":500
+               }
+            }
+         }
+      },
+      "countryresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Countries found"
+            },
+            "result":{
+               "type":"string",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "provinceresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Provinces found"
+            },
+            "result":{
+               "type":"string",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      }
+   }
+}
