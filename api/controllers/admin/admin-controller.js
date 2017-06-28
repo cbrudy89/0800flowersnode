@@ -380,10 +380,27 @@ function AdminController() {
     }else{
 
       var search = req.body.search;
-      
+      var name = "";
+      var email = "";
+      var queryString = "SELECT `id`, `name`, `email`, `country_id`, `province_id`, `address`, `phone_number`, `profile_image`, `confirmed`, `status`, `type` FROM users WHERE `type` = 2 ";
+
+      if(search == "yes"){
+        name = req.body.name;
+        email = req.body.email;
+        
+        if(name != "" && name != undefined){
+          queryString += " and `name` like '%"+name+"%'";
+        
+        }
+        if(email != "" && email != undefined){
+            
+            queryString += " and `email` like '%"+email+"%'";
+          
+        }
+      }
 
       connection.acquire(function(err, con) {
-        con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+        con.query(queryString, function (error, results, fields) {
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -391,31 +408,20 @@ function AdminController() {
                 message:'There are some error with query'
               })
           }else{
-            connection.acquire(function(err, con) {
-              con.query('delete from users where id = ?',[id], function (error, results, fields) {
-                if (error) {
-                    res.status(config.HTTP_SERVER_ERROR).send({
-                      status:config.ERROR,
-                      code: config.HTTP_SERVER_ERROR,
-                      message:'Unable to delete User.'
-                    });
-                }else{
-                  if(results.affectedRows > 0){
-                    res.status(config.HTTP_SUCCESS).send({
-                      status:config.SUCCESS,
-                      code: config.HTTP_SUCCESS,
-                      message:'User deleted successfully.'
-                    });
-                  }else{
-                    res.status(config.HTTP_NOT_FOUND).send({
-                      status:config.ERROR,
-                      code: config.HTTP_NOT_FOUND,
-                      message:'User not found.'
-                    });
-                  }
-                }
+            if(results.length > 0){
+              res.status(config.HTTP_SUCCESS).send({
+                          status: config.SUCCESS,
+                          code: config.HTTP_SUCCESS,
+                          message: results.length+" User found",
+                          result:results
               });
-            });  
+            }else{
+              res.status(config.HTTP_BAD_REQUEST).send({
+                  status:config.ERROR,
+                  code: config.HTTP_BAD_REQUEST, 
+                  message:"No users found"
+              }); 
+            } 
           }
         });
       });
