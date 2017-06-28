@@ -132,13 +132,242 @@
                   "description":"Phone number of user",
                   "required":false,
                   "type":"string"
-               }                                                                 
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"User status active or Deactive",
+                  "required":true,
+                  "type":"integer"
+               }                                                                  
             ],
             "responses":{
                "200":{
                   "description":"Create response",
                   "schema":{
                      "$ref":"#/definitions/createSuccess"
+                  }
+               }
+            }
+         }
+      },
+      "/api/admin/updateProfile":{
+         "put":{
+            "tags":[
+               "User"
+            ],
+            "description":"Update admin user",
+            "operationId":"updateProfile",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired user to update.",
+                  "required":true,
+                  "type":"integer"
+               }, 
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of User",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of user",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"User password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"province_id",
+                  "in":"formData",
+                  "description":"Country province id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"address",
+                  "in":"formData",
+                  "description":"Address of User",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"phone_number",
+                  "in":"formData",
+                  "description":"Phone number of user",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"User status active(1) or Deactive(0)",
+                  "required":true,
+                  "type":"integer"
+               }                                                                  
+            ],
+            "responses":{
+               "200":{
+                  "description":"Update response",
+                  "schema":{
+                     "$ref":"#/definitions/updateProfile"
+                  }
+               }
+            }
+         }
+      },
+      "/api/admin/deleteUser":{
+         "delete":{
+            "tags":[
+               "User"
+            ],
+            "description":"Delete admin user",
+            "operationId":"deleteUser",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired user to delete.",
+                  "required":true,
+                  "type":"integer"
+               }, 
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Update response",
+                  "schema":{
+                     "$ref":"#/definitions/deleteUser"
+                  }
+               }
+            }
+         }
+      },
+      "/api/admin/changePassword":{
+         "post":{
+            "tags":[
+               "User"
+            ],
+            "description":"Admin change his own password",
+            "operationId":"changePassword",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"old_password",
+                  "in":"formData",
+                  "description":"Id of the desired user to delete.",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"new_password",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"new_password_confirmation",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               } 
+                                                                               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Update response",
+                  "schema":{
+                     "$ref":"#/definitions/changePassword"
+                  }
+               }
+            }
+         }
+      },
+      "/api/admin/getAllUsers":{
+         "post":{
+            "tags":[
+               "User"
+            ],
+            "description":"Get all Users in admin",
+            "operationId":"getAllUsers",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email to search",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name to search",
+                  "required":false,
+                  "type":"string"
+               }                                                               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Update response",
+                  "schema":{
+                     "$ref":"#/definitions/getAllUsers"
                   }
                }
             }
@@ -252,6 +481,99 @@
             "message":{
                "type":"string",
                "example":"User register successfully!"
+            }
+         }
+      },
+      "updateProfile":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"User updated successfully!"
+            }
+         }
+      },
+      "deleteUser":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"User deleted successfully!"
+            }
+         }
+      },
+      "getAllUsers":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"5 User found"
+            },
+            "result": [
+            {
+               "id": 9,
+               "name": "Manish12",
+               "email": "manish@mobikasa.com",
+               "country_id": 0,
+               "province_id": 0,
+               "address": "New yourk city",
+               "phone_number": 999999,
+               "profile_image": "06-04-2016-09-35-16Crimson_Fantasy.jpg",
+               "confirmed": 1,
+               "status": 1,
+               "type": 2
+            },
+            {
+               "id": 9,
+               "name": "Manish12",
+               "email": "manish@mobikasa.com",
+               "country_id": 0,
+               "province_id": 0,
+               "address": "New yourk city",
+               "phone_number": 999999,
+               "profile_image": "06-04-2016-09-35-16Crimson_Fantasy.jpg",
+               "confirmed": 1,
+               "status": 1,
+               "type": 2
+            }
+           ]
+            
+         }
+      },
+      "changePassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"User deleted successfully!"
             }
          }
       },

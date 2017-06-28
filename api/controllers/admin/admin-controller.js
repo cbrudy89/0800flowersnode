@@ -33,6 +33,7 @@ function AdminController() {
       var province_id = req.body.province_id;
       var address = req.body.address;
       var phone_no = req.body.phone_no;
+      var status = req.body.status;
       var type = 2; // 2 For Sub admin
       /*var confirmed = 1;
       var status = 1;*/
@@ -215,15 +216,15 @@ function AdminController() {
       var name = req.body.name;
       var email = req.body.email;
       var password = req.body.password;
-      var countryName = req.body.country_name;
-      var provinceName = req.body.province_name;
+      var countryId = req.body.country_id;
+      var provinceId = req.body.province_id;
       var address = req.body.address;
       var phoneNumber=req.body.phone_number;
-      var inputStatus=req.body.inputStatus;
+      var status=req.body.status;
 
       connection.acquire(function(err, con) {
 
-        var query = "update `users` set `name` = '"+name+"', `email` = '"+email+"', `country_id` = '"+countryName+"', `province_id` = '"+provinceName+"', `address` = '"+address+"', `phone_number` = '"+phoneNumber+"', `status` = '"+inputStatus+"'";        
+        var query = "update `users` set `name` = '"+name+"', `email` = '"+email+"', `country_id` = '"+countryId+"', `province_id` = '"+provinceId+"', `address` = '"+address+"', `phone_number` = '"+phoneNumber+"', `status` = '"+status+"'";        
 
         if(password != ""){
           hashedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
@@ -368,7 +369,7 @@ function AdminController() {
               })
           }else{
             
-              con.query('delete from users where id = ?',[id], function (error, results, fields) {
+              con.query('delete from users where id = ? and type = 2',[id], function (error, results, fields) {
                 con.release();
                 if (error) {
                     res.status(config.HTTP_SERVER_ERROR).send({
@@ -411,25 +412,17 @@ function AdminController() {
       });       
     }else{
 
-      var search = req.body.search;
-      var name = "";
-      var email = "";
+      var name = req.body.name;
+      var email = req.body.email;
       var queryString = "SELECT `id`, `name`, `email`, `country_id`, `province_id`, `address`, `phone_number`, `profile_image`, `confirmed`, `status`, `type` FROM users WHERE `type` = 2 ";
 
-      if(search == "yes"){
-        name = req.body.name;
-        email = req.body.email;
-        
-        if(name != "" && name != undefined){
-          queryString += " and `name` like '%"+name+"%'";
-        
-        }
-        if(email != "" && email != undefined){
-            
-            queryString += " and `email` like '%"+email+"%'";
-          
-        }
+      if(name != "" && name != undefined){
+        queryString += " and `name` like '%"+name+"%'";
       }
+      if(email != "" && email != undefined){
+          queryString += " and `email` like '%"+email+"%'";
+      }
+      
 
       connection.acquire(function(err, con) {
         con.query(queryString, function (error, results, fields) {
