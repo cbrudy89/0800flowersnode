@@ -18,6 +18,22 @@ module.exports = {
         adminController.login(req, res);
     });
 
+    app.post('/api/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
+        adminController.updateProfile(req, res);
+    });
+
+    app.post('/api/admin/changePassword', authenticateController.isAuthenticated, function(req, res) {
+        adminController.changePassword(req, res);
+    });
+
+    app.post('/api/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
+        adminController.deleteUser(req, res);
+    });
+
+    app.post('/api/admin/getAllUsers', authenticateController.isAuthenticated, function(req, res) {
+        adminController.getAllUsers(req, res);
+    });
+
     app.post('/api/admin/forget', function(req, res) {
         adminController.forgetPassword(req, res);
     });    
@@ -25,6 +41,7 @@ module.exports = {
     app.post('/api/admin/reset/:key', function(req, res) {
         adminController.resetPassword(req, res);
     });        
+
 
     /*app.post('/api/vendor/login', function(req, res) {
         userController.login(req, res);
