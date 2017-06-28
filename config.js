@@ -1,3 +1,6 @@
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+
 function Config() {
   this.SECRET_KEY = 'thisismysecretkey';
   this.SALT_ROUND = 10;
@@ -13,6 +16,18 @@ function Config() {
   this.HTTP_ALREADY_EXISTS = 409; // User already exist
   this.HTTP_SERVER_ERROR = 500; // Server Error
   this.PROJECT_DIR = __dirname;
+  this.BASE_URL = '';
+  this.APPLICATION_URL = '';
+
+  this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
+      host: 'smtp.gmail.com',
+      secure: 'tls',
+      port: '465',
+      auth: {
+          user: 'test@mobikasa.com',
+          pass: '123456'
+      }
+  })); 
 }
 
 module.exports = new Config();
