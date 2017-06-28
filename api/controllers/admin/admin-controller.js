@@ -1,8 +1,8 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+/*var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');*/
 var handlebars = require('handlebars');
 var fs = require('fs');
 
@@ -51,6 +51,7 @@ function AdminController() {
 
             // Checking if user email already exist in database
             con.query('SELECT id FROM users WHERE email = ?', [email], function(err, result){
+              con.release();
               if (err) {
                 res.status(config.HTTP_SERVER_ERROR).send({
                   status: config.ERROR, 
@@ -72,6 +73,7 @@ function AdminController() {
 
                   // Store hash in your password DB.
                   con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,confirmed,status,type,confirmation_code], function (err, results, fields) {
+                    con.release();
                     if (err) {
                       console.log(err);
                       res.status(config.HTTP_ALREADY_EXISTS).send({
@@ -107,6 +109,7 @@ function AdminController() {
 
     connection.acquire(function(err, con) {
       con.query('SELECT * FROM users WHERE email = ? AND confirmed = ? AND status = ?',[email, confirmed, status], function (error, results, fields) {
+        con.release();
         if (error) {
             res.status(config.HTTP_SERVER_ERROR).send({
               status:config.ERROR,
@@ -205,6 +208,7 @@ function AdminController() {
         }
                 
         con.query(query, function (error, results, fields) {
+          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -250,6 +254,7 @@ function AdminController() {
 
       connection.acquire(function(err, con) {
         con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -270,6 +275,7 @@ function AdminController() {
                     var hashedPassword = bcrypt.hashSync(newPassword, config.SALT_ROUND);
                     var query = "update `users` set `password` = '"+hashedPassword+"' where `id` = '"+id+"'";
                     con.query(query, function (error, results, fields) {
+                      con.release();
                       if (error) {
                           res.status(config.HTTP_SERVER_ERROR).send({
                             status:config.ERROR,
@@ -329,6 +335,7 @@ function AdminController() {
 
       connection.acquire(function(err, con) {
         con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -336,8 +343,9 @@ function AdminController() {
                 message:'There are some error with query'
               })
           }else{
-            connection.acquire(function(err, con) {
+            
               con.query('delete from users where id = ?',[id], function (error, results, fields) {
+                con.release();
                 if (error) {
                     res.status(config.HTTP_SERVER_ERROR).send({
                       status:config.ERROR,
@@ -360,7 +368,7 @@ function AdminController() {
                   }
                 }
               });
-            });  
+            
           }
         });
       });
@@ -384,6 +392,7 @@ function AdminController() {
 
       connection.acquire(function(err, con) {
         con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -391,8 +400,8 @@ function AdminController() {
                 message:'There are some error with query'
               })
           }else{
-            connection.acquire(function(err, con) {
               con.query('delete from users where id = ?',[id], function (error, results, fields) {
+                con.release();
                 if (error) {
                     res.status(config.HTTP_SERVER_ERROR).send({
                       status:config.ERROR,
@@ -415,7 +424,6 @@ function AdminController() {
                   }
                 }
               });
-            });  
           }
         });
       });
@@ -458,6 +466,7 @@ function AdminController() {
         });
       } else {
         con.query('SELECT id,name FROM users WHERE email = ? AND confirmed = ? AND status = ?', [email, confirmed, status], function(err, result){
+          con.release();
           if (err) {
             res.status(config.HTTP_SERVER_ERROR).send({
               status: config.ERROR, 
@@ -467,7 +476,7 @@ function AdminController() {
             });
           }else{
             if(result.length > 0 && result[0].id > 0){
-                smtpTransport = nodemailer.createTransport(smtpTransport({
+                /*smtpTransport = nodemailer.createTransport(smtpTransport({
                     host: 'smtp.gmail.com',
                     secure: 'tls',
                     port: '465',
@@ -475,7 +484,10 @@ function AdminController() {
                         user: 'test@mobikasa.com',
                         pass: '123456'
                     }
-                }));              
+                }));  */
+
+                smtpTransport = config.SMTP_TRANSPORT;
+
                 // Send Password Reset Link
                 fs.readFile(config.PROJECT_DIR + '/templates/forgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
                     if (err) {
@@ -487,12 +499,12 @@ function AdminController() {
                     } else {
                         
                         var confirmation_code = crypto.randomBytes(64).toString('hex');
-                        console.log(smtpTransport);
+                        //console.log(smtpTransport);
 
                         var template = handlebars.compile(html);
                         var replacements = {
                              userName: result[0].name,
-                             resetLink : "http://localhost::8006/api/admin/reset/"+confirmation_code,
+                             resetLink : baseUrl+"/api/admin/reset/"+confirmation_code,
                         };
 
                         var htmlToSend = template(replacements);
