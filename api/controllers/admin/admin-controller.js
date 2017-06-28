@@ -322,7 +322,7 @@ function AdminController() {
   }
 
   // delete admin users 
-  this.delete = function(req,res){
+  this.deleteUser = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 

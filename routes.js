@@ -26,8 +26,8 @@ module.exports = {
         adminController.changePassword(req, res);
     });
 
-    app.post('/api/admin/delete', authenticateController.isAuthenticated, function(req, res) {
-        adminController.delete(req, res);
+    app.post('/api/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
+        adminController.deleteUser(req, res);
     });
 
     app.post('/api/admin/getAllUsers', authenticateController.isAuthenticated, function(req, res) {
