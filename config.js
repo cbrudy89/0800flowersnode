@@ -12,6 +12,7 @@ function Config() {
   this.HTTP_NOT_FOUND = 404; // Not Found
   this.HTTP_ALREADY_EXISTS = 409; // User already exist
   this.HTTP_SERVER_ERROR = 500; // Server Error
+  this.PROJECT_DIR = __dirname;
 }
 
 module.exports = new Config();
