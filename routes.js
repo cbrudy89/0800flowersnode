@@ -1,6 +1,7 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
 var userController = require('./api/controllers/user-controller');
+var commonController = require('./api/controllers/common-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -33,6 +34,14 @@ module.exports = {
         adminController.getAllUsers(req, res);
     });
 
+    app.post('/api/admin/forget', function(req, res) {
+        adminController.forgetPassword(req, res);
+    });    
+
+    app.post('/api/admin/reset/:key', function(req, res) {
+        adminController.resetPassword(req, res);
+    });        
+
 
     /*app.post('/api/vendor/login', function(req, res) {
         userController.login(req, res);
@@ -55,6 +64,13 @@ module.exports = {
         res.send(req.decoded);
         //res.send('Token Verified');
     });
+    app.get('/api/common/countries/', function(req, res) {
+        commonController.countries(req, res);
+    });
+    app.post('/api/common/province/', function(req, res) {
+        commonController.province(req, res);
+    });
+
 
   }
 };

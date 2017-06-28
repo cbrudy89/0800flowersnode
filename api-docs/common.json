@@ -2,15 +2,15 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"User APIs",
-      "description":"All APIs related to the user controller",
+      "title":"Common APIs",
+      "description":"All APIs related to the common controller",
       "termsOfService":"#"
    },
    "basePath":"/",
    "tags":[
       {
-         "name":"User",
-         "description":"API for login and user"
+         "name":"Common",
+         "description":"API for common usage"
       }
    ],
    "schemes":[
@@ -23,38 +23,24 @@
       "application/json"
    ],
    "paths":{
-      "/api/admin/login":{
-         "post":{
+      "/api/common/countries":{
+         "get":{
             "tags":[
-               "User"
+               "Common"
             ],
-            "description":"what this API does",
+            "description":"How to get countries",
             "operationId":"for the URL",
             "produces":[
                "application/json"
             ],
             "parameters":[
-               {
-                  "name":"email",
-                  "in":"formData",
-                  "description":"The email for user",
-                  "required":true,
-                  "type": "string"
-               },
-               {
-                  "name":"password",
-                  "in":"formData",
-                  "description":"The Password for user",
-                  "required":true,
-                  "type":"string",
-                  "format":"pasword"
-               }               
+                             
             ],
             "responses":{
                "200":{
-                  "description":"Logged in successfully!",
+                  "description":"Countries Found!",
                   "schema":{
-                      "$ref":"#/definitions/response"
+                      "$ref":"#/definitions/countryresponse"
                   }
                },
                "400":{
@@ -66,44 +52,30 @@
             }
          }
       },
-      "/api/admin/create":{
+      "/api/common/province":{
          "post":{
             "tags":[
-               "User"
+               "Common"
             ],
-            "description":"Create new admin user",
-            "operationId":"create",
+            "description":"Get country specific province",
+            "operationId":"get",
             "produces":[
                "application/json"
             ],
             "parameters":[
                {
-                  "name":"name",
+                  "name":"country_id",
                   "in":"formData",
-                  "description":"Name of User",
+                  "description":"Country ID",
                   "required":true,
                   "type":"string"
-               },
-               {
-                  "name":"email",
-                  "in":"formData",
-                  "description":"Email address of user",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"password",
-                  "in":"formData",
-                  "description":"User password",
-                  "required":true,
-                  "type":"string"
-               }              
+               }             
             ],
             "responses":{
                "200":{
-                  "description":"create response",
+                  "description":"province response",
                   "schema":{
-                     "$ref":"#/definitions/createRes"
+                     "$ref":"#/definitions/provinceresponse"
                   }
                }
             }
@@ -143,7 +115,7 @@
             }
          }
       },
-      "response":{
+      "countryresponse":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -155,25 +127,57 @@
             },            
             "message":{
                "type":"string",
-               "example":"Logged in successfully!"
+               "example":"Countries found"
             },
-            "token":{
+            "result":{
                "type":"string",
-               "example":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwicm9sZSI6MSwiaWF0Ijox"
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
             }
          }
       },
-      "createRes":{
+      "provinceresponse":{
          "properties":{
-            "jobID":{
-               "required":true,
-               "type":"string",
-               "example":"234344234234"
-            },
             "status":{
-               "required":true,
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
                "type":"string",
-               "example":"deleted"
+               "example":"Provinces found"
+            },
+            "result":{
+               "type":"string",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
             }
          }
       },
