@@ -72,9 +72,27 @@ module.exports = {
         commonController.province(req, res);
     });
 
-    app.post('/api/admin/country/create', authenticateController.isAuthenticated, function(req, res) {
+    /************** Country **********/
+    app.post('/admin/country/list', authenticateController.isAuthenticated, function(req, res) {
+        countryController.list(req, res);
+    });
+
+    app.post('/admin/country/create', authenticateController.isAuthenticated, function(req, res) {
         countryController.create(req, res);
     });
+
+    app.get('/admin/country/view/:id', authenticateController.isAuthenticated, function(req, res) {
+        countryController.view(req, res);
+    });
+
+    app.put('/admin/country/update', authenticateController.isAuthenticated, function(req, res) {
+        countryController.update(req, res);
+    });    
+
+    app.delete('/admin/country/delete', authenticateController.isAuthenticated, function(req, res) {
+        countryController.delete(req, res);
+    });
+    /************** Country End **********/
 
   }
 };

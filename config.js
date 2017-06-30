@@ -24,10 +24,9 @@ function Config() {
       secure: 'tls',
       port: '465',
       auth: {
-          user: 'test@mobikasa.com',
-          pass: '12345'
+          user: 'apptestmobikasa@gmail.com',
+          pass: '12345@9876'
       }
   })); 
 }
-
 module.exports = new Config();
