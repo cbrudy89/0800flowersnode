@@ -76,12 +76,10 @@ module.exports = {
     });
 
     app.post('/customer/register', function(req, res) {
-        userController.saveNotification(req, res);
+        userController.register(req, res);
     });
     
-/*  
-
-    app.get('/customer/login', function(req, res) {
+    app.post('/customer/login', function(req, res) {
         userController.login(req, res);
     });
 
@@ -89,9 +87,13 @@ module.exports = {
         userController.forget(req, res);
     });    
 
-    app.post('/customer/reset/:key', function(req, res) {
-        adminController.reset(req, res);
-    });*/
+    app.post('/customer/verifyCode', function(req, res) {
+        userController.verifyCode(req, res);
+    });        
+
+    app.put('/customer/resetPassword', function(req, res) {
+        adminController.resetPassword(req, res);
+    });    
 
     /************************* END of Home *****************/
 
