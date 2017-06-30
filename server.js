@@ -44,8 +44,7 @@ db.acquire(function(err, con){
 		    console.log('No --port=xxx specified, taking default port ' + port + '.')
 
 		// Set and display the application URL
-		var baseUrl = 'http://' + domain;
-		var applicationUrl = baseUrl + ':' + port;
+		var applicationUrl = 'http://' + domain + ':' + port;
 
 		swagger.configure(applicationUrl, '1.0.0');
 

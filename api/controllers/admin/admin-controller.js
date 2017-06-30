@@ -504,7 +504,7 @@ function AdminController() {
                         var template = handlebars.compile(html);
                         var replacements = {
                              userName: result[0].name,
-                             resetLink : baseUrl+"/api/admin/reset/"+confirmation_code,
+                             resetLink : config.BASE_URL+"/api/admin/reset/"+confirmation_code,
                         };
 
                         var htmlToSend = template(replacements);
