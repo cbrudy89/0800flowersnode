@@ -10,35 +10,35 @@ module.exports = {
         res.sendFile(__dirname + '/api-docs/index.html');
     });    
 
-    app.post('/api/admin/create', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/create', authenticateController.isAuthenticated, function(req, res) {
         adminController.create(req, res);
     });
 
-    app.post('/api/admin/login', function(req, res) {
+    app.post('/admin/login', function(req, res) {
         adminController.login(req, res);
     });
 
-    app.put('/api/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
         adminController.updateProfile(req, res);
     });
 
-    app.post('/api/admin/changePassword', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/changePassword', authenticateController.isAuthenticated, function(req, res) {
         adminController.changePassword(req, res);
     });
 
-    app.delete('/api/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
         adminController.deleteUser(req, res);
     });
 
-    app.post('/api/admin/getAllUsers', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getAllUsers', authenticateController.isAuthenticated, function(req, res) {
         adminController.getAllUsers(req, res);
     });
 
-    app.post('/api/admin/forget', function(req, res) {
+    app.post('/admin/forget', function(req, res) {
         adminController.forgetPassword(req, res);
     });    
 
-    app.post('/api/admin/reset/:key', function(req, res) {
+    app.post('/admin/reset/:key', function(req, res) {
         adminController.resetPassword(req, res);
     });        
 
@@ -55,19 +55,19 @@ module.exports = {
         userController.login(req, res);
     });*/
 
-    app.get('/api/admin/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
+    app.get('/admin/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
         userController.getUser(req.params.id, res);
     });
 
-    app.get('/api/dashboard', authenticateController.isAuthenticated, function(req, res){
+    app.get('/dashboard', authenticateController.isAuthenticated, function(req, res){
         console.log(req.decoded.id);
         res.send(req.decoded);
         //res.send('Token Verified');
     });
-    app.get('/api/common/countries/', function(req, res) {
+    app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
-    app.post('/api/common/province/', function(req, res) {
+    app.post('/common/province/', function(req, res) {
         commonController.province(req, res);
     });
 

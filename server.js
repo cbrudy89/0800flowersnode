@@ -45,7 +45,8 @@ db.acquire(function(err, con){
 		    console.log('No --port=xxx specified, taking default port ' + port + '.')
 
 		// Set and display the application URL
-		var applicationUrl = 'http://' + domain + ':' + port;
+		var baseUrl = 'http://' + domain;
+		var applicationUrl = baseUrl + ':' + port;
 
 		config.BASE_URL = baseUrl;
 		config.APPLICATION_URL = applicationUrl;
