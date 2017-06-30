@@ -1,5 +1,6 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
+var countryController = require('./api/controllers/admin/country-controller');
 var userController = require('./api/controllers/user-controller');
 var commonController = require('./api/controllers/common-controller');
 
@@ -71,6 +72,9 @@ module.exports = {
         commonController.province(req, res);
     });
 
+    app.post('/api/admin/country/create', authenticateController.isAuthenticated, function(req, res) {
+        countryController.create(req, res);
+    });
 
   }
 };
