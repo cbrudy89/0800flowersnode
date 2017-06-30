@@ -4,6 +4,7 @@ var express = require('express');
 var argv = require('minimist')(process.argv.slice(2));
 var bodyParser = require('body-parser');
 var jwt= require("jsonwebtoken");
+var config = require('./config');
 
 var app = express();
 var subpath = express();
@@ -45,6 +46,9 @@ db.acquire(function(err, con){
 
 		// Set and display the application URL
 		var applicationUrl = 'http://' + domain + ':' + port;
+
+		config.BASE_URL = baseUrl;
+		config.APPLICATION_URL = applicationUrl;
 
 		swagger.configure(applicationUrl, '1.0.0');
 

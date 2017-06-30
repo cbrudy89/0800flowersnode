@@ -9,6 +9,7 @@ var fs = require('fs');
 var config = require('./../../../config');
 var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
+var commonHelper = require('./../../helpers/common-helper');
 //var userModel = require('./../../../user-model');
 
 var confirmed = status = 1;
@@ -33,6 +34,7 @@ function AdminController() {
       var province_id = req.body.province_id;
       var address = req.body.address;
       var phone_no = req.body.phone_no;
+      var status = req.body.status;
       var type = 2; // 2 For Sub admin
       /*var confirmed = 1;
       var status = 1;*/
@@ -51,7 +53,6 @@ function AdminController() {
 
             // Checking if user email already exist in database
             con.query('SELECT id FROM users WHERE email = ?', [email], function(err, result){
-              con.release();
               if (err) {
                 res.status(config.HTTP_SERVER_ERROR).send({
                   status: config.ERROR, 
@@ -61,11 +62,11 @@ function AdminController() {
                 });
               }else{
                 if(result.length > 0 && result[0].id > 0){
-                    res.status(config.HTTP_ALREADY_EXISTS).send({
-                      status: config.ERROR, 
-                      code : config.HTTP_ALREADY_EXISTS, 
-                      message: "The specified account already exists."
-                    });
+                  res.status(config.HTTP_ALREADY_EXISTS).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_ALREADY_EXISTS, 
+                    message: "The specified account already exists."
+                  });
                 }else{
                     
                   var hashedPassword = hash;
@@ -94,11 +95,9 @@ function AdminController() {
             });
           }        
         });
-      });
-      
-    }
-    
-  }  
+      });      
+    }    
+  }
 
   // Authenticate Admin User in DB
   this.login=function(req,res){
@@ -111,22 +110,51 @@ function AdminController() {
       con.query('SELECT * FROM users WHERE email = ? AND confirmed = ? AND status = ?',[email, confirmed, status], function (error, results, fields) {
         con.release();
         if (error) {
-            res.status(config.HTTP_SERVER_ERROR).send({
-              status:config.ERROR,
-              code: config.HTTP_SERVER_ERROR,
-              message:'Unable to login!'
-            })
+          res.status(config.HTTP_SERVER_ERROR).send({
+            status:config.ERROR,
+            code: config.HTTP_SERVER_ERROR,
+            message:'Unable to login!'
+          });
         }else{
           if(results.length >0){
             bcrypt.compare(password, results[0].password, function(err, response) {
                 // res == true 
-                if(err) {
+              if(err) {
+                res.status(config.HTTP_BAD_REQUEST).send({
+                  status:config.ERROR,
+                  code: config.HTTP_BAD_REQUEST,             
+                  message:"Email and password does not match"
+                 });                    
+              }else{
+
+                // Password Matched
+                if(response == true){
+                  var token=jwt.sign({id: results[0].id, role : config.ROLE_ADMIN},process.env.SECRET_KEY,{
+                      expiresIn:1440
+                  });
+                  res.status(config.HTTP_SUCCESS).send({
+                      status: config.SUCCESS,
+                      code: config.HTTP_SUCCESS,
+                      message:"Logged in successfully!",
+                      token: token,
+                      data:{
+                        userId : results[0].id,
+                        name: results[0].name,
+                        email: results[0].email,
+                        country_id: results[0].country_id,
+                        province_id : results[0].province_id,
+                        address : results[0].address,
+                        phone_number : results[0].phone_number,
+                        profile_image : results[0].profile_image
+                      }
+                  });
+
+                }else{
                   res.status(config.HTTP_BAD_REQUEST).send({
                     status:config.ERROR,
-                    code: config.HTTP_BAD_REQUEST,             
+                    code: config.HTTP_BAD_REQUEST, 
                     message:"Email and password does not match"
                    });                    
-                }else{
 
                   // Password Matched
                   if(response == true){
@@ -159,8 +187,8 @@ function AdminController() {
                   }
 
                 }
-            });
-           
+              }
+            });           
           }
           else{
             res.status(config.HTTP_NOT_FOUND).send({
@@ -189,15 +217,15 @@ function AdminController() {
       var name = req.body.name;
       var email = req.body.email;
       var password = req.body.password;
-      var countryName = req.body.country_name;
-      var provinceName = req.body.province_name;
+      var countryId = req.body.country_id;
+      var provinceId = req.body.province_id;
       var address = req.body.address;
       var phoneNumber=req.body.phone_number;
-      var inputStatus=req.body.inputStatus;
+      var status=req.body.status;
 
       connection.acquire(function(err, con) {
 
-        var query = "update `users` set `name` = '"+name+"', `email` = '"+email+"', `country_id` = '"+countryName+"', `province_id` = '"+provinceName+"', `address` = '"+address+"', `phone_number` = '"+phoneNumber+"', `status` = '"+inputStatus+"'";        
+        var query = "update `users` set `name` = '"+name+"', `email` = '"+email+"', `country_id` = '"+countryId+"', `province_id` = '"+provinceId+"', `address` = '"+address+"', `phone_number` = '"+phoneNumber+"', `status` = '"+status+"'";        
 
         if(password != ""){
           hashedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
@@ -254,7 +282,6 @@ function AdminController() {
 
       connection.acquire(function(err, con) {
         con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
-          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -322,7 +349,7 @@ function AdminController() {
   }
 
   // delete admin users 
-  this.delete = function(req,res){
+  this.deleteUser = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
@@ -335,7 +362,6 @@ function AdminController() {
 
       connection.acquire(function(err, con) {
         con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
-          con.release();
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -344,7 +370,7 @@ function AdminController() {
               })
           }else{
             
-              con.query('delete from users where id = ?',[id], function (error, results, fields) {
+              con.query('delete from users where id = ? and type = 2',[id], function (error, results, fields) {
                 con.release();
                 if (error) {
                     res.status(config.HTTP_SERVER_ERROR).send({
@@ -387,12 +413,22 @@ function AdminController() {
       });       
     }else{
 
-      var search = req.body.search;
+      var name = req.body.name;
+      var email = req.body.email;
+      var queryString = "SELECT `id`, `name`, `email`, `country_id`, `province_id`, `address`, `phone_number`, `profile_image`, `confirmed`, `status`, `type` FROM users WHERE `type` = 2 ";
+
+      if(name != "" && name != undefined){
+        queryString += " and `name` like '%"+name+"%'";
+      }
+      if(email != "" && email != undefined){
+          queryString += " and `email` like '%"+email+"%'";
+      }
       
 
       connection.acquire(function(err, con) {
-        con.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+        con.query(queryString, function (error, results, fields) {
           con.release();
+
           if (error) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
@@ -400,30 +436,21 @@ function AdminController() {
                 message:'There are some error with query'
               })
           }else{
-              con.query('delete from users where id = ?',[id], function (error, results, fields) {
-                con.release();
-                if (error) {
-                    res.status(config.HTTP_SERVER_ERROR).send({
-                      status:config.ERROR,
-                      code: config.HTTP_SERVER_ERROR,
-                      message:'Unable to delete User.'
-                    });
-                }else{
-                  if(results.affectedRows > 0){
-                    res.status(config.HTTP_SUCCESS).send({
-                      status:config.SUCCESS,
-                      code: config.HTTP_SUCCESS,
-                      message:'User deleted successfully.'
-                    });
-                  }else{
-                    res.status(config.HTTP_NOT_FOUND).send({
-                      status:config.ERROR,
-                      code: config.HTTP_NOT_FOUND,
-                      message:'User not found.'
-                    });
-                  }
-                }
+            if(results.length > 0){
+              res.status(config.HTTP_SUCCESS).send({
+                          status: config.SUCCESS,
+                          code: config.HTTP_SUCCESS,
+                          message: results.length+" User found",
+                          result:results
               });
+            }else{
+              res.status(config.HTTP_BAD_REQUEST).send({
+                  status:config.ERROR,
+                  code: config.HTTP_BAD_REQUEST, 
+                  message:"No users found"
+              }); 
+            } 
+
           }
         });
       });
@@ -456,13 +483,15 @@ function AdminController() {
 
   // Forget Password
   this.forgetPassword = function(req, res){
+    //console.log(commonHelper.generatePassword(10));
     var email=req.body.email;
     connection.acquire(function(err, con) {
       if (err) {
         res.status(config.HTTP_SERVER_ERROR).send({
             status: config.ERROR, 
             code : config.HTTP_SERVER_ERROR,          
-            message: "Unable to process request!"
+            message: "Unable to process request!",
+            errors : err
         });
       } else {
         con.query('SELECT id,name FROM users WHERE email = ? AND confirmed = ? AND status = ?', [email, confirmed, status], function(err, result){
@@ -471,74 +500,85 @@ function AdminController() {
             res.status(config.HTTP_SERVER_ERROR).send({
               status: config.ERROR, 
               code : config.HTTP_SERVER_ERROR, 
-              message : "Email does not exist!", 
+              message : "Unable to process request!", 
               errors : err
             });
           }else{
             if(result.length > 0 && result[0].id > 0){
-                /*smtpTransport = nodemailer.createTransport(smtpTransport({
-                    host: 'smtp.gmail.com',
-                    secure: 'tls',
-                    port: '465',
-                    auth: {
-                        user: 'test@mobikasa.com',
-                        pass: '123456'
-                    }
-                }));  */
+              smtpTransport = config.SMTP_TRANSPORT;
+              password = commonHelper.generatePassword(10);
 
-                smtpTransport = config.SMTP_TRANSPORT;
+             //update password query
+              var hashedUpdatedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
+              var resetQuery = "update `users` set `password` = '"+hashedUpdatedPassword+"' where `id` = '"+result[0].id+"'";
+              con.query(resetQuery, function (error, results, fields) {
+                  console.log(results);
+                  if (error) {
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to process request!'
+                          });
+                      }
+              });
+             //end update password query  
 
-                // Send Password Reset Link
-                fs.readFile(config.PROJECT_DIR + '/templates/forgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
-                    if (err) {
+              // Send on email Updated Password
+              fs.readFile(config.PROJECT_DIR + '/templates/adminForgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
+                if (err) {
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                      status: config.ERROR, 
+                      code : config.HTTP_SERVER_ERROR,          
+                      message: "Unable to process request!"
+                  });
+                } else {
+                    
+                  var confirmation_code = crypto.randomBytes(64).toString('hex');
+                  //console.log(smtpTransport);
+                  var template = handlebars.compile(html);
+                  var replacements = {
+                       userName: result[0].name,
+                       //resetLink : config.BASE_URL+"/api/admin/reset/"+confirmation_code,
+                       adminLink : config.baseUrl+"/admin/",
+                       userEmail: email,
+                       userPassword : password,
+                  };
+
+                  var htmlToSend = template(replacements);
+                  var mailOptions = {
+                      from: 'dinesh@mobikasa.com',
+                      to : email,
+                      subject : 'Your password reset link to change password.',
+                      html : htmlToSend
+                   };
+                
+                  smtpTransport.sendMail(mailOptions, function (error, response) {
+                    if (error) {
+                        console.log(error);
                         res.status(config.HTTP_SERVER_ERROR).send({
                             status: config.ERROR, 
                             code : config.HTTP_SERVER_ERROR,          
-                            message: "Unable to process request!"
-                        });
-                    } else {
-                        
-                        var confirmation_code = crypto.randomBytes(64).toString('hex');
-                        //console.log(smtpTransport);
+                            message: "Unable to process request!",
+                        });                                
+                    }else{
+                  
 
-                        var template = handlebars.compile(html);
-                        var replacements = {
-                             userName: result[0].name,
-                             resetLink : config.BASE_URL+"/api/admin/reset/"+confirmation_code,
-                        };
-
-                        var htmlToSend = template(replacements);
-                        var mailOptions = {
-                            from: 'dinesh@mobikasa.com',
-                            to : email,
-                            subject : 'Your password reset link to change password.',
-                            html : htmlToSend
-                         };
-                        smtpTransport.sendMail(mailOptions, function (error, response) {
-                            if (error) {
-                                //console.log(error);
-                                res.status(config.HTTP_SERVER_ERROR).send({
-                                    status: config.ERROR, 
-                                    code : config.HTTP_SERVER_ERROR,          
-                                    message: "Unable to process request!"
-                                });                                
-                            }else{
-                              // Update databse to save reset token.
-                              res.status(config.HTTP_SUCCESS).send({
-                                status: config.SUCCESS, 
-                                code : config.HTTP_SUCCESS, 
-                                message: "Check your inbox for a password reset message."
-                              });
-                            }
-                        });
+                      // Update databse to save reset token.
+                      res.status(config.HTTP_SUCCESS).send({
+                        status: config.SUCCESS, 
+                        code : config.HTTP_SUCCESS, 
+                        message: "Check your inbox for a password reset message!"
+                      });
                     }
-                });
+                  });
+                }
+              });
             }else{
-                res.status(config.HTTP_NOT_FOUND).send({
-                  status: config.ERROR, 
-                  code : config.HTTP_NOT_FOUND, 
-                  message: "Email does not exist."
-                });
+              res.status(config.HTTP_NOT_FOUND).send({
+                status: config.ERROR, 
+                code : config.HTTP_NOT_FOUND, 
+                message: "You are not registered with us."
+              });
             }
           }
         });

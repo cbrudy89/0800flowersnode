@@ -18,7 +18,7 @@ module.exports = {
         adminController.login(req, res);
     });
 
-    app.post('/api/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/api/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
         adminController.updateProfile(req, res);
     });
 
@@ -26,7 +26,7 @@ module.exports = {
         adminController.changePassword(req, res);
     });
 
-    app.post('/api/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/api/admin/deleteUser', authenticateController.isAuthenticated, function(req, res) {
         adminController.deleteUser(req, res);
     });
 
