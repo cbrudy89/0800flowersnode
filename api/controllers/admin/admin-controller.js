@@ -9,6 +9,7 @@ var fs = require('fs');
 var config = require('./../../../config');
 var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
+var commonHelper = require('./../../helpers/common-helper');
 //var userModel = require('./../../../user-model');
 
 var confirmed = status = 1;
@@ -137,7 +138,6 @@ function AdminController() {
                       message:"Logged in successfully!",
                       token: token,
                       result:{
-                        userId : results[0].id,
                         name: results[0].name,
                         email: results[0].email,
                         country_id: results[0].country_id,
@@ -448,6 +448,7 @@ function AdminController() {
 
   // Forget Password
   this.forgetPassword = function(req, res){
+    //console.log(commonHelper.generatePassword(10));
     var email=req.body.email;
     connection.acquire(function(err, con) {
       if (err) {
@@ -469,11 +470,26 @@ function AdminController() {
             });
           }else{
             if(result.length > 0 && result[0].id > 0){
-
               smtpTransport = config.SMTP_TRANSPORT;
+              password = commonHelper.generatePassword(10);
 
-              // Send Password Reset Link
-              fs.readFile(config.PROJECT_DIR + '/templates/forgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
+             //update password query
+              var hashedUpdatedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
+              var resetQuery = "update `users` set `password` = '"+hashedUpdatedPassword+"' where `id` = '"+result[0].id+"'";
+              con.query(resetQuery, function (error, results, fields) {
+                  console.log(results);
+                  if (error) {
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to process request!'
+                          });
+                      }
+              });
+             //end update password query  
+
+              // Send on email Updated Password
+              fs.readFile(config.PROJECT_DIR + '/templates/adminForgetPassword.html', {encoding: 'utf-8'}, function (err, html) {
                 if (err) {
                   res.status(config.HTTP_SERVER_ERROR).send({
                       status: config.ERROR, 
@@ -484,11 +500,13 @@ function AdminController() {
                     
                   var confirmation_code = crypto.randomBytes(64).toString('hex');
                   //console.log(smtpTransport);
-
                   var template = handlebars.compile(html);
                   var replacements = {
                        userName: result[0].name,
-                       resetLink : baseUrl+"/api/admin/reset/"+confirmation_code,
+                       //resetLink : config.BASE_URL+"/api/admin/reset/"+confirmation_code,
+                       adminLink : config.baseUrl+"/admin/",
+                       userEmail: email,
+                       userPassword : password,
                   };
 
                   var htmlToSend = template(replacements);
@@ -501,14 +519,15 @@ function AdminController() {
                 
                   smtpTransport.sendMail(mailOptions, function (error, response) {
                     if (error) {
-                        //console.log(error);
+                        console.log(error);
                         res.status(config.HTTP_SERVER_ERROR).send({
                             status: config.ERROR, 
                             code : config.HTTP_SERVER_ERROR,          
                             message: "Unable to process request!",
-                            errors : error
                         });                                
                     }else{
+                  
+
                       // Update databse to save reset token.
                       res.status(config.HTTP_SUCCESS).send({
                         status: config.SUCCESS, 
@@ -523,7 +542,7 @@ function AdminController() {
               res.status(config.HTTP_NOT_FOUND).send({
                 status: config.ERROR, 
                 code : config.HTTP_NOT_FOUND, 
-                message: "Email does not exist."
+                message: "You are not registered with us."
               });
             }
           }

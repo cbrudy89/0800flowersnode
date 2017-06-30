@@ -84,9 +84,11 @@ module.exports = {
         homeController.languages(req, res);
     });
 
-/*    app.post('/api/customer/register', function(req, res) {
-        userController.register(req, res);
+    app.post('/api/customer/register', function(req, res) {
+        userController.saveNotification(req, res);
     });
+    
+/*  
 
     app.get('/api/customer/login', function(req, res) {
         userController.login(req, res);
