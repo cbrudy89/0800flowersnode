@@ -2,6 +2,7 @@ var authenticateController = require('./api/controllers/authenticate-controller'
 var adminController = require('./api/controllers/admin/admin-controller');
 var userController = require('./api/controllers/user-controller');
 var commonController = require('./api/controllers/common-controller');
+var homeController = require('./api/controllers/frontend/home-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -64,12 +65,42 @@ module.exports = {
         res.send(req.decoded);
         //res.send('Token Verified');
     });
+    
     app.get('/api/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
+    
     app.post('/api/common/province/', function(req, res) {
         commonController.province(req, res);
     });
+
+    /************************* Home Routes ************************/
+
+    app.get('/api/curriencies/', function(req, res) {
+        homeController.curriencies(req, res);
+    });
+
+    app.get('/api/languages/', function(req, res) {
+        homeController.languages(req, res);
+    });
+
+/*    app.post('/api/customer/register', function(req, res) {
+        userController.register(req, res);
+    });
+
+    app.get('/api/customer/login', function(req, res) {
+        userController.login(req, res);
+    });
+
+    app.post('/api/customer/forget', function(req, res) {
+        userController.forget(req, res);
+    });    
+
+    app.post('/api/customer/reset/:key', function(req, res) {
+        adminController.reset(req, res);
+    });*/
+
+    /************************* END of Home *****************/
 
 
   }
