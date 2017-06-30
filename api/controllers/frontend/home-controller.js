@@ -1,20 +1,23 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var config = require('./../../config');
-var connection = require('./../../database');
-//var userHelper = require('./../helpers/user-helper');
-//var userModel = require('./../../../user-model');
+var config = require('./../../../config');
+var connection = require('./../../../database');
 
-function CommonController() {
+function HomeController() {
 
-  // Get countries data
-  this.countries = function(req, res) {
+  // Get curriencies data
+  this.curriencies = function(req, res) {
 
     connection.acquire(function(err, con) {
       if (err) {
-        res.send({status: 1, message: err});
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status:config.ERROR,
+          code: config.HTTP_SERVER_ERROR,
+          message:'Unable to get currencies!',
+          errors : err
+        });
       }      
-      con.query('select id,country_name from country_list where status = 1', function(err, result) {
+      con.query('SELECT id,currency_code,symbol,default_currency FROM currency WHERE status = 1', function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
@@ -26,14 +29,14 @@ function CommonController() {
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS,
               code: config.HTTP_SUCCESS,
-              message:"Countries found",
+              message:"Curriencies found",
               result:result
             });
           }else{
             res.status(config.HTTP_BAD_REQUEST).send({
               status:config.ERROR,
               code: config.HTTP_BAD_REQUEST, 
-              message:"Failed to get countries"
+              message:"Failed to get currencies"
             }); 
           }
         }        
@@ -41,15 +44,20 @@ function CommonController() {
       });
     });
   };
-  // Get province data
-  this.province = function(req, res) {
-    var country_id=req.body.country_id;
-    //console.log(country_id);
+
+  // Get language data
+  this.languages = function(req, res) {
+
     connection.acquire(function(err, con) {
       if (err) {
-        res.send({status: 1, message: err});
-      }  
-      con.query('SELECT id,province_name FROM provinces WHERE country_id = ?',[country_id], function(err, result) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status:config.ERROR,
+          code: config.HTTP_SERVER_ERROR,
+          message:'Unable to get languages!',
+          errors : err
+        });
+      }      
+      con.query('SELECT id,name FROM languages WHERE status = 1', function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
@@ -61,23 +69,22 @@ function CommonController() {
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS,
               code: config.HTTP_SUCCESS,
-              message:"Provinces found",
+              message:"Languages found",
               result:result
             });
           }else{
             res.status(config.HTTP_BAD_REQUEST).send({
               status:config.ERROR,
               code: config.HTTP_BAD_REQUEST, 
-              message:"Failed to get provinces"
+              message:"Failed to get languages"
             }); 
           }
-        }       
+        }        
         con.release();
       });
     });
   };
-
-
+  
 }
 
-module.exports = new CommonController();
+module.exports = new HomeController();

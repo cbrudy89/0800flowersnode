@@ -3,6 +3,7 @@ var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
 var userController = require('./api/controllers/user-controller');
 var commonController = require('./api/controllers/common-controller');
+var homeController = require('./api/controllers/frontend/home-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -43,19 +44,6 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-
-    /*app.post('/api/vendor/login', function(req, res) {
-        userController.login(req, res);
-    });
-
-    app.post('/api/vendor/create', authenticateController.isAuthenticated,  function(req, res) {
-        vendorController.create(req, res);
-    });    
-
-    app.post('/api/user/login', function(req, res) {
-        userController.login(req, res);
-    });*/
-
     app.get('/admin/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
         userController.getUser(req.params.id, res);
     });
@@ -65,6 +53,7 @@ module.exports = {
         res.send(req.decoded);
         //res.send('Token Verified');
     });
+
     app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
@@ -93,6 +82,39 @@ module.exports = {
         countryController.delete(req, res);
     });
     /************** Country End **********/
+
+    /************************* Home Routes ************************/
+
+    app.get('/curriencies/', function(req, res) {
+        homeController.curriencies(req, res);
+    });
+
+    app.get('/languages/', function(req, res) {
+        homeController.languages(req, res);
+    });
+
+    app.post('/customer/register', function(req, res) {
+        userController.register(req, res);
+    });
+    
+    app.post('/customer/login', function(req, res) {
+        userController.login(req, res);
+    });
+
+    app.post('/customer/forget', function(req, res) {
+        userController.forget(req, res);
+    });    
+
+    app.post('/customer/verifyCode', function(req, res) {
+        userController.verifyCode(req, res);
+    });        
+
+    app.put('/customer/resetPassword', function(req, res) {
+        adminController.resetPassword(req, res);
+    });    
+
+    /************************* END of Home *****************/
+
 
   }
 };
