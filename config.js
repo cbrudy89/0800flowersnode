@@ -27,7 +27,7 @@ function Config() {
       port: '465',
       auth: {
           user: 'test@mobikasa.com',
-          pass: '123456'
+          pass: '12345'
       }
   })); 
 }
