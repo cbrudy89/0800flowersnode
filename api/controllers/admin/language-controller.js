@@ -173,7 +173,7 @@ function LanguageController() {
   // Get language Information 
   this.getlanguage = function(req, res) {
     var id=req.body.id;
-    console.log(id);
+    //console.log(id);
     connection.acquire(function(err, con) {
       if (err) {
         res.send({status: 1, message: err});

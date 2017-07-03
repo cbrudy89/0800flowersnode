@@ -5,7 +5,7 @@ var userController = require('./api/controllers/user-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var commonController = require('./api/controllers/common-controller');
 var homeController = require('./api/controllers/frontend/home-controller');
-
+var timezoneController = require('./api/controllers/admin/timezone-controller');
 module.exports = {
   configure: function(app, router) {
 
@@ -133,6 +133,22 @@ module.exports = {
         languageController.deletelanguage(req, res);
     });
     /************************* END of language *****************/
+
+    /************************* START timezone *****************/
+
+    app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezones(req, res);
+    });
+    app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezone(req, res);
+    });
+    app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.updatetimezone(req, res);
+    });
+    app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.deletetimezone(req, res);
+    });
+    /************************* END of timezone *****************/
 
 
   }
