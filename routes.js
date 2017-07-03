@@ -176,9 +176,9 @@ module.exports = {
     });
 
 
-<<<<<<< HEAD
+
     /************************* END of Customer *****************/
-=======
+
     /************************ START Admin Provinces/States ************************/
     app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
         provinceController.getprovince(req, res);
@@ -200,7 +200,7 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
->>>>>>> 42c40725f76f2a39966967797b5c38dbee2874af
+
 
   }
 };
