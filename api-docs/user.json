@@ -139,7 +139,7 @@
                   "description":"User status active or Deactive",
                   "required":true,
                   "type":"integer"
-               }                                                                  
+               }                                                                 
             ],
             "responses":{
                "200":{
@@ -194,7 +194,7 @@
                   "name":"password",
                   "in":"formData",
                   "description":"User password",
-                  "required":true,
+                  "required":false,
                   "type":"string"
                },
                {
