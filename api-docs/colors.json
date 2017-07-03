@@ -1,0 +1,396 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"color APIs",
+      "description":"All APIs related to the color controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"color",
+         "description":"API for color"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getcolors":{
+         "post":{
+            "tags":[
+               "color"
+            ],
+            "description":"How to get color",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               }             
+            ],
+            "responses":{
+               "200":{
+                  "description":"all colors found",
+                  "schema":{
+                      "$ref":"#/definitions/colorresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/createcolor":{
+         "post":{
+            "tags":[
+               "color"
+            ],
+            "description":"Create colors",
+            "operationId":"create",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"color_name",
+                  "in":"formData",
+                  "description":"color Name",
+                  "required":true,
+                  "type":"string"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"color created",
+                  "schema":{
+                      "$ref":"#/definitions/createcolorresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified color already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/getcolor":{
+         "post":{
+            "tags":[
+               "color"
+            ],
+            "description":"Get a color",
+            "operationId":"getl",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"color ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"color found",
+                  "schema":{
+                      "$ref":"#/definitions/getcolorresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }              
+            }
+         }
+      },
+      "/admin/updatecolor":{
+         "post":{
+            "tags":[
+               "color"
+            ],
+            "description":"Update colors",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"color ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"color_name",
+                  "in":"formData",
+                  "description":"color Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"color status",
+                  "required":true,
+                  "type":"integer"
+               }                     
+            ],
+            "responses":{
+               "200":{
+                  "description":"the colors has been updated",
+                  "schema":{
+                      "$ref":"#/definitions/updateresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"the specified color name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/deletecolor":{
+         "delete":{
+            "tags":[
+               "color"
+            ],
+            "description":"Delete a color",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"color ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"color found",
+                  "schema":{
+                      "$ref":"#/definitions/deleteresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified color already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }              
+            }
+         }
+      }
+   },
+   "definitions":{
+      "colorresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"all colors found"
+            },
+            "result":{
+               "type":"object",
+               "data":"array"
+            }
+         }
+      },
+      "createcolorresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"new colors has been created"
+            },
+            "result":{
+               "type":"object",
+               "result":"array"
+            }
+         }
+      },
+      "getcolorresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"color found!"
+            },
+            "result":{
+               "type":"object",
+               "data":"array"
+            }
+         }
+      },
+      "updateresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the colors has been updated"
+            },
+            "result":{
+               "type":"object",
+               "result":"array"
+            }
+         }
+      },
+      "deleteresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the colors has been deleted"
+            },
+            "result":{
+               "type":"object",
+               "result":"array"
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      },
+      "409error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"The specified color already exists."
+            }
+         }
+      }
+   }
+}

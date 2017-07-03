@@ -1,9 +1,13 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
+
 var customerController = require('./api/controllers/customer-controller');
+var languageController = require('./api/controllers/admin/language-controller');
 var commonController = require('./api/controllers/common-controller');
 var homeController = require('./api/controllers/home-controller');
+var timezoneController = require('./api/controllers/admin/timezone-controller');
+var colorController = require('./api/controllers/admin/color-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -44,16 +48,6 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-/*    app.get('/admin/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
-        userController.getUser(req.params.id, res);
-    });
-
-    app.get('/dashboard', authenticateController.isAuthenticated, function(req, res){
-        console.log(req.decoded.id);
-        res.send(req.decoded);
-        //res.send('Token Verified');
-    });*/
-
     app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
@@ -83,6 +77,60 @@ module.exports = {
     });
     /************** Country End **********/
 
+    /************************* START language *****************/
+
+    app.post('/admin/getlanguages', authenticateController.isAuthenticated, function(req, res) {
+        languageController.getlanguages(req, res);
+    });
+    app.post('/admin/createlanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.createlanguage(req, res);
+    });
+    app.post('/admin/getlanguage/', authenticateController.isAuthenticated, function(req, res) {
+        languageController.getlanguage(req, res);
+    });
+    app.post('/admin/updatelanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.updatelanguage(req, res);
+    });
+    app.delete('/admin/deletelanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.deletelanguage(req, res);
+    });
+    /************************* END of language *****************/
+
+    /************************* START timezone *****************/
+
+    app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezones(req, res);
+    });
+    app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezone(req, res);
+    });
+    app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.updatetimezone(req, res);
+    });
+    app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.deletetimezone(req, res);
+    });
+    /************************* END of timezone *****************/
+    
+    /************************* START colors *****************/
+
+    app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
+        colorController.getcolors(req, res);
+    });
+    app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.createcolor(req, res);
+    });
+    app.post('/admin/getcolor/', authenticateController.isAuthenticated, function(req, res) {
+        colorController.getcolor(req, res);
+    });
+    app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.updatecolor(req, res);
+    });
+    app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.deletecolor(req, res);
+    });
+    /************************* END of colors *****************/    
+
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies/', function(req, res) {
@@ -97,33 +145,34 @@ module.exports = {
         homeController.subscribe(req, res);
     });    
 
-        /********************* Customer Routes ************************/
-
-        app.post('/customer/register', function(req, res) {
-            customerController.register(req, res);
-        });
-        
-        app.post('/customer/login', function(req, res) {
-            customerController.login(req, res);
-        });
-
-        // Use to send forget password link to customer.
-        app.post('/customer/forgetPassword', function(req, res) {
-            customerController.forgetPassword(req, res);
-        });    
-
-        // Use to validate verification code for forget password sent by customer.
-        app.post('/customer/verifyCode', function(req, res) {
-            customerController.verifyCode(req, res);
-        });
-
-        // Use to reset password send by customer and send confirmation email.
-        app.put('/customer/resetPassword', function(req, res) {
-            customerController.resetPassword(req, res);
-        });
-
-        /************************* END of Customer *****************/
-
     /************************* END of Home Page *****************/    
+    /********************* Customer Routes ************************/
+
+    app.post('/customer/register', function(req, res) {
+        customerController.register(req, res);
+    });
+    
+    app.post('/customer/login', function(req, res) {
+        customerController.login(req, res);
+    });
+
+    // Use to send forget password link to customer.
+    app.post('/customer/forgetPassword', function(req, res) {
+        customerController.forgetPassword(req, res);
+    });    
+
+    // Use to validate verification code for forget password sent by customer.
+    app.post('/customer/verifyCode', function(req, res) {
+        customerController.verifyCode(req, res);
+    });
+
+    // Use to reset password send by customer and send confirmation email.
+    app.put('/customer/resetPassword', function(req, res) {
+        customerController.resetPassword(req, res);
+    });
+
+
+    /************************* END of Customer *****************/
+
   }
 };
