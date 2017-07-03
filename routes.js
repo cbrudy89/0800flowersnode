@@ -1,6 +1,7 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
+var provinceController = require('./api/controllers/admin/province-controller');
 var userController = require('./api/controllers/user-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var commonController = require('./api/controllers/common-controller');
@@ -170,6 +171,27 @@ module.exports = {
     });
     /************************* END of colors *****************/
 
+    /************************ START Admin Provinces/States ************************/
+    app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.getprovince(req, res);
+    });
+
+    app.post('/admin/province/createprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.createprovince(req, res);
+    });
+
+    app.get('/admin/province/viewprovince/:id', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.viewprovince(req, res);
+    });
+
+    app.put('/admin/province/updateprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.updateprovince(req, res);
+    });    
+
+    app.delete('/admin/province/deleteprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.deleteprovince(req, res);
+    });
+    /************************ END Admin Provinces/States ************************/
 
   }
 };
