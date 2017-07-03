@@ -11,7 +11,7 @@ var confirmed = status = 1;
 
 function ProvinceController() {
   // Create New Country
-  this.create=function(req,res,next){
+  this.getprovince=function(req,res,next){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
