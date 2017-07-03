@@ -1,5 +1,5 @@
-var config = require('./../../config');
-var connection = require('./../../database');
+var config = require('./../../../config');
+var connection = require('./../../../database');
 
 function LanguageModel(){	
 	this.getlanguages = function(name, callback) {

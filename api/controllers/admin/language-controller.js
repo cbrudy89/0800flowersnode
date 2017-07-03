@@ -1,9 +1,9 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var config = require('./../../config');
-var connection = require('./../../database');
+var config = require('./../../../config');
+var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
-var languageModel = require('./../models/language-model');
+var languageModel = require('./../../models/admin/language-model');
 
 function LanguageController() {
 

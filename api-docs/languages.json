@@ -23,7 +23,7 @@
       "application/json"
    ],
    "paths":{
-      "/getlanguages":{
+      "/admin/getlanguages":{
          "post":{
             "tags":[
                "language"
@@ -58,7 +58,7 @@
             }
          }
       },
-      "/createlanguage":{
+      "/admin/createlanguage":{
          "post":{
             "tags":[
                "language"
@@ -127,7 +127,7 @@
             }
          }
       },
-      "/getlanguage":{
+      "/admin/getlanguage":{
          "post":{
             "tags":[
                "language"
@@ -169,7 +169,7 @@
             }
          }
       },
-      "/updatelanguage":{
+      "/admin/updatelanguage":{
          "post":{
             "tags":[
                "language"
@@ -252,7 +252,7 @@
             }
          }
       },
-      "/deletelanguage":{
+      "/admin/deletelanguage":{
          "delete":{
             "tags":[
                "language"
