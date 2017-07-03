@@ -3,28 +3,28 @@ var bcrypt = require('bcrypt');
 var config = require('./../../../config');
 var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
-var languageModel = require('./../../models/admin/language-model');
+var colorModel = require('./../../models/admin/color-model');
 
-function LanguageController() {
+function ColorController() {
 
-    // get all languages
-  this.getlanguages = function(req,res){
+    // get all colors
+  this.getcolors = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to get language!"
+        message: "You dont have permission to get color!"
       });       
     }else{
-      var name = req.body.name;
-      languageModel.getlanguages(name, function(err, result){
+      var color_name = req.body.color_name;
+      colorModel.getcolors(color_name, function(err, result){
          if(err) {
             console.log(err);
          }else{
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS, 
               code : config.HTTP_SUCCESS, 
-              message: 'all languages found',
+              message: 'all colors found',
               data : result
             });
          }
@@ -32,8 +32,8 @@ function LanguageController() {
     } // else close    
 
   }
-  // Create new language
-  this.createlanguage=function(req,res){
+  // Create new color
+  this.createcolor=function(req,res){
 
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
@@ -42,28 +42,25 @@ function LanguageController() {
         message: "You dont have permission to create user!"
       });       
     }else{
-      // Insert into language table
+      // Insert into color table
       var curr_date  = new Date();
       var id=0;
-      langData = {
-            'name':req.body.name,
-            'lang_icon':req.body.lang_icon,
-            'short_code2':req.body.short_code2,
-            'short_code3':req.body.short_code3,
+      colorData = {
+            'color_name':req.body.color_name,
             'status':'1',
             'created_at':curr_date,
             'updated_at':curr_date
       };
-      languageModel.checklanguage(langData,id, function(err, result){
+      colorModel.checkcolor(colorData,id, function(err, result){
         //console.log(err);
          if(result.length > 0 && result[0].id > 0){
             res.status(config.HTTP_ALREADY_EXISTS).send({
               status: config.ERROR, 
               code : config.HTTP_ALREADY_EXISTS, 
-              message: "The specified language already exists."
+              message: "The specified color already exists."
             });
          }else{
-            languageModel.createlanguage(langData, function(err, result){
+            colorModel.createcolor(colorData, function(err, result){
               //console.log(err);
                if(err) {
                   console.log(err);
@@ -71,7 +68,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'new languages has been created',
+                    message: 'new colors has been created',
                   });
                }
             });
@@ -82,36 +79,33 @@ function LanguageController() {
   }
 
  
-  // Update language
-  this.updatelanguage=function(req,res){
+  // Update color
+  this.updatecolor=function(req,res){
 
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to update language!"
+        message: "You dont have permission to update color!"
       });       
     }else{
       var curr_date  = new Date();
       var id =req.body.id;
-      langData = {
-            'name':req.body.name,
-            'lang_icon':req.body.lang_icon,
-            'short_code2':req.body.short_code2,
-            'short_code3':req.body.short_code3,
+      colorData = {
+            'color_name':req.body.color_name,
             'status':req.body.status,
             'updated_at':curr_date
       };
-      languageModel.checklanguage(langData,id, function(err, result){
+      colorModel.checkcolor(colorData,id, function(err, result){
         //console.log(err);
          if(result.length > 0 && result[0].id > 0){
             res.status(config.HTTP_ALREADY_EXISTS).send({
               status: config.ERROR, 
               code : config.HTTP_ALREADY_EXISTS, 
-              message: "the specified language name already exists."
+              message: "the specified color name already exists."
             });
          }else{
-            languageModel.updatelanguage(langData,id, function(err, result){
+            colorModel.updatecolor(colorData,id, function(err, result){
               //console.log(err);
                if(err) {
                   console.log(err);
@@ -119,7 +113,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'the languages has been updated',
+                    message: 'the colors has been updated',
                   });
                }
             });
@@ -130,28 +124,28 @@ function LanguageController() {
     }  
   }
 
-  // delete language 
-  this.deletelanguage = function(req,res){
+  // delete color 
+  this.deletecolor = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to delete language!"
+        message: "You dont have permission to delete color!"
       });       
     }else{
       
       var id = req.body.id;
       //console.log("id-"+id);
-      languageModel.checkdeletelanguage(id, function(err, result){
+      colorModel.checkdeletecolor(id, function(err, result){
        // console.log(result);
          if(!result.length){
             res.status(config.HTTP_NOT_FOUND).send({
               status: config.ERROR, 
               code : config.HTTP_NOT_FOUND, 
-              message: "The specified language not found."
+              message: "The specified color not found."
             });
          }else{
-            languageModel.deletelanguage(id, function(err, result){
+            colorModel.deletecolor(id, function(err, result){
               //console.log(err);
                if(err) {
                   console.log('test'+err);
@@ -159,7 +153,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'the languages has been deleted',
+                    message: 'the colors has been deleted',
                   });
                }
             });
@@ -170,22 +164,22 @@ function LanguageController() {
 
   }
 
-  // Get language Information 
-  this.getlanguage = function(req, res) {
+  // Get color Information 
+  this.getcolor = function(req, res) {
     var id=req.body.id;
     //console.log(id);
     connection.acquire(function(err, con) {
       if (err) {
         res.send({status: 1, message: err});
       }      
-      con.query('select * from languages where id = ?', [id], function(err, result) {
+      con.query('select * from colors where id = ?', [id], function(err, result) {
         if (err) {
           res.send({status: 1, message: 'Failed to get'});
         } else {
           if(result.length > 0){
-            res.send({status: 0, message: 'language found!', response: result});
+            res.send({status: 0, message: 'color found!', response: result});
           }else{
-            res.send({status: 1, message: 'Failed to get language'});
+            res.send({status: 1, message: 'Failed to get color'});
           }
         }        
         con.release();
@@ -195,4 +189,4 @@ function LanguageController() {
 
 }
 
-module.exports = new LanguageController();
+module.exports = new ColorController();

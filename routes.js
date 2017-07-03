@@ -5,6 +5,8 @@ var userController = require('./api/controllers/user-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var commonController = require('./api/controllers/common-controller');
 var homeController = require('./api/controllers/frontend/home-controller');
+var timezoneController = require('./api/controllers/admin/timezone-controller');
+var colorController = require('./api/controllers/admin/color-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -133,6 +135,40 @@ module.exports = {
         languageController.deletelanguage(req, res);
     });
     /************************* END of language *****************/
+
+/************************* START timezone *****************/
+
+    app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezones(req, res);
+    });
+    app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.gettimezone(req, res);
+    });
+    app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.updatetimezone(req, res);
+    });
+    app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
+        timezoneController.deletetimezone(req, res);
+    });
+    /************************* END of timezone *****************/
+    /************************* START colors *****************/
+
+    app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
+        colorController.getcolors(req, res);
+    });
+    app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.createcolor(req, res);
+    });
+    app.post('/admin/getcolor/', authenticateController.isAuthenticated, function(req, res) {
+        colorController.getcolor(req, res);
+    });
+    app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.updatecolor(req, res);
+    });
+    app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
+        colorController.deletecolor(req, res);
+    });
+    /************************* END of colors *****************/
 
 
   }
