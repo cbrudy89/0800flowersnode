@@ -2,14 +2,14 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"Home APIs",
+      "title":"Store Home APIs",
       "description":"All APIs related to the home controller",
       "termsOfService":"#"
    },
    "basePath":"/",
    "tags":[
       {
-         "name":"Home",
+         "name":"Store Home",
          "description":"API for common usage"
       }
    ],
@@ -23,10 +23,10 @@
       "application/json"
    ],
    "paths":{
-      "/api/curriencies":{
+      "/curriencies":{
          "get":{
             "tags":[
-               "Home"
+               "Store Home"
             ],
             "description":"How to get curriencies",
             "operationId":"for the URL",
@@ -52,10 +52,10 @@
             }
          }
       },
-      "/api/languages":{
+      "/languages":{
          "get":{
             "tags":[
-               "Home"
+               "Store Home"
             ],
             "description":"How to get languages",
             "operationId":"for the URL",
@@ -99,26 +99,7 @@
             },
             "result":{
                "type":"string",
-               "result":[
-                 {
-                     "id": 1,
-                     "currency_code": "USD",
-                     "symbol": "$",
-                     "default_currency": 1
-                 },
-                 {
-                     "id": 2,
-                     "currency_code": "CAD",
-                     "symbol": "$",
-                     "default_currency": null
-                 },
-                 {
-                     "id": 3,
-                     "currency_code": "DKK",
-                     "symbol": "kr",
-                     "default_currency": null
-                 }
-               ]
+               "result":{}
             }
          }
       },
@@ -138,20 +119,7 @@
             },
             "result":{
                "type":"string",
-               "result":[
-                 {
-                     "id": 1,
-                     "name": "English"
-                 },
-                 {
-                     "id": 2,
-                     "name": "French"
-                 },
-                 {
-                     "id": 7,
-                     "name": "Spanish"
-                 }
-               ]
+               "result":{}
             }
          }
       },

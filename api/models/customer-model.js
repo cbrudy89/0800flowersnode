@@ -4,7 +4,7 @@ var connection = require('./../../database');
 function CustomerModel(){
 	
 	// Validate Customer email is already exist or not.
-	this.isCustomerEmailExist = function(email, callback) {
+	this.isEmailExist = function(email, callback) {
 		connection.acquire(function(err, con) {
 			if (err) {
 				callback(err);
@@ -37,7 +37,8 @@ function CustomerModel(){
 					var len = condintion.length;
 					var i = 1;
 
-					if(condintion.length > 1){
+					//if(condintion.length > 1){
+					if(typeof condintion === 'object' && condintion instanceof Array){
 
 						sql += " WHERE ";
 						condintion.forEach(function(item, index){

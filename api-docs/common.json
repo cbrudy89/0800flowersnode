@@ -23,7 +23,7 @@
       "application/json"
    ],
    "paths":{
-      "/api/common/countries":{
+      "/common/countries":{
          "get":{
             "tags":[
                "Common"
@@ -52,7 +52,7 @@
             }
          }
       },
-      "/api/common/province":{
+      "/common/province":{
          "post":{
             "tags":[
                "Common"
