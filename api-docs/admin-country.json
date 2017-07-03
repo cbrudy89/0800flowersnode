@@ -1,0 +1,244 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Country APIs",
+      "description":"All APIs related to the admin country controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Country",
+         "description":"API for admin country usage"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/country/create/":{
+         "post":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"Create country from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"continet_name",
+                  "in":"formData",
+                  "description":"Continent Name",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"preferred_currency_id",
+                  "in":"formData",
+                  "description":"Select a Currency",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_name",
+                  "in":"formData",
+                  "description":"Country Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code",
+                  "in":"formData",
+                  "description":"Country Sort Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_alias",
+                  "in":"formData",
+                  "description":"Country Alias Name",
+                  "required":false,
+                  "type":"string"
+               }
+
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Country has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/countryresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/country/view":{
+         "post":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"province response",
+                  "schema":{
+                     "$ref":"#/definitions/provinceresponse"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "create":{
+         "properties":{
+            "eventId":{
+               "required":true,
+               "type":"string",
+               "example":"mathmaticial"
+            },
+            "numberRequired":{
+               "required":true,
+               "type":"integer",
+               "format":"int64",
+               "example":500
+            }
+         }
+      },
+      "response1":{
+         "properties":{
+            "jobID":{
+               "required":true,
+               "type":"string",
+               "example":"23423456543"
+            },
+            "request":{
+               "required":true,
+               "type":"schema",
+               "example":{
+                  "eventId":"mathmaticial",
+                  "numberRequired":500
+               }
+            }
+         }
+      },
+      "countryresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country has been inserted successfully."
+            },
+            "result":{
+               "type":"string",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "provinceresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Provinces found"
+            },
+            "result":{
+               "type":"string",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      }
+   }
+}

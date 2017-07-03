@@ -19,15 +19,16 @@ function Config() {
   this.BASE_URL = '';
   this.APPLICATION_URL = '';
 
+  this.SITE_URL = 'https://www.0800flowers.com';
+
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
       host: 'smtp.gmail.com',
       secure: 'tls',
       port: '465',
       auth: {
-          user: 'test@mobikasa.com',
-          pass: '123456'
+          user: 'apptestmobikasa@gmail.com',
+          pass: '12345@9876'
       }
   })); 
 }
-
 module.exports = new Config();
