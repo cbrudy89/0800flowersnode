@@ -2,12 +2,16 @@ var authenticateController = require('./api/controllers/authenticate-controller'
 var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
 
-var customerController = require('./api/controllers/customer-controller');
+// For Backend Controllers
+var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
-var commonController = require('./api/controllers/common-controller');
-var homeController = require('./api/controllers/home-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+
+// For Frontend Controllers
+var homeController = require('./api/controllers/home-controller');
+var customerController = require('./api/controllers/customer-controller');
+var commonController = require('./api/controllers/common-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -172,7 +176,31 @@ module.exports = {
     });
 
 
+<<<<<<< HEAD
     /************************* END of Customer *****************/
+=======
+    /************************ START Admin Provinces/States ************************/
+    app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.getprovince(req, res);
+    });
+
+    app.post('/admin/province/createprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.createprovince(req, res);
+    });
+
+    app.get('/admin/province/viewprovince/:id', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.viewprovince(req, res);
+    });
+
+    app.put('/admin/province/updateprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.updateprovince(req, res);
+    });    
+
+    app.delete('/admin/province/deleteprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.deleteprovince(req, res);
+    });
+    /************************ END Admin Provinces/States ************************/
+>>>>>>> 42c40725f76f2a39966967797b5c38dbee2874af
 
   }
 };
