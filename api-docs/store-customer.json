@@ -1,0 +1,604 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Customer APIs",
+      "description":"All APIs related to the customer controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Store Customer",
+         "description":"API for store customer"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/customer/register":{
+         "post":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Register new customer for store",
+            "operationId":"register",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"first_name",
+                  "in":"formData",
+                  "description":"Customer first name.",
+                  "required":true,
+                  "type": "string"
+               },
+               {
+                  "name":"last_name",
+                  "in":"formData",
+                  "description":"Customer last name.",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Customer uniqe email address.",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"confirm_email",
+                  "in":"formData",
+                  "description":"Confirm email for customer.",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"Passowrd to access account.",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"confirm_password",
+                  "in":"formData",
+                  "description":"Confirm password to match with password.",
+                  "required":true,
+                  "type":"string"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Thank you for registering with us!",
+                  "schema":{
+                      "$ref":"#/definitions/200register"
+                  }
+               },
+               "400":{
+                  "description":"Validation errors",
+                  "schema":{
+                     "$ref":"#/definitions/400register"
+                  }
+               },
+               "409":{
+                  "description":"The email has already been taken",
+                  "schema":{
+                     "$ref":"#/definitions/409register"
+                  }
+               },               
+               "500":{
+                  "description":"Due to some error, customer is not registered yet. Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500register"
+                  }
+               }               
+            }
+         }
+      },
+      "/customer/login":{
+         "post":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Login API to access customer account.",
+            "operationId":"login",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of customer",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"Passowrd for customer account",
+                  "required":true,
+                  "type":"string"
+               }                                                                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Logged in successfully!",
+                  "schema":{
+                     "$ref":"#/definitions/200login"
+                  }
+               },
+               "404":{
+                  "description":"Email & Password not correct. Please try again.",
+                  "schema":{
+                     "$ref":"#/definitions/404login"
+                  }
+               },
+               "500":{
+                  "description":"Due to some error, unable to login. Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500login"
+                  }
+               }                                    
+            }
+         }
+      },
+      "/customer/forgetPassword":{
+         "post":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Forget password API for customer.",
+            "operationId":"forgetPassword",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of customer",
+                  "required":true,
+                  "type":"string"
+               }                                                                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Reset password link sent to your email.Please check and reset your password!",
+                  "schema":{
+                     "$ref":"#/definitions/200forget"
+                  }
+               },
+               "404":{
+                  "description":"Email is not registered with us. Please enter correct email id!",
+                  "schema":{
+                     "$ref":"#/definitions/404forget"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500forget"
+                  }
+               }                                    
+            }
+         }
+      },
+      "/customer/verifyCode":{
+         "post":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Validate verification code for forget password sent by customer.",
+            "operationId":"verifyCode",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"confirmation_code",
+                  "in":"formData",
+                  "description":"Confirmatin code sent in link of forget password API",
+                  "required":true,
+                  "type":"string"
+               }                                                                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Confirmation code matched!",
+                  "schema":{
+                     "$ref":"#/definitions/200verifyCode"
+                  }
+               },
+               "400":{
+                  "description":"Confirmation link has expired!",
+                  "schema":{
+                     "$ref":"#/definitions/400verifyCode"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500verifyCode"
+                  }
+               }                                    
+            }
+         }
+      },                      
+      "/customer/resetPassword":{
+         "put":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Use to reset password send by customer and send confirmation email.",
+            "operationId":"resetPassword",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"confirmation_code",
+                  "in":"formData",
+                  "description":"Confirmatin code sent in link of forget password API",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"New password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"confirm_password",
+                  "in":"formData",
+                  "description":"Confirm password same as password.",
+                  "required":true,
+                  "type":"string"
+               }                              
+            ],
+            "responses":{
+               "200":{
+                  "description":"Password is successfully reset!",
+                  "schema":{
+                     "$ref":"#/definitions/200resetPassword"
+                  }
+               },
+               "400":{
+                  "description":"Validation errors!",
+                  "schema":{
+                     "$ref":"#/definitions/400resetPassword"
+                  }
+               },
+               "404":{
+                  "description":"Confirmation link has expired!",
+                  "schema":{
+                     "$ref":"#/definitions/404resetPassword"
+                  }
+               },               
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500resetPassword"
+                  }
+               }                                    
+            }
+         }
+      }      
+   },
+   "definitions":{
+      "200register":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Thank you for registering with us!"
+            },
+            "token":{
+               "type":"string",
+               "example":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjEsInJvbGUiOjMsImlhdCI6MTQ5OTA3NDQyNCwiZXhwIjoxNDk5MDc3NDI0fQ.yeJH0TLS2bQfQNqrDAKprsJ2paV-sMKISrur_TE74lY"
+            },
+            "result": {
+               "type":"object",
+               "example": {
+                  "first_name": "Anil",
+                  "last_name": "Tester",
+                  "email": "vikram@mobikasa.com"
+               }
+            }
+         }
+      }, 
+      "400register":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Validation errors"
+            }
+         }
+      },  
+      "409register":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The email has already been taken"
+            }     
+         }
+      },  
+      "500register":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Due to some error, customer is not registered yet. Please try again!"
+            }    
+         }
+      },                      
+      "200login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Logged in successfully!"
+            },
+            "token":{
+               "type":"string",
+               "example":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInJvbGUiOjMsImlhdCI6MTQ5OTA3NTg0MCwiZXhwIjoxNDk5MDc4ODQwfQ.DzwMaf55DQyhhKPo8jdxk63EjB9G-CNHuYntYmY250U"
+            },
+            "result": {
+               "type":"object",
+               "example": {
+                  "first_name": "Anil",
+                  "last_name": "Tester",
+                  "email": "vikram@mobikasa.com"
+               }
+            } 
+         }
+      },
+      "404login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Email & Password not correct. Please try again."
+            }
+         }
+      },            
+      "500login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Due to some error, unable to login. Please try again!"
+            }
+         }
+      },
+      "200forget":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Reset password link sent to your email.Please check and reset your password!"
+            } 
+         }
+      },
+      "404forget":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Email is not registered with us. Please enter correct email id!"
+            }
+         }
+      },            
+      "500forget":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "200verifyCode":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Confirmation code matched!"
+            } 
+         }
+      },
+      "400verifyCode":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Confirmation link has expired!"
+            }
+         }
+      },            
+      "500verifyCode":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "200resetPassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Password is successfully reset!"
+            } 
+         }
+      },
+      "400resetPassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Validation errors!"
+            },
+            "errors":{
+               "type":"object",
+               "example":{
+                  "confirm_password": "Please enter same password as above."
+               }
+            }
+         }
+      }, 
+      "404resetPassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Confirmation link has expired!"
+            }
+         }
+      },                 
+      "500resetPassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      }        
+   }
+}
