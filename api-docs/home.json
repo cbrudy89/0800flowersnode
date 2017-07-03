@@ -23,7 +23,7 @@
       "application/json"
    ],
    "paths":{
-      "/api/curriencies":{
+      "/curriencies":{
          "get":{
             "tags":[
                "Home"
@@ -52,7 +52,7 @@
             }
          }
       },
-      "/api/languages":{
+      "/languages":{
          "get":{
             "tags":[
                "Home"
@@ -100,24 +100,18 @@
             "result":{
                "type":"string",
                "result":[
-                 {
-                     "id": 1,
-                     "currency_code": "USD",
-                     "symbol": "$",
-                     "default_currency": 1
-                 },
-                 {
-                     "id": 2,
-                     "currency_code": "CAD",
-                     "symbol": "$",
-                     "default_currency": null
-                 },
-                 {
-                     "id": 3,
-                     "currency_code": "DKK",
-                     "symbol": "kr",
-                     "default_currency": null
-                 }
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
                ]
             }
          }
@@ -139,18 +133,18 @@
             "result":{
                "type":"string",
                "result":[
-                 {
-                     "id": 1,
-                     "name": "English"
-                 },
-                 {
-                     "id": 2,
-                     "name": "French"
-                 },
-                 {
-                     "id": 7,
-                     "name": "Spanish"
-                 }
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
                ]
             }
          }

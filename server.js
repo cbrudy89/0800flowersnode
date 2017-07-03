@@ -38,7 +38,7 @@ db.acquire(function(err, con){
 		    console.log('No --domain=xxx specified, taking default hostname "localhost".')
 
 		// Configure the API port
-		var port = 8081;
+		var port = 8080;
 		if(argv.port !== undefined)
 		    port = argv.port;
 		else

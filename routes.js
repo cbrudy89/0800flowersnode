@@ -2,6 +2,7 @@ var authenticateController = require('./api/controllers/authenticate-controller'
 var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
 var userController = require('./api/controllers/user-controller');
+var languageController = require('./api/controllers/language-controller');
 var commonController = require('./api/controllers/common-controller');
 var homeController = require('./api/controllers/frontend/home-controller');
 
@@ -61,7 +62,7 @@ module.exports = {
         commonController.province(req, res);
     });
 
-    app.post('/api/admin/country/create', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/country/create', authenticateController.isAuthenticated, function(req, res) {
         countryController.create(req, res);
     });
 
@@ -94,6 +95,24 @@ module.exports = {
     });*/
 
     /************************* END of Home *****************/
+    /************************* START language *****************/
+
+    app.post('/getlanguages', authenticateController.isAuthenticated, function(req, res) {
+        languageController.getlanguages(req, res);
+    });
+    app.post('/createlanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.createlanguage(req, res);
+    });
+    app.post('/getlanguage/', authenticateController.isAuthenticated, function(req, res) {
+        languageController.getlanguage(req, res);
+    });
+    app.post('/updatelanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.updatelanguage(req, res);
+    });
+    app.delete('/deletelanguage', authenticateController.isAuthenticated, function(req, res) {
+        languageController.deletelanguage(req, res);
+    });
+    /************************* END of language *****************/
 
   }
 };
