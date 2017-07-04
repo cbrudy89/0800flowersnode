@@ -12,6 +12,8 @@ var router=express.Router();
 
 app.use(bodyParser.urlencoded({extended:true}));
 
+app.use('/',router);
+
 app.use(bodyParser.json());
 
 var swagger = require("swagger-node-express").createNew(subpath);

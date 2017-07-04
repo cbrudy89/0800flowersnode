@@ -52,10 +52,10 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-    app.get('/common/countries/', function(req, res) {
+    router.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
-    app.post('/common/province/', function(req, res) {
+    router.post('/common/province/', function(req, res) {
         commonController.province(req, res);
     });
 

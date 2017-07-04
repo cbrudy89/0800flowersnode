@@ -131,7 +131,7 @@
             },
             "result":{
                "type":"object",
-               "result":[
+               "example":[
                   {
                      "id": 4,
                      "country_name": "Canada"
