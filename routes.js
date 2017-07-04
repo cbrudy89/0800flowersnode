@@ -1,12 +1,17 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
 var countryController = require('./api/controllers/admin/country-controller');
-var userController = require('./api/controllers/user-controller');
+
+// For Backend Controllers
+var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
-var commonController = require('./api/controllers/common-controller');
-var homeController = require('./api/controllers/frontend/home-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+
+// For Frontend Controllers
+var homeController = require('./api/controllers/home-controller');
+var customerController = require('./api/controllers/customer-controller');
+var commonController = require('./api/controllers/common-controller');
 
 module.exports = {
   configure: function(app, router) {
@@ -47,16 +52,6 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-    app.get('/admin/:id[0-9]/', authenticateController.isAuthenticated, function(req, res) {
-        userController.getUser(req.params.id, res);
-    });
-
-    app.get('/dashboard', authenticateController.isAuthenticated, function(req, res){
-        console.log(req.decoded.id);
-        res.send(req.decoded);
-        //res.send('Token Verified');
-    });
-
     app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
@@ -86,37 +81,6 @@ module.exports = {
     });
     /************** Country End **********/
 
-    /************************* Home Routes ************************/
-
-    app.get('/curriencies/', function(req, res) {
-        homeController.curriencies(req, res);
-    });
-
-    app.get('/languages/', function(req, res) {
-        homeController.languages(req, res);
-    });
-
-    app.post('/customer/register', function(req, res) {
-        userController.register(req, res);
-    });
-    
-    app.post('/customer/login', function(req, res) {
-        userController.login(req, res);
-    });
-
-    app.post('/customer/forget', function(req, res) {
-        userController.forget(req, res);
-    });    
-
-    app.post('/customer/verifyCode', function(req, res) {
-        userController.verifyCode(req, res);
-    });        
-
-    app.put('/customer/resetPassword', function(req, res) {
-        adminController.resetPassword(req, res);
-    });    
-
-    /************************* END of Home *****************/
     /************************* START language *****************/
 
     app.post('/admin/getlanguages', authenticateController.isAuthenticated, function(req, res) {
@@ -136,7 +100,7 @@ module.exports = {
     });
     /************************* END of language *****************/
 
-/************************* START timezone *****************/
+    /************************* START timezone *****************/
 
     app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezones(req, res);
@@ -151,6 +115,7 @@ module.exports = {
         timezoneController.deletetimezone(req, res);
     });
     /************************* END of timezone *****************/
+    
     /************************* START colors *****************/
 
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
@@ -168,7 +133,73 @@ module.exports = {
     app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.deletecolor(req, res);
     });
-    /************************* END of colors *****************/
+    /************************* END of colors *****************/    
+
+    /************************* Home Page Routes ************************/
+
+    app.get('/curriencies/', function(req, res) {
+        homeController.curriencies(req, res);
+    });
+
+    app.get('/languages/', function(req, res) {
+        homeController.languages(req, res);
+    });
+
+    app.post('/subscribe/newsletter', function(req, res) {
+        homeController.subscribe(req, res);
+    });    
+
+    /************************* END of Home Page *****************/    
+    /********************* Customer Routes ************************/
+
+    app.post('/customer/register', function(req, res) {
+        customerController.register(req, res);
+    });
+    
+    app.post('/customer/login', function(req, res) {
+        customerController.login(req, res);
+    });
+
+    // Use to send forget password link to customer.
+    app.post('/customer/forgetPassword', function(req, res) {
+        customerController.forgetPassword(req, res);
+    });    
+
+    // Use to validate verification code for forget password sent by customer.
+    app.post('/customer/verifyCode', function(req, res) {
+        customerController.verifyCode(req, res);
+    });
+
+    // Use to reset password send by customer and send confirmation email.
+    app.put('/customer/resetPassword', function(req, res) {
+        customerController.resetPassword(req, res);
+    });
+
+
+
+    /************************* END of Customer *****************/
+
+    /************************ START Admin Provinces/States ************************/
+    app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.getprovince(req, res);
+    });
+
+    app.post('/admin/province/createprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.createprovince(req, res);
+    });
+
+    app.get('/admin/province/viewprovince/:id', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.viewprovince(req, res);
+    });
+
+    app.put('/admin/province/updateprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.updateprovince(req, res);
+    });    
+
+    app.delete('/admin/province/deleteprovince', authenticateController.isAuthenticated, function(req, res) {
+        provinceController.deleteprovince(req, res);
+    });
+    /************************ END Admin Provinces/States ************************/
 
 
   }

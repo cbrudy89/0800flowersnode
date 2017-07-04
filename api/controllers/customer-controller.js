@@ -57,7 +57,7 @@ function UserController() {
         }else{
 
           // Checking if user email already exist in database
-          customerModel.isCustomerEmailExist(email, function(err, result){
+          customerModel.isEmailExist(email, function(err, result){
             if (err) {
               res.status(config.HTTP_SERVER_ERROR).send({
                 status: config.ERROR, 
@@ -87,9 +87,9 @@ function UserController() {
                 customerModel.create(userData, function (err, results) {
                   if (err) {
                     console.log(err);
-                    res.status(config.HTTP_ALREADY_EXISTS).send({
+                    res.status(config.HTTP_SERVER_ERROR).send({
                       status: config.ERROR, 
-                      code : config.HTTP_ALREADY_EXISTS, 
+                      code : config.HTTP_SERVER_ERROR, 
                       message: 'Due to some error, customer is not registered yet. Please try again!'
                     });
                   }else{
@@ -194,7 +194,7 @@ function UserController() {
         res.status(config.HTTP_SERVER_ERROR).send({
           status:config.ERROR,
           code: config.HTTP_SERVER_ERROR,
-          message:'Unable to login!'
+          message:'Due to some error, unable to login. Please try again!'
         });
       }else{
 
@@ -202,10 +202,10 @@ function UserController() {
           bcrypt.compare(password, results[0].password, function(err, response) {
               // res == true 
             if(err) {
-              res.status(config.HTTP_BAD_REQUEST).send({
+              res.status(config.HTTP_SERVER_ERROR).send({
                 status:config.ERROR,
-                code: config.HTTP_BAD_REQUEST,             
-                message:"Email & Password not correct. Please try again."
+                code: config.HTTP_SERVER_ERROR,             
+                message:"Due to some error, unable to login. Please try again!"
                });                    
             }else{
 
@@ -232,9 +232,9 @@ function UserController() {
                 });
 
               }else{
-                res.status(config.HTTP_BAD_REQUEST).send({
+                res.status(config.HTTP_NOT_FOUND).send({
                   status:config.ERROR,
-                  code: config.HTTP_BAD_REQUEST, 
+                  code: config.HTTP_NOT_FOUND, 
                   message:"Email & Password not correct. Please try again."
                 });                          
               }
@@ -253,7 +253,7 @@ function UserController() {
   }
 
   // Forget Password
-  this.forget = function(req, res){
+  this.forgetPassword = function(req, res){
     //console.log(commonHelper.generatePassword(10));
     var email=req.body.email;
     connection.acquire(function(err, con) {
@@ -339,7 +339,7 @@ function UserController() {
                           res.status(config.HTTP_SUCCESS).send({
                             status: config.SUCCESS, 
                             code : config.HTTP_SUCCESS, 
-                            message: "Reset password link sent to your email.Please check and reset your password! !"
+                            message: "Reset password link sent to your email.Please check and reset your password!"
                           });
                         }
                       });
@@ -366,13 +366,114 @@ function UserController() {
     var confirmation_code = req.body.confirmation_code;
 
     var cond = [
-      { 'email' : { 'val': email, 'cond': '='} },
+      { 'confirmation_code' : { 'val': confirmation_code, 'cond': '='} },
       { 'status' : { 'val': 1, 'cond': '='} },
     ];    
+
+    customerModel.query('customers', cond, '', '', function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        if(results.length > 0 && results[0].id > 0){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message : "Confirmation code matched!"
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Confirmation link has expired!", 
+          });          
+        }
+      }
+    });
   }
 
   // Reset Password
   this.resetPassword = function(req, res){
+
+    var confirmation_code = req.body.confirmation_code;
+    var password = req.body.password;
+    var confirm_password = req.body.confirm_password;
+
+    var error = 0;
+    var errors = {};
+
+    if(password !== confirm_password){
+        errors['confirm_password'] = 'Please enter same password as above.';
+        error = 1;
+    }
+
+    if(error == 1){
+      res.status(config.HTTP_BAD_REQUEST).send({
+        status: config.ERROR,
+        code : config.HTTP_BAD_REQUEST, 
+        message: "Validation errors!",
+        errors: errors
+      });  
+      return false;    
+    }
+
+    var cond = [
+      { 'confirmation_code' : { 'val': confirmation_code, 'cond': '='} },
+      { 'status' : { 'val': 1, 'cond': '='} },
+    ];     
+
+    customerModel.query('customers', cond, '', '', function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        if(results.length > 0 && results[0].id > 0){
+
+          // Generate new password
+          var hashedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
+
+          var data = {
+            password: hashedPassword,
+            confirmation_code: ""
+          };                    
+          
+          // Update new password in database for customer.
+          customerModel.update(data, results[0].id, function(err, result){
+            if (err) {
+              res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR, 
+                message : "Unable to process request!", 
+                errors : err
+              });                  
+            }else{
+
+              //Password is successfully reset
+              res.status(config.HTTP_SUCCESS).send({
+                status: config.SUCCESS, 
+                code : config.HTTP_SUCCESS, 
+                message : "Password is successfully reset!"
+              });
+            }
+          });
+
+        }else{
+          res.status(config.HTTP_NOT_FOUND).send({
+            status: config.ERROR, 
+            code : config.HTTP_NOT_FOUND, 
+            message : "Confirmation link has expired!", 
+          });          
+        }
+      }
+    });    
     
   }
 
