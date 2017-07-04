@@ -23,6 +23,9 @@ module.exports = {
     app.post('/admin/create', authenticateController.isAuthenticated, function(req, res) {
         adminController.create(req, res);
     });
+    app.post('/admin/image', function(req, res) {
+        adminController.image(req, res);
+    });
 
     app.post('/admin/login', function(req, res) {
         adminController.login(req, res);
