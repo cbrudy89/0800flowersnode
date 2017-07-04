@@ -206,7 +206,7 @@ function CountryController() {
             if (err) {
               res.send({status: 1, message: err});
             }      
-            con.query('select * from country_list where status = 1', function(err, result) {
+            con.query('select * from country_list', function(err, result) {
               if (err) {
                 res.status(config.HTTP_SERVER_ERROR).send({
                           status:config.ERROR,
