@@ -31,6 +31,10 @@ module.exports = {
         adminController.login(req, res);
     });
 
+    app.get('/admin/getUser/:id', authenticateController.isAuthenticated, function(req, res) {
+        adminController.getUser(req, res);
+    });
+
     app.put('/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
         adminController.updateProfile(req, res);
     });

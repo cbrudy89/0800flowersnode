@@ -82,7 +82,7 @@ function AdminController() {
 
                     if(profile_image != ""){
 
-                      fileHelper.uploadProfileImage(profile_image, profileImagePath, function(err, result){
+                      fileHelper.uploadImage(profile_image, profileImagePath, function(err, result){
                         if(err){
                           res.status(config.HTTP_BAD_REQUEST).send({
                             status: config.ERROR, 
@@ -240,7 +240,7 @@ function AdminController() {
                   
           if(profile_image != ""){
             
-            fileHelper.uploadProfileImage(profile_image, profileImagePath, function(err, result){
+            fileHelper.uploadImage(profile_image, profileImagePath, function(err, result){
               if(err){
                 res.status(config.HTTP_BAD_REQUEST).send({
                   status: config.ERROR, 
@@ -483,25 +483,55 @@ function AdminController() {
   }
 
   // Get User Information 
-  this.getUser = function(id, res) {
+  this.getUser = function(req, res) {
 
-    connection.acquire(function(err, con) {
-      if (err) {
-        res.send({status: 1, message: err});
-      }      
-      con.query('select * from users where id = ?', [id], function(err, result) {
-        if (err) {
-          res.send({status: 1, message: 'Failed to get'});
-        } else {
-          if(result.length > 0){
-            res.send({status: 0, message: 'Address Found!', response: result});
-          }else{
-            res.send({status: 1, message: 'Failed to get address'});
-          }
-        }        
-        con.release();
-      });
-    });
+    if(req.decoded.role != config.ROLE_ADMIN){
+        res.status(config.HTTP_FORBIDDEN).send({
+          status: config.ERROR, 
+          code : config.HTTP_FORBIDDEN, 
+          message: "You dont have permission to create Country!"
+        });       
+      }else{
+        var id = req.params.id;
+          connection.acquire(function(err, con) {
+            if (err) {
+                res.status(config.HTTP_BAD_REQUEST).send({
+                status: config.ERROR, 
+                code : config.HTTP_BAD_REQUEST, 
+                message: "sdfsdf"
+              });  
+            }   
+            con.query('select id, name, email, country_id, province_id, address, phone_number, profile_image, status from users where id = ?', [id], function(err, result) {
+              if (err) {
+                res.status(config.HTTP_NOT_FOUND).send({
+                          status:config.ERROR,
+                          code: config.HTTP_NOT_FOUND,             
+                          message:"No records found"
+                         });
+              } else {
+                if(result.length > 0){
+                  result[0].profile_image = '/uploads/profile_image/'+result[0].profile_image;
+
+                  res.status(config.HTTP_SUCCESS).send({
+                              status: config.SUCCESS,
+                              code: config.HTTP_SUCCESS,
+                              message:"User found",
+                              result: result[0]
+                          
+                  });
+                }else{
+                  res.status(config.HTTP_BAD_REQUEST).send({
+                      status:config.ERROR,
+                      code: config.HTTP_BAD_REQUEST, 
+                      message:"Failed to get Customer Information"
+                  }); 
+                }
+              }        
+              con.release();
+            });
+          });
+
+      }
   };
 
   // Forget Password
