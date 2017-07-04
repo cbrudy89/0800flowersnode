@@ -1,0 +1,438 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Language APIs",
+      "description":"All APIs related to the language controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"language",
+         "description":"API for Language"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getlanguages":{
+         "post":{
+            "tags":[
+               "language"
+            ],
+            "description":"How to get language",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               }             
+            ],
+            "responses":{
+               "200":{
+                  "description":"all languages found",
+                  "schema":{
+                      "$ref":"#/definitions/languageresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/createlanguage":{
+         "post":{
+            "tags":[
+               "language"
+            ],
+            "description":"Create languages",
+            "operationId":"createl",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Language Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"lang_icon",
+                  "in":"formData",
+                  "description":"Language icon",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code2",
+                  "in":"formData",
+                  "description":"language short code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code3",
+                  "in":"formData",
+                  "description":"language short code 2",
+                  "required":true,
+                  "type":"string"
+               }                   
+            ],
+            "responses":{
+               "200":{
+                  "description":"all languages found",
+                  "schema":{
+                      "$ref":"#/definitions/languageresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified language already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/getlanguage":{
+         "post":{
+            "tags":[
+               "language"
+            ],
+            "description":"Get a language",
+            "operationId":"getl",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Language ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"language found",
+                  "schema":{
+                      "$ref":"#/definitions/getlanguageresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }              
+            }
+         }
+      },
+      "/admin/updatelanguage":{
+         "post":{
+            "tags":[
+               "language"
+            ],
+            "description":"Update languages",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Language ID",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Language Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"lang_icon",
+                  "in":"formData",
+                  "description":"Language icon",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code2",
+                  "in":"formData",
+                  "description":"language short code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code3",
+                  "in":"formData",
+                  "description":"language short code 2",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"language status",
+                  "required":true,
+                  "type":"integer"
+               }                     
+            ],
+            "responses":{
+               "200":{
+                  "description":"the languages has been updated",
+                  "schema":{
+                      "$ref":"#/definitions/updateresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"the specified language name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/deletelanguage":{
+         "delete":{
+            "tags":[
+               "language"
+            ],
+            "description":"Delete a language",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Language ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"language found",
+                  "schema":{
+                      "$ref":"#/definitions/deleteresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified language already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }              
+            }
+         }
+      }
+   },
+   "definitions":{
+      "languageresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"all languages found"
+            },
+            "result":{
+               "type":"string",
+               "data":"array"
+            }
+         }
+      },
+      "createlanguageresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"new languages has been created"
+            },
+            "result":{
+               "type":"string",
+               "result":"array"
+            }
+         }
+      },
+      "getlanguageresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"language found!"
+            },
+            "result":{
+               "type":"string",
+               "data":"array"
+            }
+         }
+      },
+      "updateresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the languages has been updated"
+            },
+            "result":{
+               "type":"string",
+               "result":"array"
+            }
+         }
+      },
+      "deleteresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the languages has been deleted"
+            },
+            "result":{
+               "type":"string",
+               "result":"array"
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      },
+      "409error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"The specified language already exists."
+            }
+         }
+      }
+   }
+}

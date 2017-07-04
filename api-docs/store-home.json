@@ -1,0 +1,258 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Store Home APIs",
+      "description":"All APIs related to the home controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Store Home",
+         "description":"API for common usage"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/curriencies":{
+         "get":{
+            "tags":[
+               "Store Home"
+            ],
+            "description":"How to get curriencies",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Curriencies Found!",
+                  "schema":{
+                      "$ref":"#/definitions/curriencyresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/languages":{
+         "get":{
+            "tags":[
+               "Store Home"
+            ],
+            "description":"How to get languages",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Languages Found!",
+                  "schema":{
+                      "$ref":"#/definitions/languageresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/subscribe/newsletter":{
+         "post":{
+            "tags":[
+               "Store Home"
+            ],
+            "description":"Subscribe for newsletter",
+            "operationId":"newsletter",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address use for subscription.",
+                  "required":true,
+                  "type": "string"
+               }               
+            ],
+            "responses":{
+               "200":{
+                  "description":"test@mobikasa.com has been subscribed successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200newsletter"
+                  }
+               },
+               "409":{
+                  "description":"This email address is already registered.",
+                  "schema":{
+                     "$ref":"#/definitions/409newsletter"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500newsletter"
+                  }
+               }                                
+            }
+         }
+      }      
+   },
+   "definitions":{
+      "curriencyresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Curriencies found"
+            },
+            "result":{
+               "type":"object",
+               "result":[
+                   {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "languageresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Languages found"
+            },
+            "result":{
+               "type":"object",
+               "result":[
+                  {
+                     "id": 4,
+                     "country_name": "Canada"
+                   },
+                   {
+                     "id": 5,
+                     "country_name": "Australia"
+                   },
+                   {
+                     "id": 6,
+                     "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      },
+      "200newsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"test@mobikasa.com has been subscribed successfully"
+            }
+         }
+      },
+      "409newsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"This email address is already registered."
+            }
+         }
+      },
+      "500newsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }                  
+   }
+}

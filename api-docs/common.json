@@ -23,7 +23,7 @@
       "application/json"
    ],
    "paths":{
-      "/api/common/countries":{
+      "/common/countries":{
          "get":{
             "tags":[
                "Common"
@@ -52,7 +52,7 @@
             }
          }
       },
-      "/api/common/province":{
+      "/common/province":{
          "post":{
             "tags":[
                "Common"
@@ -130,19 +130,11 @@
                "example":"Countries found"
             },
             "result":{
-               "type":"string",
+               "type":"object",
                "result":[
                   {
                      "id": 4,
                      "country_name": "Canada"
-                   },
-                   {
-                     "id": 5,
-                     "country_name": "Australia"
-                   },
-                   {
-                     "id": 6,
-                     "country_name": "Japan"
                    }
                ]
             }
@@ -163,19 +155,11 @@
                "example":"Provinces found"
             },
             "result":{
-               "type":"string",
+               "type":"object",
                "result":[
                   {
                      "id": 4,
                      "country_name": "Canada"
-                   },
-                   {
-                     "id": 5,
-                     "country_name": "Australia"
-                   },
-                   {
-                     "id": 6,
-                     "country_name": "Japan"
                    }
                ]
             }

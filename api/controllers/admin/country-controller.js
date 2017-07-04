@@ -47,7 +47,7 @@ function CountryController() {
                 res.status(config.HTTP_SERVER_ERROR).send({
                   status: config.ERROR, 
                   code : config.HTTP_SERVER_ERROR, 
-                  message : "There are some error with query.", 
+                  message : "Country has been not inserted.", 
                   errors : err
                 });
               }else{
@@ -100,9 +100,9 @@ function CountryController() {
             }      
             con.query('select * from country_list where id = ?', [id], function(err, result) {
               if (err) {
-                res.status(config.HTTP_BAD_REQUEST).send({
+                res.status(config.HTTP_NOT_FOUND).send({
                           status:config.ERROR,
-                          code: config.HTTP_BAD_REQUEST,             
+                          code: config.HTTP_NOT_FOUND,             
                           message:"No records found"
                          });
               } else {
@@ -182,7 +182,7 @@ function CountryController() {
               res.send({
                 status:config.ERROR,
                 code:config.HTTP_FORBIDDEN,
-                message:"Unable to update country."
+                message:"Country has not been updated."
               });
             }
           }
@@ -208,9 +208,9 @@ function CountryController() {
             }      
             con.query('select * from country_list where status = 1', function(err, result) {
               if (err) {
-                res.status(config.HTTP_BAD_REQUEST).send({
+                res.status(config.HTTP_SERVER_ERROR).send({
                           status:config.ERROR,
-                          code: config.HTTP_BAD_REQUEST,             
+                          code: config.HTTP_SERVER_ERROR,             
                           message:"No records found"
                          });
               } else {

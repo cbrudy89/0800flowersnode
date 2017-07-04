@@ -1,0 +1,6 @@
+No --domain=xxx specified, taking default hostname "localhost".
+No --port=xxx specified, taking default port 8080.
+0800Flowers API running on http://localhost:8080
+SELECT id FROM subscribe_newsletter WHERE subscribe_email='manish@mobikasa.com'
+SELECT id FROM subscribe_newsletter WHERE subscribe_email='manish2@mobikasa.com'
+SELECT id FROM subscribe_newsletter WHERE subscribe_email='manish2@mobikasa.com'
