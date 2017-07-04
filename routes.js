@@ -23,9 +23,6 @@ module.exports = {
     app.post('/admin/create', authenticateController.isAuthenticated, function(req, res) {
         adminController.create(req, res);
     });
-    app.post('/admin/image', function(req, res) {
-        adminController.image(req, res);
-    });
 
     app.post('/admin/login', function(req, res) {
         adminController.login(req, res);
@@ -55,10 +52,10 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-    router.get('/common/countries/', function(req, res) {
+    app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
-    router.post('/common/province/', function(req, res) {
+    app.post('/common/province/', function(req, res) {
         commonController.province(req, res);
     });
 
