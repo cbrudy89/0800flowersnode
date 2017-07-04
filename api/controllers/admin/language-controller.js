@@ -71,7 +71,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'new languages has been created',
+                    message: 'new language has been created',
                   });
                }
             });
@@ -108,7 +108,7 @@ function LanguageController() {
             res.status(config.HTTP_ALREADY_EXISTS).send({
               status: config.ERROR, 
               code : config.HTTP_ALREADY_EXISTS, 
-              message: "the specified language name already exists."
+              message: "the specified language name is already exists."
             });
          }else{
             languageModel.updatelanguage(langData,id, function(err, result){
@@ -119,7 +119,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'the languages has been updated',
+                    message: 'the language has been updated',
                   });
                }
             });
@@ -159,7 +159,7 @@ function LanguageController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'the languages has been deleted',
+                    message: 'the language has been deleted',
                   });
                }
             });
