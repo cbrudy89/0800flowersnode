@@ -10,6 +10,8 @@ var config = require('./../../../config');
 var connection = require('./../../../database');
 //var userHelper = require('./../helpers/user-helper');
 var commonHelper = require('./../../helpers/common-helper');
+var fileHelper = require('./../../helpers/file-helper');
+var base64Img = require('base64-img');
 //var userModel = require('./../../../user-model');
 
 var confirmed = status = 1;
@@ -36,6 +38,11 @@ function AdminController() {
       var phone_no = req.body.phone_no;
       var status = req.body.status;
       var type = 2; // 2 For Sub admin
+      var profile_image = "";
+      if(req.body.profile_image != ""){
+        profile_image = req.body.profile_image;
+      }
+
       /*var confirmed = 1;
       var status = 1;*/
       var confirmation_code = crypto.createHash('sha512').update(email).digest('hex');
@@ -70,10 +77,34 @@ function AdminController() {
                 }else{
                     
                   var hashedPassword = hash;
-                  //var data = [name,email,hashedPassword,country_id,province_id,address,phone_no,1,1,type];
+                  var profileImagePath = "uploads/profile_images";
+                  
+
+                    if(profile_image != ""){
+
+                      fileHelper.uploadProfileImage(profile_image, profileImagePath, function(err, result){
+                        if(err){
+                          res.status(config.HTTP_BAD_REQUEST).send({
+                            status: config.ERROR, 
+                            code : config.HTTP_BAD_REQUEST, 
+                            message: err
+                          });
+                        }else{
+                          profile_image = result;
+                        }
+
+                      });
+
+                      
+                      
+                      
+                    }
+                    
+                  
+                  
 
                   // Store hash in your password DB.
-                  con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,confirmed,status,type,confirmation_code], function (err, results, fields) {
+                  con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,profile_image,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,profile_image,confirmed,status,type,confirmation_code], function (err, results, fields) {
                     con.release();
                     if (err) {
                       console.log(err);
@@ -98,7 +129,7 @@ function AdminController() {
       });      
     }    
   }
-
+  
   // Authenticate Admin User in DB
   this.login=function(req,res){
   
@@ -190,18 +221,45 @@ function AdminController() {
       var address = req.body.address;
       var phoneNumber=req.body.phone_number;
       var status=req.body.status;
+      var profile_image = "";
+      if(req.body.profile_image != ""){
+        profile_image = req.body.profile_image;
+      }
 
       connection.acquire(function(err, con) {
 
         var query = "update `users` set `name` = '"+name+"', `email` = '"+email+"', `country_id` = '"+countryId+"', `province_id` = '"+provinceId+"', `address` = '"+address+"', `phone_number` = '"+phoneNumber+"', `status` = '"+status+"'";        
 
-        if(password != ""){
+        if(password != "" && password != undefined){
           hashedPassword = bcrypt.hashSync(password, config.SALT_ROUND);
-          query += ", `password` = '"+hashedPassword+"' where `id` = '"+id+"'";  
+          query += ", `password` = '"+hashedPassword+"'";  
             
-        }else{
-          query += " where `id` = '"+id+"'";
         }
+        if(profile_image != ""){
+          var profileImagePath = "uploads/profile_images";
+                  
+          if(profile_image != ""){
+            
+            fileHelper.uploadProfileImage(profile_image, profileImagePath, function(err, result){
+              if(err){
+                res.status(config.HTTP_BAD_REQUEST).send({
+                  status: config.ERROR, 
+                  code : config.HTTP_BAD_REQUEST, 
+                  message: err
+                });
+              }else{
+                profile_image = result;
+              }
+
+            });
+              
+            query += ", `profile_image` = '"+profile_image+"'";    
+            
+            
+          }
+        }
+        query += " where `id` = '"+id+"'";
+        
                 
         con.query(query, function (error, results, fields) {
           con.release();
