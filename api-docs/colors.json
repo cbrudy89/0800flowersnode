@@ -40,6 +40,13 @@
                   "description":"Token get api response",
                   "required":true,
                   "type":"string"
+               },
+               {
+                  "name":"color_name",
+                  "in":"formData",
+                  "description":"Color Name for search",
+                  "required":false,
+                  "type":"string"
                }             
             ],
             "responses":{
@@ -276,7 +283,7 @@
             },
             "result":{
                "type":"object",
-               "data":"array"
+               "example":[]
             }
          }
       },
@@ -296,7 +303,7 @@
             },
             "result":{
                "type":"object",
-               "result":"array"
+               "example":[]
             }
          }
       },
@@ -316,7 +323,7 @@
             },
             "result":{
                "type":"object",
-               "data":"array"
+               "example":[]
             }
          }
       },
@@ -336,7 +343,7 @@
             },
             "result":{
                "type":"object",
-               "result":"array"
+               "example":"array"
             }
          }
       },
@@ -353,10 +360,6 @@
             "message":{
                "type":"string",
                "example":"the colors has been deleted"
-            },
-            "result":{
-               "type":"object",
-               "result":"array"
             }
          }
       },

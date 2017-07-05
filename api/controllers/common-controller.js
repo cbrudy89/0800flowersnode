@@ -14,7 +14,7 @@ function CommonController() {
       if (err) {
         res.send({status: 1, message: err});
       }      
-      con.query('select id,country_name from country_list where status = 1', function(err, result) {
+      con.query('select id,country_name from country_list where status = 1 AND  is_display = 1', function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
