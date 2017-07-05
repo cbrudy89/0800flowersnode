@@ -16,8 +16,9 @@ function TimezoneController() {
         message: "You dont have permission to get timezones!"
       });       
     }else{
-      var name = req.body.name;
-      timezoneModel.gettimezones(name, function(err, result){
+      var timezone = req.body.timezone;
+      var tz_title = req.body.tz_title;
+      timezoneModel.gettimezones(timezone,tz_title, function(err, result){
          if(err) {
             console.log(err);
          }else{
@@ -45,7 +46,7 @@ function TimezoneController() {
     }else{
       var curr_date  = new Date();
       var id =req.body.id;
-      langData = {
+      tmData = {
             'timezone':req.body.timezone,
             'tz_title':req.body.tz_title,
             'offset':req.body.offset,
@@ -53,7 +54,7 @@ function TimezoneController() {
             'stoppage_minute':req.body.stoppage_minute,
             'updated_at':curr_date
       };
-      timezoneModel.checktimezone(langData,id, function(err, result){
+      timezoneModel.checktimezone(tmData,id, function(err, result){
        // console.log(err);
          if(result.length > 0 && result[0].id > 0){
             res.status(config.HTTP_ALREADY_EXISTS).send({
@@ -62,7 +63,7 @@ function TimezoneController() {
               message: "the specified timezone name already exists."
             });
          }else{
-            timezoneModel.updatetimezone(langData,id, function(err, result){
+            timezoneModel.updatetimezone(tmData,id, function(err, result){
               //console.log(err);
                if(err) {
                   console.log(err);

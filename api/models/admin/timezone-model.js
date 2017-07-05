@@ -2,16 +2,29 @@ var config = require('./../../../config');
 var connection = require('./../../../database');
 
 function timezoneModel(){	
-	this.gettimezones = function(name, callback) {
+	this.gettimezones = function(timezone,tz_title, callback) {
 		connection.acquire(function(err, con) {
 			if (err) {
 				callback(err);
 			}
 			else {	
+				var string=string1='';
 			    var queryString = "SELECT * FROM timezones";
-			    if(name != "" && name != undefined){
-			        queryString += " WHERE `name` like '%"+name+"%'";
+			    if(timezone != "" && timezone != undefined){
+			        string += " `timezone` like '%"+timezone+"%'";
 			    }
+			    if(tz_title != "" && tz_title != undefined){
+			        string1 += " `tz_title` like '%"+tz_title+"%'";
+			    }
+			    if(string != "" || string1 != ""){
+			        queryString += " WHERE ";
+			    }
+			    queryString += string;
+			    if(string != "" && string1 != ""){
+			        queryString += " AND ";
+			    }
+			    queryString += string1;
+			    console.log(queryString);
 				con.query(queryString, function (err, results) {
 		          	if (err) {
 		          		callback(err);

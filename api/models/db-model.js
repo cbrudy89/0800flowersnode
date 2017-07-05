@@ -136,7 +136,8 @@ function DbModel(){
 						var len = condintion.length;
 						var i = 1;
 
-						if(condintion.length > 1){
+						//if(condintion.length > 1){
+						if(typeof condintion === 'object' && condintion instanceof Array){							
 
 							sql += " WHERE ";
 							condintion.forEach(function(item, index){

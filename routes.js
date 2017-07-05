@@ -37,6 +37,10 @@ module.exports = {
         adminController.login(req, res);
     });
 
+    app.get('/admin/getUser/:id', authenticateController.isAuthenticated, function(req, res) {
+        adminController.getUser(req, res);
+    });
+
     app.put('/admin/updateProfile', authenticateController.isAuthenticated, function(req, res) {
         adminController.updateProfile(req, res);
     });
@@ -64,11 +68,25 @@ module.exports = {
     app.get('/common/countries/', function(req, res) {
         commonController.countries(req, res);
     });
+    
     app.post('/common/province/', function(req, res) {
         commonController.province(req, res);
     });
+    
+    app.get('/common/allprovince/', function(req, res) {
+        commonController.allprovince(req, res);
+    });
 
+    app.get('/common/topcountries/', function(req, res) {
+        commonController.topcountries(req, res);
+    });
+
+    app.post('/common/countrylanguage/', function(req, res) {
+        commonController.countrylanguage(req, res);
+    });
+    
     /************** Country **********/
+    
     app.post('/admin/country/list', authenticateController.isAuthenticated, function(req, res) {
         countryController.list(req, res);
     });
@@ -88,6 +106,7 @@ module.exports = {
     app.delete('/admin/country/delete', authenticateController.isAuthenticated, function(req, res) {
         countryController.delete(req, res);
     });
+    
     /************** Country End **********/
 
     /************************* START language *****************/
@@ -95,18 +114,23 @@ module.exports = {
     app.post('/admin/getlanguages', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguages(req, res);
     });
+    
     app.post('/admin/createlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.createlanguage(req, res);
     });
+    
     app.post('/admin/getlanguage/', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguage(req, res);
     });
+    
     app.post('/admin/updatelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.updatelanguage(req, res);
     });
+    
     app.delete('/admin/deletelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.deletelanguage(req, res);
     });
+    
     /************************* END of language *****************/
 
     /************************* START timezone *****************/
@@ -114,15 +138,19 @@ module.exports = {
     app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezones(req, res);
     });
+    
     app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezone(req, res);
     });
+    
     app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.updatetimezone(req, res);
     });
+    
     app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.deletetimezone(req, res);
     });
+    
     /************************* END of timezone *****************/
     
     /************************* START colors *****************/
@@ -130,18 +158,23 @@ module.exports = {
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolors(req, res);
     });
+    
     app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.createcolor(req, res);
     });
+    
     app.post('/admin/getcolor/', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolor(req, res);
     });
+    
     app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.updatecolor(req, res);
     });
+    
     app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.deletecolor(req, res);
     });
+    
     /************************* END of colors *****************/    
 
     /************************* Home Page Routes ************************/
@@ -156,7 +189,12 @@ module.exports = {
 
     app.post('/subscribe/newsletter', validate(homeValidation.subscribe), function(req, res) {
         homeController.subscribe(req, res);
-    });    
+    });
+
+    app.get('/homeoffer/', function(req, res) {
+        homeController.homeoffer(req, res);
+    });
+ 
 
     /************************* END of Home Page *****************/    
     /********************* Customer Routes ************************/
@@ -184,7 +222,6 @@ module.exports = {
         customerController.resetPassword(req, res);
     });
 
-
     /************************* END of Customer *****************/
 
     /************************ START Admin Provinces/States ************************/
@@ -208,6 +245,5 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
-
-  }
-};
+   }
+}
