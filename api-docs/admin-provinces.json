@@ -23,12 +23,12 @@
       "application/json"
    ],
    "paths":{
-      "/admin/country/create/":{
+      "/admin/province/getprovince/":{
          "post":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
-            "description":"Create country from admin section",
+            "description":"List all provice from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -40,140 +40,13 @@
                   "description":"Token get on login api response",
                   "required":true,
                   "type":"string"
-               },
-               {
-                  "name":"continet_name",
-                  "in":"formData",
-                  "description":"Continent Name",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"preferred_currency_id",
-                  "in":"formData",
-                  "description":"Select a Currency",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"country_name",
-                  "in":"formData",
-                  "description":"Country Name",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"short_code",
-                  "in":"formData",
-                  "description":"Country Sort Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"country_alias",
-                  "in":"formData",
-                  "description":"Country Alias Name",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"iso_code",
-                  "in":"formData",
-                  "description":"ISO Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"calling_code",
-                  "in":"formData",
-                  "description":"Calling Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"phone",
-                  "in":"formData",
-                  "description":"Order by phone",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"surcharge",
-                  "in":"formData",
-                  "description":"Surcharge",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"country_flag",
-                  "in":"formData",
-                  "description":"Country Flag",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"ga_code",
-                  "in":"formData",
-                  "description":"Google Analytics Code",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"zipcode_length",
-                  "in":"formData",
-                  "description":"Zipcode Length",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"zipcode_type",
-                  "in":"formData",
-                  "description":"Zipcode Type",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"required_zipcode",
-                  "in":"formData",
-                  "description":"Required Zipcode",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"is_display",
-                  "in":"formData",
-                  "description":"Display on Home page",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"show_state",
-                  "in":"formData",
-                  "description":"Show Province/States",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"status",
-                  "in":"formData",
-                  "description":"Status",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"redirect_url",
-                  "in":"formData",
-                  "description":"Redirect URL",
-                  "required":false,
-                  "type":"string"
                }
-                             
             ],
             "responses":{
                "200":{
-                  "description":"Country has been inserted successfully!",
+                  "description":"All provinces listed.",
                   "schema":{
-                      "$ref":"#/definitions/200country"
+                      "$ref":"#/definitions/200getprovince"
                   }
                },
                "409":{
@@ -194,7 +67,7 @@
       "/admin/country/view/{id}":{
          "get":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
             "description":"View single record during update",
             "operationId":"get",
@@ -243,7 +116,7 @@
       "/admin/country/update":{
          "put":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
             "description":"Update country",
             "operationId":"put",
@@ -417,7 +290,7 @@
       "/admin/country/list":{
          "post":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
             "description":"List all countries",
             "operationId":"post",
@@ -458,7 +331,7 @@
       "/admin/country/delete":{
          "delete":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
             "description":"Delete Country",
             "operationId":"delete",
