@@ -73,7 +73,28 @@ function DbModel(){
 
 			}
 		});		
+	}
+
+	this.rawQuery = function(sql = '', callback) {
+		connection.acquire(function(err, con) {
+			if (err) {
+				callback(err);
+			}
+			else {					
+
+				con.query(sql, function (err, result) {
+		          	if (err) {
+		          		callback(err);
+		          	}else{
+		          		callback(null, result);
+		          	}
+		          	con.release();
+		      	});			
+
+			}
+		});		
 	}	
+
 
 	// Insert/Update record in table
 	this.save = function(table, data, id, callback) {

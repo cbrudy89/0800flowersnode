@@ -13,6 +13,15 @@ var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
 var commonController = require('./api/controllers/common-controller');
 
+// Validation Helper used for validation
+var validate = require('./api/helpers/validation-helper');
+
+// Validation Configuration for controller
+var customerValidation = require('./api/validation/customer-validation');
+var homeValidation = require('./api/validation/home-validation');
+var adminValidation = require('./api/validation/admin/admin-validation');
+
+
 module.exports = {
   configure: function(app, router) {
 
@@ -20,11 +29,11 @@ module.exports = {
         res.sendFile(__dirname + '/api-docs/index.html');
     });    
 
-    app.post('/admin/create', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/create', authenticateController.isAuthenticated, validate(adminValidation.create), function(req, res) {
         adminController.create(req, res);
     });
 
-    app.post('/admin/login', function(req, res) {
+    app.post('/admin/login', validate(adminValidation.login), function(req, res) {
         adminController.login(req, res);
     });
 
@@ -56,14 +65,28 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-    app.get('/common/countries/', function(req, res) {
+    app.get('/common/countries', function(req, res) {
         commonController.countries(req, res);
     });
-    app.post('/common/province/', function(req, res) {
+    
+    app.post('/common/province', function(req, res) {
         commonController.province(req, res);
     });
+    
+    app.get('/common/allprovince', function(req, res) {
+        commonController.allprovince(req, res);
+    });
 
+    app.get('/common/topcountries', function(req, res) {
+        commonController.topcountries(req, res);
+    });
+
+    app.post('/common/countrylanguage', function(req, res) {
+        commonController.countrylanguage(req, res);
+    });
+    
     /************** Country **********/
+    
     app.post('/admin/country/list', authenticateController.isAuthenticated, function(req, res) {
         countryController.list(req, res);
     });
@@ -83,6 +106,7 @@ module.exports = {
     app.delete('/admin/country/delete', authenticateController.isAuthenticated, function(req, res) {
         countryController.delete(req, res);
     });
+    
     /************** Country End **********/
 
     /************************* START language *****************/
@@ -90,18 +114,23 @@ module.exports = {
     app.post('/admin/getlanguages', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguages(req, res);
     });
+    
     app.post('/admin/createlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.createlanguage(req, res);
     });
-    app.post('/admin/getlanguage/', authenticateController.isAuthenticated, function(req, res) {
+    
+    app.post('/admin/getlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguage(req, res);
     });
+    
     app.post('/admin/updatelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.updatelanguage(req, res);
     });
+    
     app.delete('/admin/deletelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.deletelanguage(req, res);
     });
+    
     /************************* END of language *****************/
 
     /************************* START timezone *****************/
@@ -109,15 +138,19 @@ module.exports = {
     app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezones(req, res);
     });
-    app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
+    
+    app.post('/admin/gettimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezone(req, res);
     });
+    
     app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.updatetimezone(req, res);
     });
+    
     app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.deletetimezone(req, res);
     });
+    
     /************************* END of timezone *****************/
     
     /************************* START colors *****************/
@@ -125,61 +158,74 @@ module.exports = {
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolors(req, res);
     });
+    
     app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.createcolor(req, res);
     });
-    app.post('/admin/getcolor/', authenticateController.isAuthenticated, function(req, res) {
+    
+    app.post('/admin/getcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolor(req, res);
     });
+    
     app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.updatecolor(req, res);
     });
+    
     app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.deletecolor(req, res);
     });
+    
     /************************* END of colors *****************/    
 
     /************************* Home Page Routes ************************/
 
-    app.get('/curriencies/', function(req, res) {
+    app.get('/curriencies', function(req, res) {
         homeController.curriencies(req, res);
     });
 
-    app.get('/languages/', function(req, res) {
+    app.get('/languages', function(req, res) {
         homeController.languages(req, res);
     });
 
-    app.post('/subscribe/newsletter', function(req, res) {
+    app.post('/subscribe/newsletter', validate(homeValidation.subscribe), function(req, res) {
         homeController.subscribe(req, res);
-    });    
+    });
+
+    app.get('/homeoffer', function(req, res) {
+        homeController.homeoffer(req, res);
+    });
+
+    // Load all home page data.
+    app.get('/home', function(req, res){
+        homeController.home(req, res);
+    });
+ 
 
     /************************* END of Home Page *****************/    
     /********************* Customer Routes ************************/
 
-    app.post('/customer/register', function(req, res) {
+    app.post('/customer/register', validate(customerValidation.register), function(req, res) {
         customerController.register(req, res);
     });
     
-    app.post('/customer/login', function(req, res) {
+    app.post('/customer/login', validate(customerValidation.login), function(req, res) {
         customerController.login(req, res);
     });
 
     // Use to send forget password link to customer.
-    app.post('/customer/forgetPassword', function(req, res) {
+    app.post('/customer/forgetPassword', validate(customerValidation.forgetPassword), function(req, res) {
         customerController.forgetPassword(req, res);
     });    
 
     // Use to validate verification code for forget password sent by customer.
-    app.post('/customer/verifyCode', function(req, res) {
+    app.post('/customer/verifyCode', validate(customerValidation.verifyCode), function(req, res) {
         customerController.verifyCode(req, res);
     });
 
     // Use to reset password send by customer and send confirmation email.
-    app.put('/customer/resetPassword', function(req, res) {
+    app.put('/customer/resetPassword', validate(customerValidation.resetPassword), function(req, res) {
         customerController.resetPassword(req, res);
     });
-
-
 
     /************************* END of Customer *****************/
 
@@ -204,7 +250,5 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
-
-
-  }
-};
+   }
+}

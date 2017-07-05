@@ -4,6 +4,8 @@ var crypto = require('crypto');
 var handlebars = require('handlebars');
 var fs = require('fs');
 
+var Joi = require('joi');
+
 var config = require('./../../config');
 var connection = require('./../../database');
 //var userHelper = require('./../helpers/user-helper');
@@ -13,8 +15,8 @@ var notificationModel = require('./../models/admin/notification-model');
 function UserController() {
 
   // Register New Frontend User
-  this.register = function(req,res,next){
-
+  this.register = function(req,res,next){   
+    
     var first_name=req.body.first_name;
     var last_name=req.body.last_name;
     var email=req.body.email;
@@ -22,7 +24,7 @@ function UserController() {
     var password = req.body.password;
     var confirm_password = req.body.confirm_password;
 
-    var error = 0;
+   /* var error = 0;
     var errors = {};
 
     if(email !== confirm_email){
@@ -43,7 +45,7 @@ function UserController() {
         errors: errors
       });  
       return false;    
-    }
+    }*/
 
     connection.acquire(function(err, con) {
       bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {

@@ -1,5 +1,6 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+var async = require('async');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
@@ -78,6 +79,46 @@ function HomeController() {
               status:config.ERROR,
               code: config.HTTP_BAD_REQUEST, 
               message:"Failed to get languages"
+            }); 
+          }
+        }        
+        con.release();
+      });
+    });
+  };
+
+    // Get home offer data
+  this.homeoffer = function(req, res) {
+
+    connection.acquire(function(err, con) {
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status:config.ERROR,
+          code: config.HTTP_SERVER_ERROR,
+          message:'Unable to get currencies!',
+          errors : err
+        });
+      }      
+      con.query('SELECT id, line1, line2, line3, line4 FROM home_offer', function(err, result) {
+        if (err) {
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status:config.ERROR,
+            code: config.HTTP_BAD_REQUEST,             
+            message:"No records found"
+           });
+        } else {
+          if(result.length > 0){
+            res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS,
+              code: config.HTTP_SUCCESS,
+              message:"Curriencies found",
+              result:result
+            });
+          }else{
+            res.status(config.HTTP_BAD_REQUEST).send({
+              status:config.ERROR,
+              code: config.HTTP_BAD_REQUEST, 
+              message:"Failed to get currencies"
             }); 
           }
         }        
@@ -169,6 +210,69 @@ function HomeController() {
     });
   }
 
+  // Home page data
+  this.home  = function(req, res) {
+
+
+      var return_data = {};
+
+      //This functions will be executed at the same time
+      async.parallel([
+          function currencies(callback){
+
+              dbModel.find('currency','id,currency_code,symbol,default_currency', 'status=1', '', '', function(err, result) {
+                 if (err) return callback(err);
+                 return_data.currencies = result;
+                 callback();
+              });            
+
+          },
+          function languages(callback){
+
+              dbModel.find('languages','id,name', 'status=1', '', '', function(err, result) {
+                 if (err) return callback(err);
+                 return_data.languages = result;
+                 callback();
+              });
+          },
+          function homeoffer(callback){
+
+              dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
+                 if (err) return callback(err);
+                 return_data.home_offer = result;
+                 callback();
+              });
+
+          },
+          function topcountries(callback){
+
+              dbModel.rawQuery('SELECT country_id, country_name,product_image FROM top_country, country_list WHERE  top_country.country_id=country_list.id AND is_display=1 AND country_list.status=1', function(err, result) {
+                 if (err) return callback(err);
+                 return_data.topcountries = result;
+                 callback();
+              });
+
+          }              
+      ], function (err, result) {
+
+          if (err) {
+              res.status(config.HTTP_SERVER_ERROR).send({
+                  status: config.ERROR, 
+                  code : config.HTTP_SERVER_ERROR,          
+                  message: "Unable to process request, Please try again!",
+                  err: err
+              }); 
+          }else{
+            res.status(config.HTTP_SUCCESS).send({
+                status: config.SUCCESS, 
+                code : config.HTTP_SUCCESS, 
+                message: 'Record found!',
+                result : return_data
+            });           
+          }
+      });
+
+  }
   
 }
 
