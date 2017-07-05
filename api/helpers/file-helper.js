@@ -2,10 +2,10 @@ var base64Img = require('base64-img');
 
 function FileHelper(){
 
-	this.uploadProfileImage = function(profile_image, profileImagePath, callback){
-		var profileImagePath = "uploads/profile_images";
+	this.uploadImage = function(profile_image, profileImagePath, callback){
+		
     	              
-      if(profile_image != ""){
+      if(profile_image != ""){console.log(profile_image);
           var profileImageName = new Date().getTime();
           var imageTypeRegularExpression      = /\/(.*?)$/;
           var matches = profile_image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);// splitit base64 data.

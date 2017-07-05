@@ -158,6 +158,55 @@
             }
          }
       },
+      "/admin/getUser/{id}":{
+         "get":{
+            "tags":[
+               "User"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The customer ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               },               
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Customer found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewuser"
+                  }
+               },
+               "404":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewuser"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get customer.",
+                  "schema":{
+                     "$ref":"#/definitions/400viewuser"
+                  }
+               }                                
+            }
+         }
+      },
       "/admin/updateProfile":{
          "put":{
             "tags":[
@@ -652,6 +701,54 @@
             "message":{
                "type":"string",
                "example":"400 Bad Request"
+            }
+         }
+      },
+      "200viewuser":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"User found."
+            }
+         }
+      },
+      "404viewuser":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400viewuser":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get customer."
             }
          }
       }
