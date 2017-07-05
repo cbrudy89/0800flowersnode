@@ -27,7 +27,7 @@ function UserController() {
     var error = 0;
     var errors = {};
 
-    if(email !== confirm_email){
+/*    if(email !== confirm_email){
         errors['confirm_email'] = 'Please enter same email as above.';
         error = 1;
     }
@@ -35,7 +35,7 @@ function UserController() {
     if(password !== confirm_password){
         errors['confirm_password'] = 'Please enter same password as above.';
         error = 1;
-    }
+    }*/
 
     if(error == 1){
       res.status(config.HTTP_BAD_REQUEST).send({
