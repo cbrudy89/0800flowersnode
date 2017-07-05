@@ -8,12 +8,26 @@ function ProvinceModel(){
 				callback(err);
 			}
 			else {	
-				console.log(province_name);
-				console.log(short_code);
+				var string=string1='';
 				var queryString = "select provinces.id, provinces.province_name, provinces.short_code, provinces.location_tax,provinces.status,country_list.country_name, timezones.timezone, timezones.tz_title, timezones.stoppage_hour,timezones.stoppage_minute, provinces.shipping_charge, provinces.delivery_charge from `provinces` inner join `country_list` on `country_list`.`id` = `provinces`.`country_id` left join `timezones` on `timezones`.`id` = `provinces`.`timezone_id`";
-			    if(province_name != "" && province_name != undefined){
-			        queryString += "WHERE provinces.province_name LIKE '%"+province_name+"%'";
+
+				if(province_name != "" && province_name != undefined){
+			        string += "provinces.province_name LIKE '%"+province_name+"%'";
 			    }
+			    if(short_code != "" && short_code != undefined){
+			        string1 += "provinces.short_code LIKE '%"+short_code+"%'";
+			    }
+			    if(string != "" || string1 != ""){
+			        queryString += " WHERE ";
+			    }
+			    queryString += string;
+			    if(string != "" && string1 != ""){
+			        queryString += " AND ";
+			    }
+			    queryString += string1;
+				/*if(province_name != "" && province_name != undefined){
+			        queryString += "WHERE provinces.province_name LIKE '%"+province_name+"%'";
+			    }*/
 			    con.query(queryString, function (err, results) {
 			    	if (err) {
 		          		callback(err);
