@@ -62,7 +62,17 @@ module.exports = {
     app.post('/common/province/', function(req, res) {
         commonController.province(req, res);
     });
+    app.get('/common/allprovince/', function(req, res) {
+        commonController.allprovince(req, res);
+    });
 
+    app.get('/common/topcountries/', function(req, res) {
+        commonController.topcountries(req, res);
+    });
+
+    app.post('/common/countrylanguage/', function(req, res) {
+        commonController.countrylanguage(req, res);
+    });
     /************** Country **********/
     app.post('/admin/country/list', authenticateController.isAuthenticated, function(req, res) {
         countryController.list(req, res);
@@ -147,6 +157,10 @@ module.exports = {
 
     app.get('/languages/', function(req, res) {
         homeController.languages(req, res);
+    });
+
+    app.get('/homeoffer/', function(req, res) {
+        homeController.homeoffer(req, res);
     });
 
     app.post('/subscribe/newsletter', function(req, res) {

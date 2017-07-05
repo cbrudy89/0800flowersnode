@@ -81,6 +81,35 @@
             }
          }
       },
+      "/homeoffer":{
+         "get":{
+            "tags":[
+               "Store Home"
+            ],
+            "description":"How to get offer content",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Offer Found!",
+                  "schema":{
+                      "$ref":"#/definitions/offerresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
       "/subscribe/newsletter":{
          "post":{
             "tags":[
@@ -185,6 +214,34 @@
                    {
                      "id": 6,
                      "country_name": "Japan"
+                   }
+               ]
+            }
+         }
+      },
+      "offerresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Offer found"
+            },
+            "result":{
+               "type":"object",
+               "example":[
+                  {
+                     "id": 1,
+                     "line1": "10% off",
+                     "line2": "Nationwide Delivery!",
+                     "line3": "Promo Code: TESTTEN",
+                     "line4": "Prices are exclusive of applicable service and shipping charges and taxes"
                    }
                ]
             }

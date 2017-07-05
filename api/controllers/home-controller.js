@@ -86,6 +86,46 @@ function HomeController() {
     });
   };
 
+    // Get home offer data
+  this.homeoffer = function(req, res) {
+
+    connection.acquire(function(err, con) {
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status:config.ERROR,
+          code: config.HTTP_SERVER_ERROR,
+          message:'Unable to get currencies!',
+          errors : err
+        });
+      }      
+      con.query('SELECT id, line1, line2, line3, line4 FROM home_offer', function(err, result) {
+        if (err) {
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status:config.ERROR,
+            code: config.HTTP_BAD_REQUEST,             
+            message:"No records found"
+           });
+        } else {
+          if(result.length > 0){
+            res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS,
+              code: config.HTTP_SUCCESS,
+              message:"Curriencies found",
+              result:result
+            });
+          }else{
+            res.status(config.HTTP_BAD_REQUEST).send({
+              status:config.ERROR,
+              code: config.HTTP_BAD_REQUEST, 
+              message:"Failed to get currencies"
+            }); 
+          }
+        }        
+        con.release();
+      });
+    });
+  };
+
   // Subscribe NewsLetter
   this.subscribe  = function(req, res) {
 

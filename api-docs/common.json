@@ -77,7 +77,104 @@
                   "schema":{
                      "$ref":"#/definitions/provinceresponse"
                   }
-               }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               } 
+            }
+         }
+      },
+      "/common/allprovince":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get all province",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+            ],
+            "responses":{
+               "200":{
+                  "description":"province response",
+                  "schema":{
+                     "$ref":"#/definitions/allprovinceresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               } 
+            }
+         }
+      },
+      "/common/topcountries":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get all top countries (shop by countries)",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+            ],
+            "responses":{
+               "200":{
+                  "description":"top countries response",
+                  "schema":{
+                     "$ref":"#/definitions/topcountries"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               } 
+            }
+         }
+      },
+      "/common/countrylanguage":{
+         "post":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get all content related to country language",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"short_code2",
+                     "in":"formData",
+                     "description":"Country short code",
+                     "required":true,
+                     "type":"string"
+               } 
+            ],
+            "responses":{
+               "200":{
+                  "description":"top countries response",
+                  "schema":{
+                     "$ref":"#/definitions/countrieslanguage"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               } 
             }
          }
       }
@@ -133,9 +230,26 @@
                "type":"object",
                "example":[
                   {
-                     "id": 4,
-                     "country_name": "Canada"
-                   }
+                     "id": 5,
+                     "continet_name": 5,
+                     "country_domain": "http://18f.mobikasa.com/",
+                     "country_name": "Australia",
+                     "preferred_currency_id": 6,
+                     "country_alias": "",
+                     "short_code": "AU",
+                     "iso_code": "AUS",
+                     "zipcode_length": 5,
+                     "zipcode_type": 1,
+                     "calling_code": "61",
+                     "show_state": 0,
+                     "required_zipcode": "0",
+                     "country_flag": "26-10-2015+06-38-30australia.jpg",
+                     "surcharge": 0,
+                     "phone": "1-800-858-5140",
+                     "is_display": 1,
+                     "status": 1,
+                     "redirect_url": "http://1800flowers.ca"
+                   }                  
                ]
             }
          }
@@ -160,6 +274,87 @@
                   {
                      "id": 4,
                      "province_name": "New York"
+                   }
+               ]
+            }
+         }
+      },
+      "allprovinceresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Provinces found"
+            },
+            "result":{
+               "type":"object",
+               "example":[
+                  {
+                     "id": 4,
+                     "country_name": "United States"
+                   }
+               ]
+            }
+         }
+      },
+      "topcountries":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Countries found"
+            },
+            "result":{
+               "type":"object",
+               "example":[
+                  {
+                     "country_id": 5,
+                     "product_image": "19-01-2016+22-27-3713-01-2016+20-58-23105543z.jpg",
+                     "country_name": "Australia"
+                   },
+                   {
+                     "country_id": 10,
+                     "product_image": "18-03-2016-11-06-57image.jpg",
+                     "country_name": "UK"
+                   }
+               ]
+            }
+         }
+      },
+      "countrieslanguage":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Countries language content found"
+            },
+            "result":{
+               "type":"object",
+               "example":[
+                  {
+                     "key": "submit",
+                     "translated_text": "Submit"
                    }
                ]
             }
