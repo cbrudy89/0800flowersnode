@@ -40,6 +40,20 @@
                   "description":"Token get api response",
                   "required":true,
                   "type":"string"
+               },
+               {
+                  "name":"timezone",
+                  "in":"formData",
+                  "description":"timezone for search",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"tz_title",
+                  "in":"formData",
+                  "description":"GMT/UTC for search",
+                  "required":false,
+                  "type":"string"
                }             
             ],
             "responses":{

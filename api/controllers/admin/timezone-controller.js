@@ -16,8 +16,9 @@ function TimezoneController() {
         message: "You dont have permission to get timezones!"
       });       
     }else{
-      var name = req.body.name;
-      timezoneModel.gettimezones(name, function(err, result){
+      var timezone = req.body.timezone;
+      var tz_title = req.body.tz_title;
+      timezoneModel.gettimezones(timezone,tz_title, function(err, result){
          if(err) {
             console.log(err);
          }else{
