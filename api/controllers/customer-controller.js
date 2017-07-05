@@ -4,6 +4,8 @@ var crypto = require('crypto');
 var handlebars = require('handlebars');
 var fs = require('fs');
 
+var Joi = require('joi');
+
 var config = require('./../../config');
 var connection = require('./../../database');
 //var userHelper = require('./../helpers/user-helper');
@@ -13,8 +15,8 @@ var notificationModel = require('./../models/admin/notification-model');
 function UserController() {
 
   // Register New Frontend User
-  this.register = function(req,res,next){
-
+  this.register = function(req,res,next){   
+    
     var first_name=req.body.first_name;
     var last_name=req.body.last_name;
     var email=req.body.email;

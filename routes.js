@@ -13,6 +13,15 @@ var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
 var commonController = require('./api/controllers/common-controller');
 
+// Validation Helper used for validation
+var validate = require('./api/helpers/validation-helper');
+
+// Validation Configuration for controller
+var customerValidation = require('./api/validation/customer-validation');
+var homeValidation = require('./api/validation/home-validation');
+var adminValidation = require('./api/validation/admin/admin-validation');
+
+
 module.exports = {
   configure: function(app, router) {
 
@@ -20,11 +29,11 @@ module.exports = {
         res.sendFile(__dirname + '/api-docs/index.html');
     });    
 
-    app.post('/admin/create', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/create', authenticateController.isAuthenticated, validate(adminValidation.create), function(req, res) {
         adminController.create(req, res);
     });
 
-    app.post('/admin/login', function(req, res) {
+    app.post('/admin/login', validate(adminValidation.login), function(req, res) {
         adminController.login(req, res);
     });
 
@@ -145,40 +154,39 @@ module.exports = {
         homeController.languages(req, res);
     });
 
-    app.post('/subscribe/newsletter', function(req, res) {
+    app.post('/subscribe/newsletter', validate(homeValidation.subscribe), function(req, res) {
         homeController.subscribe(req, res);
     });    
 
     /************************* END of Home Page *****************/    
     /********************* Customer Routes ************************/
 
-    app.post('/customer/register', function(req, res) {
+    app.post('/customer/register', validate(customerValidation.register), function(req, res) {
         customerController.register(req, res);
     });
     
-    app.post('/customer/login', function(req, res) {
+    app.post('/customer/login', validate(customerValidation.login), function(req, res) {
         customerController.login(req, res);
     });
 
     // Use to send forget password link to customer.
-    app.post('/customer/forgetPassword', function(req, res) {
+    app.post('/customer/forgetPassword', validate(customerValidation.forgetPassword), function(req, res) {
         customerController.forgetPassword(req, res);
     });    
 
     // Use to validate verification code for forget password sent by customer.
-    app.post('/customer/verifyCode', function(req, res) {
+    app.post('/customer/verifyCode', validate(customerValidation.verifyCode), function(req, res) {
         customerController.verifyCode(req, res);
     });
 
     // Use to reset password send by customer and send confirmation email.
-    app.put('/customer/resetPassword', function(req, res) {
+    app.put('/customer/resetPassword', validate(customerValidation.resetPassword), function(req, res) {
         customerController.resetPassword(req, res);
     });
 
 
-<<<<<<< HEAD
     /************************* END of Customer *****************/
-=======
+
     /************************ START Admin Provinces/States ************************/
     app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
         provinceController.getprovince(req, res);
@@ -200,7 +208,6 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
->>>>>>> 42c40725f76f2a39966967797b5c38dbee2874af
 
   }
 };
