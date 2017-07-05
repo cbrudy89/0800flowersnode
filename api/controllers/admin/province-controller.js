@@ -15,8 +15,9 @@ function ProvinceController() {
         message: "You dont have permission to get Province!"
       });       
     }else{
-       var name = req.body.name;
-       provinceModel.getprovince(name, function(err, result){
+       var province_name = req.body.province_name;
+       var short_code = req.body.short_code;
+       provinceModel.getprovince(province_name, short_code, function(err, result){
          if(err) {
             console.log(err);
          }else{
