@@ -1,0 +1,750 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Province APIs",
+      "description":"All APIs related to the admin province controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Province",
+         "description":"API for admin province usage"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/country/create/":{
+         "post":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"Create country from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"continet_name",
+                  "in":"formData",
+                  "description":"Continent Name",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"preferred_currency_id",
+                  "in":"formData",
+                  "description":"Select a Currency",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_name",
+                  "in":"formData",
+                  "description":"Country Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code",
+                  "in":"formData",
+                  "description":"Country Sort Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_alias",
+                  "in":"formData",
+                  "description":"Country Alias Name",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"iso_code",
+                  "in":"formData",
+                  "description":"ISO Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"calling_code",
+                  "in":"formData",
+                  "description":"Calling Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"phone",
+                  "in":"formData",
+                  "description":"Order by phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"Surcharge",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_flag",
+                  "in":"formData",
+                  "description":"Country Flag",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"ga_code",
+                  "in":"formData",
+                  "description":"Google Analytics Code",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"zipcode_length",
+                  "in":"formData",
+                  "description":"Zipcode Length",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"zipcode_type",
+                  "in":"formData",
+                  "description":"Zipcode Type",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"required_zipcode",
+                  "in":"formData",
+                  "description":"Required Zipcode",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"is_display",
+                  "in":"formData",
+                  "description":"Display on Home page",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"show_state",
+                  "in":"formData",
+                  "description":"Show Province/States",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"redirect_url",
+                  "in":"formData",
+                  "description":"Redirect URL",
+                  "required":false,
+                  "type":"string"
+               }
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Country has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200country"
+                  }
+               },
+               "409":{
+                  "description":"The country name has already been taken.",
+                  "schema":{
+                     "$ref":"#/definitions/409country"
+                  }
+               },
+               "500":{
+                  "description":"Country has been not inserted.",
+                  "schema":{
+                     "$ref":"#/definitions/500country"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/view/{id}":{
+         "get":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The country ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               },               
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewcountry"
+                  }
+               },
+               "404":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewcountry"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/400viewcountry"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/update":{
+         "put":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"Update country",
+            "operationId":"put",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Country ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"continet_name",
+                  "in":"formData",
+                  "description":"Continent Name",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"preferred_currency_id",
+                  "in":"formData",
+                  "description":"Select a Currency",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_name",
+                  "in":"formData",
+                  "description":"Country Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code",
+                  "in":"formData",
+                  "description":"Country Sort Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_alias",
+                  "in":"formData",
+                  "description":"Country Alias Name",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"iso_code",
+                  "in":"formData",
+                  "description":"ISO Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"calling_code",
+                  "in":"formData",
+                  "description":"Calling Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"phone",
+                  "in":"formData",
+                  "description":"Order by phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"Surcharge",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"country_flag",
+                  "in":"formData",
+                  "description":"Country Flag",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"ga_code",
+                  "in":"formData",
+                  "description":"Google Analytics Code",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"zipcode_length",
+                  "in":"formData",
+                  "description":"Zipcode Length",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"zipcode_type",
+                  "in":"formData",
+                  "description":"Zipcode Type",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"required_zipcode",
+                  "in":"formData",
+                  "description":"Required Zipcode",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"is_display",
+                  "in":"formData",
+                  "description":"Display on Home page",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"show_state",
+                  "in":"formData",
+                  "description":"Show Province/States",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"redirect_url",
+                  "in":"formData",
+                  "description":"Redirect URL",
+                  "required":false,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Country updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updatecountry"
+                  }
+               },
+               "500":{
+                  "description":"Unable to update country.",
+                  "schema":{
+                     "$ref":"#/definitions/500updatecountry"
+                  }
+               },
+               "403":{
+                  "description":"Country has not been updated.",
+                  "schema":{
+                     "$ref":"#/definitions/403updatecountry"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/list":{
+         "post":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"List all countries",
+            "operationId":"post",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200listcountry"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500listcountry"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/400listcountry"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/delete":{
+         "delete":{
+            "tags":[
+               "Admin Country"
+            ],
+            "description":"Delete Country",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired country to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Country deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200deletecountry"
+                  }
+               },
+               "500":{
+                  "description":"Unable to delete Country.",
+                  "schema":{
+                     "$ref":"#/definitions/500deletecountry"
+                  }
+               },
+               "404":{
+                  "description":"Country not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deletecountry"
+                  }
+               }                                
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200country":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country has been inserted successfully."
+            }
+         }
+      },
+      "409country":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The country name has already been taken."
+            }
+         }
+      },
+      "500country":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country has been inserted successfully."
+            }
+         }
+      },  
+      "200viewcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Countries found."
+            }
+         }
+      },
+      "404viewcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400viewcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get countries."
+            }
+         }
+      },
+      "200updatecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country updated successfully."
+            }
+         }
+      },
+      "500updatecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to update country."
+            }
+         }
+      },
+      "403updatecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country has not been updated."
+            }
+         }
+      },
+      "200listcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Countries found."
+            }
+         }
+      },
+      "500listcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400listcountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get countries."
+            }
+         }
+      },
+      "200deletecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country deleted successfully."
+            }
+         }
+      },
+      "500deletecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to delete Country."
+            }
+         }
+      },
+      "404deletecountry":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country not found."
+            }
+         }
+      }            
+   }
+}
