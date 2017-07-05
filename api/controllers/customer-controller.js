@@ -24,7 +24,7 @@ function UserController() {
     var password = req.body.password;
     var confirm_password = req.body.confirm_password;
 
-    var error = 0;
+   /* var error = 0;
     var errors = {};
 
     if(email !== confirm_email){
@@ -45,7 +45,7 @@ function UserController() {
         errors: errors
       });  
       return false;    
-    }
+    }*/
 
     connection.acquire(function(err, con) {
       bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {
