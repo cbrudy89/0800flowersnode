@@ -13,6 +13,9 @@ var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
 var commonController = require('./api/controllers/common-controller');
 
+// For Frontend Controllers
+var productController = require('./api/controllers/product-controller');
+
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
 
@@ -202,6 +205,14 @@ module.exports = {
  
 
     /************************* END of Home Page *****************/    
+
+    /************************* Collection Page Routes ************************/
+    // Load all home page data.
+    app.get('/collections', function(req, res){
+        productController.collections(req, res);
+    });  
+    /************************* END of Collection Page ************************/    
+         
     /********************* Customer Routes ************************/
 
     app.post('/customer/register', validate(customerValidation.register), function(req, res) {

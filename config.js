@@ -18,6 +18,7 @@ function Config() {
   this.PROJECT_DIR = __dirname;
   this.BASE_URL = '';
   this.APPLICATION_URL = '';
+  this.ITEMS_PER_PAGE = 30;
 
   this.SITE_URL = 'https://www.0800flowers.com';
 
