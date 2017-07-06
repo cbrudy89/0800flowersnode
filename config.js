@@ -19,6 +19,7 @@ function Config() {
   this.BASE_URL = '';
   this.APPLICATION_URL = '';
   this.ITEMS_PER_PAGE = 30;
+  this.SITE_LANGUAGE = 1; // For english
 
   this.SITE_URL = 'https://www.0800flowers.com';
 

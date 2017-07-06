@@ -19,7 +19,7 @@ function HomeController() {
           errors : err
         });
       }      
-      con.query('SELECT id,currency_code,symbol,default_currency FROM currency WHERE status = 1', function(err, result) {
+      con.query('SELECT id,currency_code,symbol,currency_name,default_currency FROM currency WHERE status = 1', function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
@@ -59,7 +59,7 @@ function HomeController() {
           errors : err
         });
       }      
-      con.query('SELECT id,name FROM languages WHERE status = 1', function(err, result) {
+      con.query('SELECT id,name,lang_icon,short_code2 AS "language_code" FROM languages WHERE status = 1', function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
@@ -88,7 +88,7 @@ function HomeController() {
   };
 
     // Get home offer data
-  this.homeoffer = function(req, res) {
+/*  this.homeoffer = function(req, res) {
 
     connection.acquire(function(err, con) {
       if (err) {
@@ -125,7 +125,7 @@ function HomeController() {
         con.release();
       });
     });
-  };
+  };*/
 
   // Subscribe NewsLetter
   this.subscribe  = function(req, res) {
@@ -213,6 +213,10 @@ function HomeController() {
   // Home page data
   this.home  = function(req, res) {
 
+      var language_id = req.params.langauge_code;
+      if(language_id == undefined){
+        language_id = process.env.SITE_LANGUAGE;
+      }
 
       var return_data = {};
 
@@ -220,7 +224,7 @@ function HomeController() {
       async.parallel([
           function currencies(callback){
 
-              dbModel.find('currency','id,currency_code,symbol,default_currency', 'status=1', '', '', function(err, result) {
+              dbModel.find('currency','id,currency_code,symbol,currency_name,default_currency', 'status=1', '', '', function(err, result) {
                  if (err) return callback(err);
                  return_data.currencies = result;
                  callback();
@@ -229,12 +233,34 @@ function HomeController() {
           },
           function languages(callback){
 
-              dbModel.find('languages','id,name', 'status=1', '', '', function(err, result) {
+              dbModel.find('languages','id,name,lang_icon,short_code2 AS "code"', 'status=1', '', '', function(err, result) {
                  if (err) return callback(err);
                  return_data.languages = result;
                  callback();
               });
           },
+          function topcountries(callback){
+
+              sql = "SELECT tc.product_image, tc.country_id, cl.country_name, cl.redirect_url, cl.country_flag, cl.country_domain FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+
+              dbModel.rawQuery(sql, function(err, result) {
+                 if (err) return callback(err);
+                 return_data.top_countries = result;
+                 callback();
+              });
+
+          },
+          function orderByPhone(callback){
+
+              sql = "SELECT country_name,country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
+
+              dbModel.rawQuery(sql, function(err, result) {
+                 if (err) return callback(err);
+                 return_data.order_by_phone = result;
+                 callback();
+              });
+
+          },   
           function homeoffer(callback){
 
               dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
@@ -244,15 +270,17 @@ function HomeController() {
               });
 
           },
-          function topcountries(callback){
+          function site_content(callback){
 
-              dbModel.rawQuery('SELECT country_id, country_name,product_image FROM top_country, country_list WHERE  top_country.country_id=country_list.id AND is_display=1 AND country_list.status=1', function(err, result) {
+              sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.status = 1";
+
+              dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
-                 return_data.topcountries = result;
+                 return_data.site_content = result;
                  callback();
               });
 
-          }              
+          }   
       ], function (err, result) {
 
           if (err) {
@@ -268,10 +296,9 @@ function HomeController() {
                 code : config.HTTP_SUCCESS, 
                 message: 'Record found!',
                 result : return_data
-            });           
+            });
           }
       });
-
   }
   
 }

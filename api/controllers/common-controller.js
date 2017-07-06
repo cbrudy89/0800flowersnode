@@ -1,7 +1,9 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+var async = require('async');
 var config = require('./../../config');
 var connection = require('./../../database');
+var dbModel = require('./../models/db-model');
 //var userHelper = require('./../helpers/user-helper');
 //var userModel = require('./../../../user-model');
 
@@ -43,7 +45,7 @@ function CommonController() {
   };
   // Get country province data
   this.province = function(req, res) {
-    var country_id=req.body.country_id;
+    var country_id=req.params.country_id;
     //console.log(country_id);
     connection.acquire(function(err, con) {
       if (err) {
@@ -111,73 +113,75 @@ function CommonController() {
     });
   };
 
-  // Get all top country data
-  this.topcountries = function(req, res) {
-    //console.log(country_id);
-    connection.acquire(function(err, con) {
-      if (err) {
-        res.send({status: 1, message: err});
-      }  
-      con.query('SELECT country_id, country_name,product_image FROM top_country, country_list WHERE  top_country.country_id=country_list.id AND is_display=1 AND country_list.status=1', function(err, result) {
-        if (err) {
+  // Get all countries list
+  this.countrieslist = function(req, res) {
+
+    var limit = req.params.limit;
+
+    $sql = "SELECT country_name,is_display,country_flag,phone,redirect_url,country_flag,country_domain FROM country_list WHERE status = 1 LIMIT "+limit;
+
+    dbModel.rawQuery($sql, function(err, result) {
+       if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
             code: config.HTTP_BAD_REQUEST,             
-            message:"No records found"
-           });
-        } else {
+            message:"Unable to process request"
+          });
+       }else{
+
           if(result.length > 0){
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS,
               code: config.HTTP_SUCCESS,
-              message:"Provinces found",
+              message: result.length +" Countries found",
               result:result
             });
           }else{
-            res.status(config.HTTP_BAD_REQUEST).send({
+            res.status(config.HTTP_NOT_FOUND).send({
               status:config.ERROR,
-              code: config.HTTP_BAD_REQUEST, 
-              message:"Failed to get provinces"
+              code: config.HTTP_NOT_FOUND, 
+              message:"Failed to get Countries"
             }); 
           }
-        }       
-        con.release();
-      });
-    });
+       }
+    });   
+
   };
   // Get all content based on country
   this.countrylanguage = function(req, res) {
-    var short_code2=req.body.short_code2;
+
+    var language_id=req.params.langauge_code;
+
+    if(language_id == undefined){
+      language_id = process.env.SITE_LANGUAGE;
+    }
     //console.log(country_id);
-    connection.acquire(function(err, con) {
-      if (err) {
-        res.send({status: 1, message: err});
-      }  
-      con.query('SELECT translation.key,translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.short_code2= ?',[short_code2], function(err, result) {
-        if (err) {
+    $sql = "SELECT translation.key,translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.id= "+language_id;
+
+    dbModel.rawQuery($sql, function(err, result) {
+       if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
             code: config.HTTP_BAD_REQUEST,             
-            message:"No records found"
-           });
-        } else {
+            message:"Unable to process request"
+          });
+       }else{
+
           if(result.length > 0){
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS,
               code: config.HTTP_SUCCESS,
-              message:"Provinces found",
+              message:"Language data found",
               result:result
             });
           }else{
-            res.status(config.HTTP_BAD_REQUEST).send({
+            res.status(config.HTTP_NOT_FOUND).send({
               status:config.ERROR,
-              code: config.HTTP_BAD_REQUEST, 
-              message:"Failed to get provinces"
+              code: config.HTTP_NOT_FOUND, 
+              message:"Failed to get language data"
             }); 
           }
-        }       
-        con.release();
-      });
+       }
     });
   };
 

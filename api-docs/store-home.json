@@ -81,35 +81,41 @@
             }
          }
       },
-      "/homeoffer":{
+      "/home/{langauge_code}":{
          "get":{
             "tags":[
                "Store Home"
             ],
             "description":"How to get offer content",
-            "operationId":"for the URL",
+            "operationId":"home",
             "produces":[
                "application/json"
             ],
             "parameters":[
-                             
+               {
+                     "name":"langauge_code",
+                     "in":"path",
+                     "description":"Site language id",
+                     "required":true,
+                     "type":"integer"
+               }                             
             ],
             "responses":{
                "200":{
-                  "description":"Offer Found!",
+                  "description":"Record found!",
                   "schema":{
-                      "$ref":"#/definitions/offerresponse"
+                      "$ref":"#/definitions/200home"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "500":{
+                  "description":"Unable to process request, Please try again!",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/500home"
                   }
                }               
             }
          }
-      },
+      },      
       "/subscribe/newsletter":{
          "post":{
             "tags":[
@@ -310,6 +316,59 @@
                "example":"Unable to process request, Please try again!"
             }
          }
-      }                  
+      },
+      "200home":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "result":{}           
+         }
+      }, 
+      "200home":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "result":{
+               "type":"object",
+               "example": {}                
+            }
+         }
+      },      
+      "500home":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }                         
    }
 }
