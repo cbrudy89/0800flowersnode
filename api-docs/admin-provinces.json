@@ -23,12 +23,12 @@
       "application/json"
    ],
    "paths":{
-      "/admin/country/create/":{
+      "/admin/province/getprovince/":{
          "post":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
-            "description":"Create country from admin section",
+            "description":"List all provice from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -42,114 +42,86 @@
                   "type":"string"
                },
                {
-                  "name":"continet_name",
+                  "name":"province_name",
                   "in":"formData",
-                  "description":"Continent Name",
+                  "description":"Province name search",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"short_code",
+                  "in":"formData",
+                  "description":"Province short code search",
+                  "required":false,
+                  "type":"string"
+               }  
+            ],
+            "responses":{
+               "200":{
+                  "description":"All provinces listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getprovince"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400getprovince"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/province/createprovince/":{
+         "post":{
+            "tags":[
+               "Admin Province"
+            ],
+            "description":"Create Provinces",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country id",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"preferred_currency_id",
+                  "name":"timezone_id",
                   "in":"formData",
-                  "description":"Select a Currency",
+                  "description":"Timezone id",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"country_name",
+                  "name":"province_name",
                   "in":"formData",
-                  "description":"Country Name",
+                  "description":"Province name",
                   "required":true,
                   "type":"string"
                },
                {
                   "name":"short_code",
                   "in":"formData",
-                  "description":"Country Sort Code",
+                  "description":"Short code",
                   "required":true,
                   "type":"string"
                },
                {
-                  "name":"country_alias",
+                  "name":"location_tax",
                   "in":"formData",
-                  "description":"Country Alias Name",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"iso_code",
-                  "in":"formData",
-                  "description":"ISO Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"calling_code",
-                  "in":"formData",
-                  "description":"Calling Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"phone",
-                  "in":"formData",
-                  "description":"Order by phone",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"surcharge",
-                  "in":"formData",
-                  "description":"Surcharge",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"country_flag",
-                  "in":"formData",
-                  "description":"Country Flag",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"ga_code",
-                  "in":"formData",
-                  "description":"Google Analytics Code",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"zipcode_length",
-                  "in":"formData",
-                  "description":"Zipcode Length",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"zipcode_type",
-                  "in":"formData",
-                  "description":"Zipcode Type",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"required_zipcode",
-                  "in":"formData",
-                  "description":"Required Zipcode",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"is_display",
-                  "in":"formData",
-                  "description":"Display on Home page",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"show_state",
-                  "in":"formData",
-                  "description":"Show Province/States",
+                  "description":"Location tax",
                   "required":true,
                   "type":"integer"
                },
@@ -159,42 +131,34 @@
                   "description":"Status",
                   "required":true,
                   "type":"integer"
-               },
-               {
-                  "name":"redirect_url",
-                  "in":"formData",
-                  "description":"Redirect URL",
-                  "required":false,
-                  "type":"string"
-               }
-                             
+               }    
             ],
             "responses":{
                "200":{
-                  "description":"Country has been inserted successfully!",
+                  "description":"New province has been created.",
                   "schema":{
-                      "$ref":"#/definitions/200country"
+                      "$ref":"#/definitions/200createprovince"
                   }
                },
                "409":{
-                  "description":"The country name has already been taken.",
+                  "description":"The specified province already exists.",
                   "schema":{
-                     "$ref":"#/definitions/409country"
+                     "$ref":"#/definitions/409createprovince"
                   }
                },
-               "500":{
-                  "description":"Country has been not inserted.",
+               "400":{
+                  "description":"Page not found",
                   "schema":{
-                     "$ref":"#/definitions/500country"
+                     "$ref":"#/definitions/400createprovince"
                   }
                }                                
             }
          }
       },
-      "/admin/country/view/{id}":{
+      "/admin/province/viewprovince/{id}":{
          "get":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
             "description":"View single record during update",
             "operationId":"get",
@@ -205,7 +169,7 @@
                {
                   "name":"id",
                   "in":"path",
-                  "description":"The country ID.",
+                  "description":"The Province ID.",
                   "required":true,
                   "type":"integer",
                   "minimum": 1
@@ -220,32 +184,26 @@
             ],
              "responses":{
                "200":{
-                  "description":"Countries found.",
+                  "description":"Province found.",
                   "schema":{
-                      "$ref":"#/definitions/200viewcountry"
-                  }
-               },
-               "404":{
-                  "description":"No records found.",
-                  "schema":{
-                     "$ref":"#/definitions/404viewcountry"
+                      "$ref":"#/definitions/200viewprovice"
                   }
                },
                "400":{
-                  "description":"Failed to get countries.",
+                  "description":"Failed to get province",
                   "schema":{
-                     "$ref":"#/definitions/400viewcountry"
+                     "$ref":"#/definitions/400viewprovice"
                   }
                }                                
             }
          }
       },
-      "/admin/country/update":{
+      "/admin/province/updateprovince":{
          "put":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
-            "description":"Update country",
+            "description":"Update province",
             "operationId":"put",
             "produces":[
                "application/json"
@@ -261,206 +219,75 @@
                {
                   "name":"id",
                   "in":"formData",
+                  "description":"Province ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
                   "description":"Country ID",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"continet_name",
+                  "name":"timezone_id",
                   "in":"formData",
-                  "description":"Continent Name",
+                  "description":"Timezone ID",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"preferred_currency_id",
+                  "name":"province_name",
                   "in":"formData",
-                  "description":"Select a Currency",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"country_name",
-                  "in":"formData",
-                  "description":"Country Name",
+                  "description":"Province Name",
                   "required":true,
                   "type":"string"
                },
                {
                   "name":"short_code",
                   "in":"formData",
-                  "description":"Country Sort Code",
+                  "description":"Province Sort Code",
                   "required":true,
                   "type":"string"
                },
                {
-                  "name":"country_alias",
+                  "name":"location_tax",
                   "in":"formData",
-                  "description":"Country Alias Name",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"iso_code",
-                  "in":"formData",
-                  "description":"ISO Code",
+                  "description":"Location Tax",
                   "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"calling_code",
-                  "in":"formData",
-                  "description":"Calling Code",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"phone",
-                  "in":"formData",
-                  "description":"Order by phone",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"surcharge",
-                  "in":"formData",
-                  "description":"Surcharge",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"country_flag",
-                  "in":"formData",
-                  "description":"Country Flag",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"ga_code",
-                  "in":"formData",
-                  "description":"Google Analytics Code",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"zipcode_length",
-                  "in":"formData",
-                  "description":"Zipcode Length",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"zipcode_type",
-                  "in":"formData",
-                  "description":"Zipcode Type",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"required_zipcode",
-                  "in":"formData",
-                  "description":"Required Zipcode",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"is_display",
-                  "in":"formData",
-                  "description":"Display on Home page",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"show_state",
-                  "in":"formData",
-                  "description":"Show Province/States",
-                  "required":false,
                   "type":"integer"
                },
                {
                   "name":"status",
                   "in":"formData",
                   "description":"Status",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
-                  "name":"redirect_url",
-                  "in":"formData",
-                  "description":"Redirect URL",
-                  "required":false,
-                  "type":"string"
-               }
-            ],
-             "responses":{
-               "200":{
-                  "description":"Country updated successfully.",
-                  "schema":{
-                      "$ref":"#/definitions/200updatecountry"
-                  }
-               },
-               "500":{
-                  "description":"Unable to update country.",
-                  "schema":{
-                     "$ref":"#/definitions/500updatecountry"
-                  }
-               },
-               "403":{
-                  "description":"Country has not been updated.",
-                  "schema":{
-                     "$ref":"#/definitions/403updatecountry"
-                  }
-               }                                
-            }
-         }
-      },
-      "/admin/country/list":{
-         "post":{
-            "tags":[
-               "Admin Country"
-            ],
-            "description":"List all countries",
-            "operationId":"post",
-            "produces":[
-               "application/json"
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"formData",
-                  "description":"Token get on login api response",
                   "required":true,
-                  "type":"string"
+                  "type":"integer"
                }
             ],
              "responses":{
                "200":{
-                  "description":"Countries found.",
+                  "description":"The province has been updated.",
                   "schema":{
-                      "$ref":"#/definitions/200listcountry"
+                      "$ref":"#/definitions/200updateprovince"
                   }
                },
-               "500":{
-                  "description":"No records found.",
+               "409":{
+                  "description":"The specified province name already exists.",
                   "schema":{
-                     "$ref":"#/definitions/500listcountry"
+                     "$ref":"#/definitions/409updateprovince"
                   }
-               },
-               "400":{
-                  "description":"Failed to get countries.",
-                  "schema":{
-                     "$ref":"#/definitions/400listcountry"
-                  }
-               }                                
+               }                               
             }
          }
       },
-      "/admin/country/delete":{
+      "/admin/province/deleteprovince":{
          "delete":{
             "tags":[
-               "Admin Country"
+               "Admin Province"
             ],
-            "description":"Delete Country",
+            "description":"Delete Province",
             "operationId":"delete",
             "produces":[
                "application/json"
@@ -476,28 +303,28 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Id of the desired country to delete.",
+                  "description":"Id of the desired province to delete.",
                   "required":true,
                   "type":"integer"
                }
             ],
              "responses":{
                "200":{
-                  "description":"Country deleted successfully.",
+                  "description":"The province has been deleted",
                   "schema":{
-                      "$ref":"#/definitions/200deletecountry"
+                      "$ref":"#/definitions/200deleteprovince"
                   }
                },
-               "500":{
-                  "description":"Unable to delete Country.",
+               "403":{
+                  "description":"You dont have permission to delete province.",
                   "schema":{
-                     "$ref":"#/definitions/500deletecountry"
+                     "$ref":"#/definitions/403deleteprovince"
                   }
                },
                "404":{
-                  "description":"Country not found.",
+                  "description":"The specified province not found.",
                   "schema":{
-                     "$ref":"#/definitions/404deletecountry"
+                     "$ref":"#/definitions/404deleteprovince"
                   }
                }                                
             }
@@ -506,7 +333,7 @@
           
    },
    "definitions":{
-      "200country":{
+      "200getprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -518,11 +345,43 @@
             },            
             "message":{
                "type":"string",
-               "example":"Country has been inserted successfully."
+               "example":"All provinces listed."
             }
          }
       },
-      "409country":{
+      "400getprovince":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Page not found."
+            }
+         }
+      },
+      "200createprovince":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"New province has been created."
+            }
+         }
+      },
+      "409createprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -534,59 +393,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"The country name has already been taken."
+               "example":"The specified province already exists."
             }
          }
       },
-      "500country":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"false"
-            },
-            "code":{
-               "type":"integer",
-               "example":"500"
-            },            
-            "message":{
-               "type":"string",
-               "example":"Country has been inserted successfully."
-            }
-         }
-      },  
-      "200viewcountry":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"true"
-            },
-            "code":{
-               "type":"integer",
-               "example":"200"
-            },            
-            "message":{
-               "type":"string",
-               "example":"Countries found."
-            }
-         }
-      },
-      "404viewcountry":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"false"
-            },
-            "code":{
-               "type":"integer",
-               "example":"404"
-            },            
-            "message":{
-               "type":"string",
-               "example":"No records found."
-            }
-         }
-      },
-      "400viewcountry":{
+      "400createprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -598,11 +409,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Failed to get countries."
+               "example":"Page not found"
             }
          }
       },
-      "200updatecountry":{
+      "200viewprovice":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -614,27 +425,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Country updated successfully."
+               "example":"Province found."
             }
          }
       },
-      "500updatecountry":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"false"
-            },
-            "code":{
-               "type":"integer",
-               "example":"404"
-            },            
-            "message":{
-               "type":"string",
-               "example":"Unable to update country."
-            }
-         }
-      },
-      "403updatecountry":{
+      "400viewprovice":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -646,11 +441,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Country has not been updated."
+               "example":"Failed to get province"
             }
          }
       },
-      "200listcountry":{
+      "200updateprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -662,11 +457,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Countries found."
+               "example":"The province has been updated."
             }
          }
       },
-      "500listcountry":{
+      "409updateprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -674,31 +469,15 @@
             },
             "code":{
                "type":"integer",
-               "example":"500"
+               "example":"409"
             },            
             "message":{
                "type":"string",
-               "example":"No records found."
+               "example":"The specified province name already exists."
             }
          }
       },
-      "400listcountry":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"false"
-            },
-            "code":{
-               "type":"integer",
-               "example":"400"
-            },            
-            "message":{
-               "type":"string",
-               "example":"Failed to get countries."
-            }
-         }
-      },
-      "200deletecountry":{
+      "200deleteprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -710,11 +489,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Country deleted successfully."
+               "example":"The province has been deleted"
             }
          }
       },
-      "500deletecountry":{
+      "403deleteprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -722,15 +501,15 @@
             },
             "code":{
                "type":"integer",
-               "example":"500"
+               "example":"403"
             },            
             "message":{
                "type":"string",
-               "example":"Unable to delete Country."
+               "example":"You dont have permission to delete province."
             }
          }
       },
-      "404deletecountry":{
+      "404deleteprovince":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -742,7 +521,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"Country not found."
+               "example":"The specified province not found."
             }
          }
       }            

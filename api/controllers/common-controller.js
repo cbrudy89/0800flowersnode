@@ -149,6 +149,7 @@ function CommonController() {
   };
   // Get all content based on country
   this.countrylanguage = function(req, res) {
+
     var language_id=req.params.langauge_code;
 
     if(language_id == undefined){

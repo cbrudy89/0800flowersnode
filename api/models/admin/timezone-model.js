@@ -24,7 +24,7 @@ function timezoneModel(){
 			        queryString += " AND ";
 			    }
 			    queryString += string1;
-			    console.log(queryString);
+			    //console.log(queryString);
 				con.query(queryString, function (err, results) {
 		          	if (err) {
 		          		callback(err);
