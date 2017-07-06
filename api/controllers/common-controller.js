@@ -147,13 +147,13 @@ function CommonController() {
   };
   // Get all content based on country
   this.countrylanguage = function(req, res) {
-    var short_code2=req.body.short_code2;
+    var language_id=req.body.language_id;
     //console.log(country_id);
     connection.acquire(function(err, con) {
       if (err) {
         res.send({status: 1, message: err});
       }  
-      con.query('SELECT translation.key,translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.short_code2= ?',[short_code2], function(err, result) {
+      con.query('SELECT translation.key,translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND languages.id= ?',[language_id], function(err, result) {
         if (err) {
           res.status(config.HTTP_BAD_REQUEST).send({
             status:config.ERROR,
@@ -165,7 +165,7 @@ function CommonController() {
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS,
               code: config.HTTP_SUCCESS,
-              message:"Provinces found",
+              message:"Countries language content found",
               result:result
             });
           }else{
