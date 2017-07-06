@@ -52,20 +52,20 @@
             }
          }
       },
-      "/common/province":{
-         "post":{
+      "/common/province/{country_id}":{
+         "get":{
             "tags":[
                "Common"
             ],
-            "description":"Get country specific province",
-            "operationId":"get",
+            "description":"Get country specific province by using country_id",
+            "operationId":"province",
             "produces":[
                "application/json"
             ],
             "parameters":[
                {
                   "name":"country_id",
-                  "in":"formData",
+                  "in":"path",
                   "description":"Country ID",
                   "required":true,
                   "type":"string"
@@ -115,51 +115,64 @@
             }
          }
       },
-      "/common/topcountries":{
+      "/common/countrieslist/{limit}":{
          "get":{
             "tags":[
                "Common"
             ],
-            "description":"Get all top countries (shop by countries)",
-            "operationId":"get",
-            "produces":[
-               "application/json"
-            ],
-            "parameters":[
-            ],
-            "responses":{
-               "200":{
-                  "description":"top countries response",
-                  "schema":{
-                     "$ref":"#/definitions/topcountries"
-                  }
-               },
-               "400":{
-                  "description":"Page not found",
-                  "schema":{
-                     "$ref":"#/definitions/400error"
-                  }
-               } 
-            }
-         }
-      },
-      "/common/countrylanguage":{
-         "post":{
-            "tags":[
-               "Common"
-            ],
-            "description":"Get all content related to country language",
-            "operationId":"get",
+            "description":"Get all countries list for (shop by countries and countries list page)",
+            "operationId":"countrieslist",
             "produces":[
                "application/json"
             ],
             "parameters":[
                {
-                     "name":"short_code2",
-                     "in":"formData",
-                     "description":"Country short code",
+                  "name":"limit",
+                  "in":"path",
+                  "description":"No of records to get.",
+                  "required":true,
+                  "type": "integer"
+               }               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Countries found",
+                  "schema":{
+                     "$ref":"#/definitions/countriesList"
+                  }
+               },
+               "404":{
+                  "description":"Failed to get Countries",
+                  "schema":{
+                     "$ref":"#/definitions/404countriesList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request",
+                  "schema":{
+                     "$ref":"#/definitions/500countriesList"
+                  }
+               }               
+            }
+         }
+      },
+      "/common/countrylanguage/{langauge_code}":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get all content related to country language using (langauge_code) example en,fr, etc.",
+            "operationId":"countrylanguage",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"langauge_code",
+                     "in":"path",
+                     "description":"Site language id",
                      "required":true,
-                     "type":"string"
+                     "type":"integer"
                } 
             ],
             "responses":{
@@ -304,11 +317,11 @@
             }
          }
       },
-      "topcountries":{
+      "countriesList":{
          "properties":{
             "status":{
                "type":"boolean",
-               "example":"true"
+               "example": "true"
             },
             "code":{
                "type":"integer",
@@ -322,16 +335,54 @@
                "type":"object",
                "example":[
                   {
-                     "country_id": 5,
-                     "product_image": "19-01-2016+22-27-3713-01-2016+20-58-23105543z.jpg",
-                     "country_name": "Australia"
+                     "country_name": "Canada",
+                     "is_display": 0,
+                     "country_flag": "17-10-2015+14-12-24canada.jpg",
+                     "phone": "1-800-858-5039",
+                     "redirect_url": "",
+                     "country_domain": "http://18f.mobikasa.com/"
                    },
                    {
-                     "country_id": 10,
-                     "product_image": "18-03-2016-11-06-57image.jpg",
-                     "country_name": "UK"
+                     "country_name": "Australia",
+                     "is_display": 1,
+                     "country_flag": "26-10-2015+06-38-30australia.jpg",
+                     "phone": "1-800-858-5140",
+                     "redirect_url": "http://1800flowers.ca",
+                     "country_domain": "http://18f.mobikasa.com/"
                    }
                ]
+            }
+         }
+      },
+      "404countriesList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get Countries"
+            }
+         }
+      },
+      "500countriesList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request"
             }
          }
       },

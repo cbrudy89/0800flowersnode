@@ -29,6 +29,7 @@ var db = require('./database');
 var routes = require('./routes');
 
 process.env.SECRET_KEY="thisismysecretkey";
+process.env.SITE_LANGUAGE=config.SITE_LANGUAGE; // setting default language to english
 
 db.init();
 db.acquire(function(err, con){

@@ -69,7 +69,7 @@ module.exports = {
         commonController.countries(req, res);
     });
     
-    app.post('/common/province', function(req, res) {
+    app.get('/common/province/:country_id', function(req, res) {
         commonController.province(req, res);
     });
     
@@ -77,11 +77,11 @@ module.exports = {
         commonController.allprovince(req, res);
     });
 
-    app.get('/common/topcountries', function(req, res) {
-        commonController.topcountries(req, res);
+    app.get('/common/countrieslist/:limit', function(req, res) {
+        commonController.countrieslist(req, res);
     });
 
-    app.post('/common/countrylanguage', function(req, res) {
+    app.get('/common/countrylanguage/:langauge_code', function(req, res) {
         commonController.countrylanguage(req, res);
     });
     
@@ -191,12 +191,12 @@ module.exports = {
         homeController.subscribe(req, res);
     });
 
-    app.get('/homeoffer', function(req, res) {
+/*    app.get('/homeoffer', function(req, res) {
         homeController.homeoffer(req, res);
-    });
+    });*/
 
     // Load all home page data.
-    app.get('/home', function(req, res){
+    app.get('/home/:langauge_code', function(req, res){
         homeController.home(req, res);
     });
  
