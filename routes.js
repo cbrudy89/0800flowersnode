@@ -65,23 +65,23 @@ module.exports = {
         adminController.resetPassword(req, res);
     });        
 
-    app.get('/common/countries/', function(req, res) {
+    app.get('/common/countries', function(req, res) {
         commonController.countries(req, res);
     });
     
-    app.post('/common/province/', function(req, res) {
+    app.post('/common/province', function(req, res) {
         commonController.province(req, res);
     });
     
-    app.get('/common/allprovince/', function(req, res) {
+    app.get('/common/allprovince', function(req, res) {
         commonController.allprovince(req, res);
     });
 
-    app.get('/common/topcountries/', function(req, res) {
+    app.get('/common/topcountries', function(req, res) {
         commonController.topcountries(req, res);
     });
 
-    app.post('/common/countrylanguage/', function(req, res) {
+    app.post('/common/countrylanguage', function(req, res) {
         commonController.countrylanguage(req, res);
     });
     
@@ -119,7 +119,7 @@ module.exports = {
         languageController.createlanguage(req, res);
     });
     
-    app.post('/admin/getlanguage/', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguage(req, res);
     });
     
@@ -139,7 +139,7 @@ module.exports = {
         timezoneController.gettimezones(req, res);
     });
     
-    app.post('/admin/gettimezone/', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/gettimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezone(req, res);
     });
     
@@ -163,7 +163,7 @@ module.exports = {
         colorController.createcolor(req, res);
     });
     
-    app.post('/admin/getcolor/', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolor(req, res);
     });
     
@@ -179,11 +179,11 @@ module.exports = {
 
     /************************* Home Page Routes ************************/
 
-    app.get('/curriencies/', function(req, res) {
+    app.get('/curriencies', function(req, res) {
         homeController.curriencies(req, res);
     });
 
-    app.get('/languages/', function(req, res) {
+    app.get('/languages', function(req, res) {
         homeController.languages(req, res);
     });
 
@@ -191,8 +191,13 @@ module.exports = {
         homeController.subscribe(req, res);
     });
 
-    app.get('/homeoffer/', function(req, res) {
+    app.get('/homeoffer', function(req, res) {
         homeController.homeoffer(req, res);
+    });
+
+    // Load all home page data.
+    app.get('/home', function(req, res){
+        homeController.home(req, res);
     });
  
 
