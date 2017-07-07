@@ -5,11 +5,10 @@ var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
 
-function ProductController() {
+function CollectionController() {
   // Collection page data
-  this.productdetails  = function(req, res) {
+  this.collections  = function(req, res) {
       var return_data = {};
-      // Product name, image. description, price converted, related products, recent viewd products, disabled dates, calendar
       //This functions will be executed at the same time
       async.parallel([
 
@@ -74,4 +73,4 @@ function ProductController() {
   
 }
 
-module.exports = new ProductController();
+module.exports = new CollectionController();

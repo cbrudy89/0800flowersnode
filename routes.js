@@ -14,6 +14,7 @@ var customerController = require('./api/controllers/customer-controller');
 var commonController = require('./api/controllers/common-controller');
 
 // For Frontend Controllers
+var collectionController = require('./api/controllers/collection-controller');
 var productController = require('./api/controllers/product-controller');
 
 // Validation Helper used for validation
@@ -206,10 +207,16 @@ module.exports = {
 
     /************************* END of Home Page *****************/    
 
+    /************************* Product Details Page Routes ************************/
+    // Load all home page data.
+    app.get('/productdetails', function(req, res){
+        productController.productdetails(req, res);
+    });  
+    /************************* END of Collection Page ************************/  
     /************************* Collection Page Routes ************************/
     // Load all home page data.
     app.get('/collections', function(req, res){
-        productController.collections(req, res);
+        collectionController.collections(req, res);
     });  
     /************************* END of Collection Page ************************/    
          
