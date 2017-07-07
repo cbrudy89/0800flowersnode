@@ -44,7 +44,7 @@ function ProductController() {
                 $AtlasDate      = [];                        
                     
                 $postalcode = !($postalcode) ? $postalcode : config.DEFAULT_ZIPCODE;
-                
+                /*
                 $resAtlasDDOrg=getCustomDeliveryDate($product[0].product_code, $postalcode);
                 if(sizeof($resAtlasDDOrg) ){
                     $resAtlasDD = json_decode($resAtlasDDOrg);
@@ -52,7 +52,7 @@ function ProductController() {
                     /*if( $resAtlasDD.length && isset($resAtlasDD->deliveryCalendar) && sizeof($resAtlasDD->deliveryCalendar) && isset($resAtlasDD->deliveryCalendar->dateArray) && sizeof($resAtlasDD->deliveryCalendar->dateArray) ) {
                         $AtlasDate  = $resAtlasDD->deliveryCalendar->dateArray;
                     }*/
-                }
+                //} 
 
               /*
 
@@ -92,7 +92,7 @@ function ProductController() {
   }
   
 }
-
+/*
 function getCustomDeliveryDate($product_code, $postalcode) {
     if (Request::ajax()) {
             $input = Input::all();
@@ -135,9 +135,9 @@ function getCustomDeliveryDate($product_code, $postalcode) {
                     $result = false;
                 }
             } else {
-                /* if(isset($responseDlvrCal) && isset($responseDlvrCal->getDlvrCalResponse) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError->errorMessage) && $responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError->errorMessage != ''){
+                 if(isset($responseDlvrCal) && isset($responseDlvrCal->getDlvrCalResponse) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError) && isset($responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError->errorMessage) && $responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError->errorMessage != ''){
                   $deliveryCalendar = $responseDlvrCal->getDlvrCalResponse->getDlvrCalResult->flwsErrors->flwsError->errorMessage;
-                  } */
+                  } 
                 $deliveryCalendar = 'SkuNotAvailable';
                 $result = false;
             }
@@ -199,5 +199,5 @@ function getCustomDeliveryDate($product_code, $postalcode) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
         return $result;
-    }
+    }*/
 module.exports = new ProductController();

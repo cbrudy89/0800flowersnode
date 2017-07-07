@@ -34,7 +34,7 @@ function Config() {
       }
   }));
 
-this.atlas_order = [
+//this.atlas_order = [
         /************************
         | atlas config for LIVE |
         ************************/
@@ -76,7 +76,7 @@ this.atlas_order = [
         /**********************
         | atlas config for QA |
         **********************/ 
-        'source_id' => 'W0091',
+      /*  'source_id' => 'W0091',
         'store_id' => '20051',
         'site_id' => '18F',
         'customer_type' => 'R',
@@ -111,7 +111,7 @@ this.atlas_order = [
             'telephone_type' => 'd',
         ] 
     ];
-
+*/
 
 
 
