@@ -191,6 +191,54 @@
                } 
             }
          }
+      },
+      "/common/page/{langauge_code}/{slug}":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Get all content related to country language using (langauge_code) example en,fr, etc.",
+            "operationId":"countrylanguage",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"langauge_code",
+                  "in":"path",
+                  "description":"Site language id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"slug",
+                  "in":"path",
+                  "description":"Page slug",
+                  "required":true,
+                  "type":"string"
+               }                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found",
+                  "schema":{
+                     "$ref":"#/definitions/200page"
+                  }
+               },
+               "404":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/404page"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500page"
+                  }
+               }
+            }
+         }
       }
    },
    "definitions":{
@@ -425,6 +473,66 @@
             "message":{
                "type":"string",
                "example":"400 Bad Request"
+            }
+         }
+      },
+      "200page":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example": "true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found"
+            },
+            "result":{
+               "type":"object",
+               "example":[
+                  {
+                     "id": 16,
+                     "page_name": "Contact Us",
+                     "slug": "contact-us",
+                     "page_title": "Contact Us",
+                     "placement": 1
+                  }                  
+               ]
+            }
+         }
+      },
+      "404page":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Page not found"
+            }
+         }
+      },
+      "500page":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
             }
          }
       }
