@@ -185,6 +185,47 @@ function CommonController() {
     });
   };
 
+  // Get page data on the basis of page id
+  this.page = function(req, res){
+
+      var language_id = req.params.langauge_code;
+      var slug = req.params.slug;
+      if(language_id == undefined){
+        language_id = process.env.SITE_LANGUAGE;
+      }
+
+      sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.slug = '"+slug+"' AND c.status = 1";
+
+      dbModel.rawQuery(sql, function(err, result) {
+
+          if (err) {
+              res.status(config.HTTP_SERVER_ERROR).send({
+                  status: config.ERROR, 
+                  code : config.HTTP_SERVER_ERROR,          
+                  message: "Unable to process request, Please try again!",
+                  err: err
+              }); 
+          }else{
+            if(result.length > 0){
+              res.status(config.HTTP_SUCCESS).send({
+                status: config.SUCCESS,
+                code: config.HTTP_SUCCESS,
+                message:"Record found",
+                result:result
+              });
+            }else{
+              res.status(config.HTTP_NOT_FOUND).send({
+                status:config.ERROR,
+                code: config.HTTP_NOT_FOUND, 
+                message:"Page not found"
+              }); 
+            }
+          }
+
+      });      
+
+  }
+
 
 }
 
