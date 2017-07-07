@@ -20,7 +20,7 @@ function Config() {
   this.APPLICATION_URL = '';
   this.ITEMS_PER_PAGE = 30;
   this.SITE_LANGUAGE = 1; // For english
-
+  this.SITE_TITLE = '1-800-FLOWERS.COM';
   this.SITE_URL = 'https://www.0800flowers.com';
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
