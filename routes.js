@@ -214,7 +214,7 @@ module.exports = {
 
     /************************* Product Details Page Routes ************************/
     // Load all home page data.
-    app.get('/productdetails', function(req, res){
+    app.post('/productdetails', function(req, res){
         productController.productdetails(req, res);
     });  
     /************************* END of Collection Page ************************/  
