@@ -68,9 +68,6 @@ function ProductController() {
             });           
           }
       });
-
   }
-  
 }
-
 module.exports = new ProductController();
