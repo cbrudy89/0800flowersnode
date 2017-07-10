@@ -6,6 +6,83 @@ function CommonHelper(){
 	    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 	    return result;
 	}
+	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
+	{
+	    if(empty($language)) $language=1;
+	    $sql="Select `product_name`, `product_description`, `product_content`, `language_id` from `products` 
+	    inner join `language_product` on `products`.`id` = `language_product`.`product_id` 
+	    where (`product_status` = 1 and `language_product`.`language_id` = "+$language+" and `language_product`.`product_id` = "+$product_id+") limit 1";
+	    connection.acquire(function(err, con) {
+		      if (err) {
+		        res.send({status: 1, message: err});
+		      }      
+		      con.query($sql, function(err, result) {
+		        if (err) {
+		          res.status(config.HTTP_BAD_REQUEST).send({
+		            status:config.ERROR,
+		            code: config.HTTP_BAD_REQUEST,             
+		            message:"No record found"
+		           });
+		        } else {
+		          if(result.length > 0){
+		            res.status(config.HTTP_SUCCESS).send({
+		              status: config.SUCCESS,
+		              code: config.HTTP_SUCCESS,
+		              message:"record found",
+		              result:result
+		            });
+		          }else{
+		            res.status(config.HTTP_BAD_REQUEST).send({
+		              status:config.ERROR,
+		              code: config.HTTP_BAD_REQUEST, 
+		              message:"Failed to get record"
+		            }); 
+		          }
+		        }        
+		        con.release();
+	      });
+	    });
+	    $productname =result;
+	    return $productname->$field;
+	    
+	}
+	// fetch related product for a product
+	this.getRelatedproducts = function ($product_id = NULL, $language = NULL) {
+		$sql="select `product_name`, `slug`, `product_picture` from `products` 
+		inner join `language_product` on `products`.`id` = `language_product`.`product_id` 
+		where (`product_status` = 1 and `language_product`.`language_id1` = "+$language+" and `language_product`.`product_id` = "+$product_id+") limit 1";
+        connection.acquire(function(err, con) {
+		      if (err) {
+		        res.send({status: 1, message: err});
+		      }      
+		      con.query($sql, function(err, result) {
+		        if (err) {
+		          res.status(config.HTTP_BAD_REQUEST).send({
+		            status:config.ERROR,
+		            code: config.HTTP_BAD_REQUEST,             
+		            message:"No record found"
+		           });
+		        } else {
+		          if(result.length > 0){
+		            res.status(config.HTTP_SUCCESS).send({
+		              status: config.SUCCESS,
+		              code: config.HTTP_SUCCESS,
+		              message:"record found",
+		              result:result
+		            });
+		          }else{
+		            res.status(config.HTTP_BAD_REQUEST).send({
+		              status:config.ERROR,
+		              code: config.HTTP_BAD_REQUEST, 
+		              message:"Failed to get record"
+		            }); 
+		          }
+		        }        
+		        con.release();
+	      });
+	    });
+    	return result;
+    }*/
 }
 
 module.exports = new CommonHelper();
