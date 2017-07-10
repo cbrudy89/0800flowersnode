@@ -21,6 +21,8 @@ function Config() {
   this.ITEMS_PER_PAGE = 30;
   this.SITE_LANGUAGE = 1; // For english
 
+  this.DEFAULT_ZIPCODE = '00000';
+
   this.SITE_URL = 'https://www.0800flowers.com';
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({

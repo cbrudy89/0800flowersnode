@@ -218,6 +218,7 @@ module.exports = {
         productController.productdetails(req, res);
     });  
     /************************* END of Collection Page ************************/  
+    
     /************************* Collection Page Routes ************************/
     // Load all home page data.
     app.get('/collections', function(req, res){
@@ -273,5 +274,6 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
+    
    }
 }
