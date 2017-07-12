@@ -241,7 +241,7 @@ function HomeController() {
           },
           function topcountries(callback){
 
-              sql = "SELECT tc.product_image, tc.country_id, cl.country_name, cl.redirect_url, cl.country_flag, cl.country_domain FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"','/trending_products/', tc.product_image) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"','/flag/',cl.country_flag) as country_flag, cl.country_domain FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -270,26 +270,7 @@ function HomeController() {
               });
 
           },
-         /* function countries(callback) {
-              var data = [];
-              var i;
-
-              dbModel.rawQuery("SELECT id, CONCAT(country_name,',',country_alias) as country_name,short_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
-                if (err) return callback(err);
-                else 
-                  if(countries.length > 0){
-                   
-                   return_data.countries = countries;
-                   callback();
-
-                 }else{
-                    callback(null, []);
-                 }
-
-              });              
-
-          },*/
-          function provinces(callback) {
+          function countriesprovinces(callback) {
             var country = [];
             
 
@@ -359,7 +340,18 @@ function HomeController() {
 
               });
 
-          },          
+          },      
+          function translation_content(callback){
+
+            sql = "SELECT translation.lkey as 'key',translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.id= "+language_id;
+            //console.log(sql);
+            dbModel.rawQuery(sql, function(err, result) {
+               if (err) return callback(err);
+               return_data.translation_content = result;
+               callback();
+            });           
+
+          },            
           /*function site_content(callback){
 
               sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.status = 1";

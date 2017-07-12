@@ -89,6 +89,10 @@ module.exports = {
         commonController.countrylanguage(req, res);
     });
 
+    app.get('/common/header/:langauge_code', function(req, res) {
+        commonController.header(req, res);
+    });
+
     // Get CMS page data based on id
     app.get('/common/page/:langauge_code/:slug', function(req, res) {
         commonController.page(req, res);
