@@ -252,7 +252,7 @@ function HomeController() {
           },
           function orderByPhone(callback){
 
-              sql = "SELECT country_name,country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
+              sql = "SELECT country_name, CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);

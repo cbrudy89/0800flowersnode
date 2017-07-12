@@ -60,7 +60,7 @@ db.acquire(function(err, con){
 
 		config.BASE_URL = baseUrl;
 		config.APPLICATION_URL = applicationUrl;
-		config.RESOURCE_URL = applicationUrl+ '/img';
+		config.RESOURCE_URL = 'http://0800api.mobikasa.net'+ '/img';
 
 		swagger.configure(applicationUrl, '1.0.0');
 
