@@ -3,6 +3,8 @@ var smtpTransport = require('nodemailer-smtp-transport');
 
 function Config() {
   this.SECRET_KEY = 'thisismysecretkey';
+  this.PORT = 8080;
+
   this.SALT_ROUND = 10;
   this.SUCCESS = true;
   this.ERROR = false,
@@ -16,14 +18,10 @@ function Config() {
   this.HTTP_ALREADY_EXISTS = 409; // User already exist
   this.HTTP_SERVER_ERROR = 500; // Server Error
   this.PROJECT_DIR = __dirname;
+  
   this.BASE_URL = '';
   this.APPLICATION_URL = '';
-  this.ITEMS_PER_PAGE = 30;
-  this.DEFAULT_ZIPCODE = '00000';
 
-  this.SITE_LANGUAGE = 1; // For english
-  this.SITE_TITLE = '1-800-FLOWERS.COM';
-  this.SITE_URL = 'https://www.0800flowers.com';
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
       host: 'smtp.gmail.com',
@@ -34,6 +32,18 @@ function Config() {
           pass: '12345@9876'
       }
   }));
+
+  this.SITE_LANGUAGE = 1; // For english
+  this.SITE_TITLE = '1-800-FLOWERS.COM';
+  this.SITE_URL = 'https://www.0800flowers.com';
+
+  this.ITEMS_PER_PAGE = 30;
+  this.DEFAULT_ZIPCODE = '00000';
+
+  this.ZIPCODE_LENGHT = [0,1,2,3,4,5,6,7,8,9,10];
+  this.ZIPCODE_TYPE = ['None','Numeric','Alphanumeric','Characters'];
+  this.ADMIN_EMAIL = 'intlplatdev@gmail.com';
+  this.ADMIN_FROM_EMAIL = 'internationalmarketing@1800flowers.com';
 
 //this.atlas_order = [
         /************************
@@ -113,6 +123,7 @@ function Config() {
         ] 
     ];
 */
+
 
 
 
