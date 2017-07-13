@@ -24,12 +24,13 @@ app.use(bodyParser.json());
 
 var swagger = require("swagger-node-express").createNew(subpath);
 app.use(express.static('api-docs'));
+app.use('/img', express.static('public/uploads/'));
 
 var db = require('./database');
 var routes = require('./routes');
 
-process.env.SECRET_KEY="thisismysecretkey";
-process.env.SITE_LANGUAGE=config.SITE_LANGUAGE; // setting default language to english
+process.env.SECRET_KEY=config.SECRET_KEY; // Set secret key to be used for JWT token encryption.
+process.env.SITE_LANGUAGE=config.SITE_LANGUAGE; // Setting default language to english
 
 db.init();
 db.acquire(function(err, con){
@@ -47,7 +48,7 @@ db.acquire(function(err, con){
 		    console.log('No --domain=xxx specified, taking default hostname "localhost".')
 
 		// Configure the API port
-		var port = 8080;
+		var port = config.PORT;
 		if(argv.port !== undefined)
 		    port = argv.port;
 		else
@@ -59,6 +60,7 @@ db.acquire(function(err, con){
 
 		config.BASE_URL = baseUrl;
 		config.APPLICATION_URL = applicationUrl;
+		config.RESOURCE_URL = 'http://0800api.mobikasa.net'+ '/img';
 
 		swagger.configure(applicationUrl, '1.0.0');
 

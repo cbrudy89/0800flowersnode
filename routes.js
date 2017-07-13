@@ -12,10 +12,9 @@ var colorController = require('./api/controllers/admin/color-controller');
 var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
 var commonController = require('./api/controllers/common-controller');
-
-// For Frontend Controllers
 var collectionController = require('./api/controllers/collection-controller');
 var productController = require('./api/controllers/product-controller');
+var orderTrackingController = require('./api/controllers/order-tracking-controller');
 
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
@@ -23,6 +22,8 @@ var validate = require('./api/helpers/validation-helper');
 // Validation Configuration for controller
 var customerValidation = require('./api/validation/customer-validation');
 var homeValidation = require('./api/validation/home-validation');
+var orderTrackingValidation = require('./api/validation/order-tracking-validation');
+
 var adminValidation = require('./api/validation/admin/admin-validation');
 
 
@@ -87,6 +88,10 @@ module.exports = {
 
     app.get('/common/countrylanguage/:langauge_code', function(req, res) {
         commonController.countrylanguage(req, res);
+    });
+
+    app.get('/common/header/:langauge_code', function(req, res) {
+        commonController.header(req, res);
     });
 
     // Get CMS page data based on id
@@ -252,6 +257,14 @@ module.exports = {
     });
 
     /************************* END of Customer *****************/
+
+    /************************* Order Tracking ******************/
+
+    app.post('/trackOrder', validate(orderTrackingValidation.trackOrder), function(req, res) {
+        orderTrackingController.trackOrder(req, res);
+    });
+
+    /************************* Order Tracking End ***************/
 
     /************************ START Admin Provinces/States ************************/
     app.post('/admin/province/getprovince', authenticateController.isAuthenticated, function(req, res) {
