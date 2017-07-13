@@ -1,3 +1,5 @@
+var dbModel = require('./../models/db-model');
+
 function CommonHelper(){
 	
 	this.generatePassword = function(length = 10) {
@@ -5,6 +7,23 @@ function CommonHelper(){
 	    var result = '';
 	    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 	    return result;
+	}
+
+	this.getPromoBanner = function(language_id, type, callback ){
+
+	    var sql = "SELECT description FROM `snipes` inner join `snipe_language` on `snipes`.`id` = `snipe_language`.`snipe_id` WHERE (`snipes`.`type` = '"+type+"' and `snipes`.`status` = 1 and `snipe_language`.`language_id` = "+language_id+") order by RAND() limit 1";
+	    //console.log(sql);
+	    dbModel.rawQuery(sql, function(err, result) {
+	        if (err) return callback(err);
+	        else{
+	        	callback(null, result);
+	        }
+	    });
+
+	}
+
+	this.getSpecialOffer = function(){
+
 	}
 	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
 	{

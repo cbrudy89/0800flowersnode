@@ -221,7 +221,7 @@ module.exports = {
     
     /************************* Collection Page Routes ************************/
     // Load all home page data.
-    app.get('/collections', function(req, res){
+    app.get('/collections/:langauge_code/:delivery_country_id/:order_by', function(req, res){
         collectionController.collections(req, res);
     });  
     /************************* END of Collection Page ************************/    
