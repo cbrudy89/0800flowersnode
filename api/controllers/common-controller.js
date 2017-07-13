@@ -259,7 +259,7 @@ function CommonController() {
         function countriesprovinces(callback) {
           var country = [];
 
-            dbModel.rawQuery("SELECT id, CONCAT(country_name,',',country_alias) as country_name,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
+            dbModel.rawQuery("SELECT id, country_name, CONCAT(country_name,',',country_alias) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
               if (err) return callback(err);
               else 
                 if(countries.length > 0){
@@ -276,6 +276,7 @@ function CommonController() {
 
                             country_id = countries[i].id;
                             country_name = countries[i].country_name;
+                            alias = countries[i].alias;
                             short_code = countries[i].short_code;
                             iso_code = countries[i].iso_code;
                             country_flag = countries[i].country_flag;
@@ -296,6 +297,7 @@ function CommonController() {
                               country.push({
                                 "country_id": country_id, 
                                 "country_name": country_name, 
+                                "alias": alias, 
                                 "short_code": short_code, 
                                 "iso_code": iso_code, 
                                 "country_flag": country_flag, 

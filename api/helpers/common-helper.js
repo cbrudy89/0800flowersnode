@@ -1,3 +1,6 @@
+var request = require('request');
+var config = require('./../../config');
+
 function CommonHelper(){
 	
 	this.generatePassword = function(length = 10) {
@@ -6,6 +9,42 @@ function CommonHelper(){
 	    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 	    return result;
 	}
+
+	this.executeCommonCurl = function($curlUrl, $curlData, callback){
+
+        // Set the headers
+        var headers = {
+            'Content-Type':'application/json',
+            'X-IBM-Client-Id':config.atlas_order.client_id,
+            'X-IBM-Client-Secret':config.atlas_order.client_secret
+        }
+
+        // Configure the request
+        var options = {
+            url: $curlUrl,
+            method: 'POST',
+            headers: headers,
+            form: $curlData
+        }
+        
+        //console.log(options);
+        // Start the request
+        request(options, function (err, response, body) {
+        	if(err){
+             	//console.log("ERROR: " + error + "\n\n");
+        		callback(err);	
+        	} 
+        	else{
+              //console.log("STATUS CODE: " + response.statusCode + "\n\n");
+              //console.log("RESPONSE BODY: " + response.body + "\n\n");        	
+
+              //console.log("RESPONSE BODY: " + body + "\n\n");
+        		callback(null, response);
+        	}
+        });
+
+	}
+
 	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
 	{
 	    if(empty($language)) $language=1;
