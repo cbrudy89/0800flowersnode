@@ -29,6 +29,7 @@
     "mysql": "^2.13.0",
     "nodemailer": "^4.0.1",
     "nodemailer-smtp-transport": "^2.7.4",
+    "request": "^2.81.0",
     "swagger-node-express": "^2.1.3"
   }
 }

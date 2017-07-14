@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+var request = require('request');
+>>>>>>> 3a5dbb393c1bbf7f7c56711bbd484aab88123445
 var config = require('./../../config');
 var dbModel = require('./../models/db-model');
 
@@ -10,6 +14,7 @@ function CommonHelper(){
 	    return result;
 	}
 
+
 	// get country code
 	this.countrycode=function (countryid,callback) {
 	    dbModel.rawQuery('SELECT iso_code FROM country_list WHERE id = '+countryid, function(err, result) {  
@@ -20,6 +25,55 @@ function CommonHelper(){
 	    });
 
 	}
+
+	this.getPromoBanner = function(language_id, type, callback ){
+
+	    var sql = "SELECT description FROM `snipes` inner join `snipe_language` on `snipes`.`id` = `snipe_language`.`snipe_id` WHERE (`snipes`.`type` = '"+type+"' and `snipes`.`status` = 1 and `snipe_language`.`language_id` = "+language_id+") order by RAND() limit 1";
+	    //console.log(sql);
+	    dbModel.rawQuery(sql, function(err, result) {
+	        if (err) return callback(err);
+	        else{
+	        	callback(null, result);
+	        }
+	    });
+
+	}
+
+	this.executeCommonCurl = function($curlUrl, $curlData, callback){
+
+        // Set the headers
+        var headers = {
+            'Content-Type':'application/json',
+            'X-IBM-Client-Id':config.atlas_order.client_id,
+            'X-IBM-Client-Secret':config.atlas_order.client_secret
+        }
+
+        // Configure the request
+        var options = {
+            url: $curlUrl,
+            method: 'POST',
+            headers: headers,
+            form: $curlData
+        }
+        
+        //console.log(options);
+        // Start the request
+        request(options, function (err, response, body) {
+        	if(err){
+             	//console.log("ERROR: " + error + "\n\n");
+        		callback(err);	
+        	} 
+        	else{
+              //console.log("STATUS CODE: " + response.statusCode + "\n\n");
+              //console.log("RESPONSE BODY: " + response.body + "\n\n");        	
+
+              //console.log("RESPONSE BODY: " + body + "\n\n");
+        		callback(null, response);
+        	}
+        });
+
+	}
+
 	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
 	{
 	    if(empty($language)) $language=1;

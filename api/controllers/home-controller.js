@@ -241,7 +241,7 @@ function HomeController() {
           },
           function topcountries(callback){
 
-              sql = "SELECT tc.product_image, tc.country_id, cl.country_name, cl.redirect_url, cl.country_flag, cl.country_domain FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"','/trending_products/', tc.product_image) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"','/flag/',cl.country_flag) as country_flag, cl.country_domain FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -252,7 +252,7 @@ function HomeController() {
           },
           function orderByPhone(callback){
 
-              sql = "SELECT country_name,country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
+              sql = "SELECT country_name, CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -270,7 +270,91 @@ function HomeController() {
               });
 
           },
-          function site_content(callback){
+          function countriesprovinces(callback) {
+            var country = [];
+            
+
+              dbModel.rawQuery("SELECT id, country_name, CONCAT(country_name,',',country_alias) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
+                if (err) return callback(err);
+                else 
+                  if(countries.length > 0){
+
+                      sql = "SELECT country_id,id,province_name FROM provinces WHERE status = 1";
+
+                      //console.log(sql);
+                        
+                      dbModel.rawQuery(sql, function(err, provinces) {
+                        if (err) return callback(err);
+                        else 
+                          if(provinces.length > 0){
+
+                            for ( var i=0 ; i < countries.length; i++) {
+
+                              var province = [];
+
+                              country_id = countries[i].id;
+                              country_name = countries[i].country_name;
+                              alias = countries[i].alias;
+                              short_code = countries[i].short_code;
+                              iso_code = countries[i].iso_code;
+                              country_flag = countries[i].country_flag;
+                              show_state = countries[i].show_state;
+
+
+                                for ( var j=0 ; j < provinces.length; j++) {
+
+                                  if(country_id == provinces[j].country_id){
+                                    
+                                    //console.log(provinces[j].province_name);
+                                    province.push({
+                                      "provience_id" : provinces[j].id,
+                                      "provience_name" :  provinces[j].province_name
+                                    });
+
+                                  }
+                                    
+                                }                              
+
+                                country.push({
+                                  "country_id": country_id, 
+                                  "country_name": country_name, 
+                                  "alias": alias, 
+                                  "short_code": short_code, 
+                                  "iso_code": iso_code, 
+                                  "country_flag": country_flag, 
+                                  "show_state": show_state, 
+                                  "provinces": province
+                                });
+                            } 
+
+
+                            return_data.countries_and_proviences = country;
+                            callback();
+                         }
+
+                      });
+                      
+                    
+
+                 }else{
+                    callback(null, []);
+                 }
+
+              });
+
+          },      
+          function translation_content(callback){
+
+            sql = "SELECT translation.lkey as 'key',translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.id= "+language_id;
+            //console.log(sql);
+            dbModel.rawQuery(sql, function(err, result) {
+               if (err) return callback(err);
+               return_data.translation_content = result;
+               callback();
+            });           
+
+          },            
+          /*function site_content(callback){
 
               sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.status = 1";
 
@@ -279,8 +363,8 @@ function HomeController() {
                  return_data.site_content = result;
                  callback();
               });
+          } */
 
-          }   
       ], function (err, result) {
 
           if (err) {

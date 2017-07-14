@@ -239,7 +239,42 @@
                }
             }
          }
-      }
+      },
+      "/common/header/{langauge_code}":{
+         "get":{
+            "tags":[
+               "Common"
+            ],
+            "description":"Header Page API (Countries and Provinces, Language, Currency, Language Translation Content)",
+            "operationId":"header",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"langauge_code",
+                  "in":"path",
+                  "description":"Site language id",
+                  "required":true,
+                  "type":"integer"
+               }                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found",
+                  "schema":{
+                     "$ref":"#/definitions/200header"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500header"
+                  }
+               }
+            }
+         }
+      }      
    },
    "definitions":{
       "create":{
@@ -535,6 +570,42 @@
                "example":"Unable to process request, Please try again!"
             }
          }
-      }
+      },
+      "200header":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example": "true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found"
+            },
+            "result":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },
+      "500header":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }      
    }
 }

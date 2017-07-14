@@ -253,7 +253,7 @@ function getDeliveryCalendar($params){
             headers: headers,
             form: $curlData.getDlvrCalRequest
         }
-        //console.log(options);
+        console.log(options);
         // Start the request
         request(options, function (error, response, body) {
               //console.log("ERROR: " + error + "\n\n");

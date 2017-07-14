@@ -3,6 +3,8 @@ var smtpTransport = require('nodemailer-smtp-transport');
 
 function Config() {
   this.SECRET_KEY = 'thisismysecretkey';
+  this.PORT = 8080;
+
   this.SALT_ROUND = 10;
   this.SUCCESS = true;
   this.ERROR = false,
@@ -16,14 +18,10 @@ function Config() {
   this.HTTP_ALREADY_EXISTS = 409; // User already exist
   this.HTTP_SERVER_ERROR = 500; // Server Error
   this.PROJECT_DIR = __dirname;
+  
   this.BASE_URL = '';
   this.APPLICATION_URL = '';
-  this.ITEMS_PER_PAGE = 30;
-  this.DEFAULT_ZIPCODE = '00000';
 
-  this.SITE_LANGUAGE = 1; // For english
-  this.SITE_TITLE = '1-800-FLOWERS.COM';
-  this.SITE_URL = 'https://www.0800flowers.com';
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
       host: 'smtp.gmail.com',
@@ -35,11 +33,23 @@ function Config() {
       }
   }));
 
-this.atlas_order = {
+  this.SITE_LANGUAGE = 1; // For english
+  this.SITE_TITLE = '1-800-FLOWERS.COM';
+  this.SITE_URL = 'https://www.0800flowers.com';
+
+  this.ITEMS_PER_PAGE = 30;
+  this.DEFAULT_ZIPCODE = '00000';
+
+  this.ZIPCODE_LENGHT = [0,1,2,3,4,5,6,7,8,9,10];
+  this.ZIPCODE_TYPE = ['None','Numeric','Alphanumeric','Characters'];
+  this.ADMIN_EMAIL = 'intlplatdev@gmail.com';
+  this.ADMIN_FROM_EMAIL = 'internationalmarketing@1800flowers.com';
+
+  this.atlas_order = {
         /************************
         | atlas config for LIVE |
         ************************/
-        /*'source_id' : 'W0093',
+        'source_id' : 'W0093',
         'store_id' : '348',
         'site_id' : '18F',
         'customer_type' : 'R',
@@ -72,13 +82,12 @@ this.atlas_order = {
             'division_number' : '126367',
             'transaction_type' : '7',
             'telephone_type' : 'd',
-        }*/
+        }
 
         /**********************
         | atlas config for QA |
         **********************/ 
-      /* {*/
-       'source_id' : 'W0091',
+        /*'source_id' : 'W0091',
         'store_id' : '20051',
         'site_id' : '18F',
         'customer_type' : 'R',
@@ -111,7 +120,7 @@ this.atlas_order = {
             'division_number' : '126367',
             'transaction_type' : '7',
             'telephone_type' : 'd',
-        } 
+        } */
     };
 this.week_days = {
         '1':'Sunday', '2':'Monday', '3':'Tuesday', '4':'Wednesday', '5':'Thursday', '6':'Friday', '7':'Saturday'
@@ -143,7 +152,6 @@ this.months_short = {
 this.right_sentiments = {
         '1':'Immediate Family Member', '2':'Close Relative', '3':'Friend/Colleague'
     },
-
 this.price_filter = {
         '0-49.99':'49.99 or less', '50-99.99':'50 - 99.99 ','100-149.99':'100 - 149.99 ','150-10000':'150 and above '
     },
@@ -175,5 +183,8 @@ this.pagination={'limit_10':'10', 'limit_15':'15', 'limit_20':'20'},
 this.triple_des_key = '18F-Super-WiDoW5Mobi1eKe!',
 this.cad_currency_code = 'CAD',
 this.default_zipcode = '00000'
+
+
+
 }
 module.exports = new Config();
