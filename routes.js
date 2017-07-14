@@ -256,6 +256,11 @@ module.exports = {
         customerController.resetPassword(req, res);
     });
 
+    // Customer Feedback
+    app.post('/feedback', validate(customerValidation.feedback), function(req, res) {
+        customerController.feedback(req, res);
+    });    
+
     /************************* END of Customer *****************/
 
     /************************* Order Tracking ******************/

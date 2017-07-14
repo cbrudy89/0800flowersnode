@@ -1,6 +1,3 @@
-var Curl = require( 'node-libcurl' ).Curl; 
-var curl = new Curl();
-
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');

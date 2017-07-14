@@ -1,5 +1,5 @@
 //'use strict';
-
+var compression = require('compression');
 var express = require('express');
 var argv = require('minimist')(process.argv.slice(2));
 var bodyParser = require('body-parser');
@@ -9,6 +9,8 @@ var config = require('./config');
 var app = express();
 var subpath = express();
 var router=express.Router();
+
+app.use(compression());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
