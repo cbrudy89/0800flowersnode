@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 var request = require('request');
->>>>>>> 3a5dbb393c1bbf7f7c56711bbd484aab88123445
 var config = require('./../../config');
 var dbModel = require('./../models/db-model');
 
