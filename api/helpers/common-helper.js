@@ -11,6 +11,18 @@ function CommonHelper(){
 	    return result;
 	}
 
+
+	// get country code
+	this.countrycode=function (countryid,callback) {
+	    dbModel.rawQuery('SELECT iso_code FROM country_list WHERE id = '+countryid, function(err, result) {  
+	    	//console.log(result);
+	        if (err) return callback(err,null);
+	        else
+	            callback(null,result);
+	    });
+
+	}
+
 	this.getPromoBanner = function(language_id, type, callback ){
 
 	    var sql = "SELECT description FROM `snipes` inner join `snipe_language` on `snipes`.`id` = `snipe_language`.`snipe_id` WHERE (`snipes`.`type` = '"+type+"' and `snipes`.`status` = 1 and `snipe_language`.`language_id` = "+language_id+") order by RAND() limit 1";
