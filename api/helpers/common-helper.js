@@ -1,3 +1,6 @@
+var config = require('./../../config');
+var dbModel = require('./../models/db-model');
+
 function CommonHelper(){
 	
 	this.generatePassword = function(length = 10) {
@@ -5,6 +8,17 @@ function CommonHelper(){
 	    var result = '';
 	    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 	    return result;
+	}
+
+	// get country code
+	this.countrycode=function (countryid,callback) {
+	    dbModel.rawQuery('SELECT iso_code FROM country_list WHERE id = '+countryid, function(err, result) {  
+	    	//console.log(result);
+	        if (err) return callback(err,null);
+	        else
+	            callback(null,result);
+	    });
+
 	}
 	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
 	{
