@@ -106,7 +106,7 @@ function CollectionController() {
             }            
 
             // Get preferred_currency_id from country 
-            var queryString = "SELECT products.id AS 'product_id',products.product_code,products.slug,products.atlas_product_name,products.vendor_id,products.product_picture,methods.delivery_method,methods.delivery_within,methods.delivery_charge,methods.delivery_days,methods.delivery_hour,methods.delivery_minute,methods.delivery_policy_id FROM products INNER JOIN location_product ON (products.id = location_product.product_id) INNER JOIN methods ON(methods.id = products.delivery_method_id) INNER JOIN vendor ON(vendor.id = products.vendor_id)";
+            var queryString = "SELECT products.id AS 'product_id',products.product_code,products.slug,products.atlas_product_name,products.vendor_id, CONCAT('"+config.RESOURCE_URL+"','/products/',products.product_picture) as product_picture,methods.delivery_method,methods.delivery_within,methods.delivery_charge,methods.delivery_days,methods.delivery_hour,methods.delivery_minute,methods.delivery_policy_id FROM products INNER JOIN location_product ON (products.id = location_product.product_id) INNER JOIN methods ON(methods.id = products.delivery_method_id) INNER JOIN vendor ON(vendor.id = products.vendor_id)";
             queryString += " WHERE ";
             queryString += "products.product_status = 1";
             queryString += " AND ";
@@ -133,8 +133,8 @@ function CollectionController() {
               if (err) {
                 return callback(err);
               } else {
-                var products = [];
 
+                return_data.getProductlistwithcountry =  result;
 
                 Sync(function(){
                   
@@ -144,16 +144,21 @@ function CollectionController() {
                       item = result[i];
 
                       // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context 
+
+                      //console.log(result[i].product_id);
+
                       var price_data = getproductprices.sync(null, result[i].product_id, delivery_country_id, 0);
 
                       if(price_data != ''){
 
-                          $actPrice = number_format((price_data.product_result[0].price_value * price_data.currency_result[0].exchange_rate), 2);
-                          $compPrice = number_format((price_data.product_result[0].compare_price * price_data.currency_result[0].exchange_rate), 2);
+                          var $actPrice = number_format((price_data.product_result[0].price_value * price_data.currency_result[0].exchange_rate), 2);
+                          var $compPrice = number_format((price_data.product_result[0].compare_price * price_data.currency_result[0].exchange_rate), 2);
 
-                          var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                          //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                          var $current_currency = price_data.currency_result[0].currency_code;
+
                           var $currentCurrSymbl = price_data.currency_result[0].symbol;
-                          if($current_currency.indexOf("USD") === false){ 
+                          if($current_currency !== "USD"){ 
                               $actPrice = roundToNineNine($actPrice, $current_currency);
                           }
                           if ($compPrice > $actPrice) {
@@ -162,9 +167,12 @@ function CollectionController() {
                           } else {
                              item.price = $currentCurrSymbl + $actPrice;
                           }
+                          item.product_name = price_data.product_result[0].price_name;
+
+                          //console.log(item);
 
                       }
-                                            
+
                       products.push(item);
                     
                     }
@@ -179,9 +187,11 @@ function CollectionController() {
           },
           function homeoffer(callback){
               dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
-                 if (err) return callback(err);
-                 return_data.home_offer = result;
-                 callback();
+                if (err) return callback(err);
+                else {
+                  return_data.home_offer = result;
+                  callback();
+                }
               });
 
           },
@@ -192,10 +202,8 @@ function CollectionController() {
               dbModel.rawQuery(sql, function(err, result) {
                 if (err) return callback(err);
                 else {
-                  if(result.length > 0){
-                    return_data.filterColors = result;
-                    callback();                    
-                  }                  
+                  return_data.filterColors = result;
+                  callback();                    
                 }
               });            
           },
@@ -212,10 +220,8 @@ function CollectionController() {
             dbModel.rawQuery(sql, function(err, result) {
               if (err) return callback(err);
               else {
-                if(result.length > 0){
                   return_data.filterFlowerTypes = result;
                   callback();              
-                }
               }
             }); 
           }, 
@@ -233,34 +239,33 @@ function CollectionController() {
             dbModel.rawQuery(sql, function(err, result) {
               if (err) return callback(err);
               else {
-                if(result.length > 0){
                   return_data.filterOccasions = result;
                   callback();              
-                }
               }
             }); 
-          }, 
+          },                    
           function getSympathyTypeFilterByCountryProvince(callback){
 
-            var sql = "select `sympathy_types`.`id`, `sympathy_types`.`sympathy_type` from `products` inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id` inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
+            var sql = "SELECT `sympathy_types`.`id`, `sympathy_types`.`sympathy_type` FROM `products` inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id` inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
             sql += " AND `location_product`.`country_id` = "+delivery_country_id;
+            
             if(province_id != undefined){
                sql += " AND ";
                sql += "location_product.province_id = '"+province_id+"'";                  
             }
+
             sql += " GROUP BY `sympathy_types`.`id`";            
 
             dbModel.rawQuery(sql, function(err, result) {
               if (err) return callback(err);
               else {
-                if(result.length > 0){
                   return_data.filterSympathyTypes = result;
                   callback();              
-                }
               }
-            }); 
-          },     
-/*
+            });
+
+          },
+          /*
           function getDeliveryMethodFilterByCountryProvince(callback){
 
             var today = 0;
@@ -325,7 +330,8 @@ function CollectionController() {
             })
 
 
-          }, */                              
+          },
+          */                            
                       
       ], function (err, result) {
 
@@ -350,24 +356,22 @@ function CollectionController() {
   
 }
 
-function getColorFilterByCountryProvince(){
-  $sql = "SELECT `colors`.`id`, `colors`.`color_name` FROM `products` INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id` INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id` INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id` WHERE `products`.`product_status` = 1 AND `products`.`frontend_show` = 1 and `vendor`.`status` = 1 and `products`.`admin_confirm` = 1 and `location_product`.`country_id` = 4 GROUP BY `colors`.`id`";
-
-
-}
-
 function getproductprices($product_id = NULL, $country_id = null, $sale = NULL, callback)
 {
     var data = {};
     // Select product price on basis of product id
     var sql = "SELECT pp.* FROM products p JOIN product_prices pp ON(p.id = pp.product_id) WHERE p.product_status = 1 AND p.id = "+$product_id+" ORDER BY pp.price_value ASC";
 
+    //console.log(sql);
+
     dbModel.rawQuery(sql, function(err, product_result) {
        if (err) return callback(err);
        if (product_result.length > 0){
 
          // Get price details from currency tables by country
-         var sql = "SELECT c.* FROM country_list cl JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+         var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+
+         //console.log(sql);
 
           dbModel.rawQuery(sql, function(err, currency_result) {
             if (err) return callback(err);
@@ -378,6 +382,11 @@ function getproductprices($product_id = NULL, $country_id = null, $sale = NULL, 
 
                callback(null, data);
                               
+            }else{
+               data.product_result = product_result;
+               data.currency_result = [];
+
+               callback(null, data);              
             }
           });
        }
@@ -415,10 +424,13 @@ function roundToNineNine($actPrice, $current_currency){
     if($actPrice != '' && $actPrice != undefined){
         //$parse = explode(".", $actPrice);
         $parse = $actPrice.split(".");
+/*        console.log($parse[0]);
+        console.log($parse[1]);*/
 
-        if($current_currency.indexOf("INR") !== false){
+        if($current_currency !== "INR"){
             $price = $parse[0];
             $priceLength = $price.length;
+            //console.log($price);
                     
             switch ($priceLength) {
                 case 1: 
@@ -428,6 +440,7 @@ function roundToNineNine($actPrice, $current_currency){
                 case 2: 
                     //$newPrice = substr($price, 0, -2) . '99';
                     $newPrice = $price.substring(0, -2) + '99';
+                    
                     break;
                 default:
                     //$newPrice = substr($price, 0, -2) . '99';

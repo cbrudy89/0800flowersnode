@@ -25,7 +25,7 @@ function Config() {
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
       host: 'smtp.gmail.com',
-      secure: 'tls',
+      secure: 'ssl',
       port: '465',
       auth: {
           user: 'apptestmobikasa@gmail.com',
