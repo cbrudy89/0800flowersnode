@@ -12,11 +12,11 @@ function CollectionController() {
   // Collection page data
   this.collections  = function(req, res) {
       var return_data = {};
-      var delivery_country_id = req.params.delivery_country_id;
-      var province_id = req.params.delivery_province_id;
-      var language_id = req.params.langauge_code;
-      var order_by = req.params.order_by;
-      var page = req.params.page;
+      var delivery_country_id = req.body.delivery_country_id;
+      var province_id = req.body.delivery_province_id;
+      var language_id = req.body.langauge_code;
+      var order_by = req.body.order_by;
+      var page = req.body.page;
 
       //This functions will be executed at the same time
       async.parallel([
@@ -81,7 +81,7 @@ function CollectionController() {
             countSql += "vendor.status = 1";
             countSql += " AND ";
             countSql += "location_product.country_id = '"+delivery_country_id+"'";
-            if(province_id != undefined){
+            if(province_id != undefined && province_id != '' ){
                countSql += " AND ";
                countSql += "location_product.province_id = '"+province_id+"'";                  
             }
@@ -119,7 +119,7 @@ function CollectionController() {
             queryString += "vendor.status = 1";
             queryString += " AND ";
             queryString += "location_product.country_id = '"+delivery_country_id+"'";
-            if(province_id != undefined){
+            if(province_id != undefined && province_id != '' ){
                queryString += " AND ";
                queryString += "location_product.province_id = '"+province_id+"'";                  
             }
@@ -211,7 +211,7 @@ function CollectionController() {
             
             var sql = "SELECT `flower_types`.`id`, `flower_types`.`flower_type` FROM `products` INNER JOIN `flower_type_product` on `products`.`id` = `flower_type_product`.`product_id` INNER JOIN `flower_types` on `flower_types`.`id` = `flower_type_product`.`flower_type_id` INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id` WHERE `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
             sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-            if(province_id != undefined){
+            if(province_id != undefined && province_id != '' ){
                sql += " AND ";
                sql += "location_product.province_id = '"+province_id+"'";                  
             }
@@ -230,7 +230,7 @@ function CollectionController() {
             var sql = "select `occasions`.`id`, `occasions`.`occasion_name` from `products` inner join `occasion_product` on `products`.`id` = `occasion_product`.`product_id` inner join `occasions` on `occasions`.`id` = `occasion_product`.`occasion_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `occasion_country` on `occasions`.`id` = `occasion_country`.`occasion_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1 and `occasions`.`collection_filter` = 1";
             sql += " AND `location_product`.`country_id` = "+delivery_country_id;
             sql += " AND `occasion_country`.`country_id` = "+delivery_country_id;
-            if(province_id != undefined){
+            if(province_id != undefined && province_id != '' ){
                sql += " AND ";
                sql += "location_product.province_id = '"+province_id+"'";                  
             }
@@ -249,7 +249,7 @@ function CollectionController() {
             var sql = "SELECT `sympathy_types`.`id`, `sympathy_types`.`sympathy_type` FROM `products` inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id` inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
             sql += " AND `location_product`.`country_id` = "+delivery_country_id;
             
-            if(province_id != undefined){
+            if(province_id != undefined && province_id != '' ){
                sql += " AND ";
                sql += "location_product.province_id = '"+province_id+"'";                  
             }
@@ -277,7 +277,7 @@ function CollectionController() {
               var sql = "select count(*) as aggregate from `products` inner join `methods` on `methods`.`id` = `products`.`delivery_method_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
                 sql += " AND `methods`.`delivery_within` = "+today;
                 sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-                if(province_id != undefined){
+                if(province_id != undefined && province_id != '' ){
                    sql += " AND ";
                    sql += "location_product.province_id = '"+province_id+"'";                  
                 }
@@ -299,7 +299,7 @@ function CollectionController() {
                 var sql = "select count(*) as aggregate from `products` inner join `methods` on `methods`.`id` = `products`.`delivery_method_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
                 sql += " AND `methods`.`delivery_within` = "+tomorrow;
                 sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-                if(province_id != undefined){
+                if(province_id != undefined && province_id != '' ){
                    sql += " AND ";
                    sql += "location_product.province_id = '"+province_id+"'";                  
                 }
