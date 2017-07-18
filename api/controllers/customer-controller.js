@@ -112,7 +112,7 @@ function UserController() {
 
                               var htmlToSend = template(replacements);
                               var mailOptions = {
-                                  from: 'dinesh@mobikasa.com',
+                                  from: config.ADMIN_FROM_EMAIL,
                                   to : email,
                                   subject : 'Welcome to 18FInternational',
                                   html : htmlToSend
@@ -299,7 +299,7 @@ function UserController() {
 
                       var htmlToSend = template(replacements);
                       var mailOptions = {
-                          from: 'dinesh@mobikasa.com',
+                          from: config.ADMIN_FROM_EMAIL,
                           to : email,
                           subject : 'Reset Password.',
                           html : htmlToSend

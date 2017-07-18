@@ -24,13 +24,13 @@ function Config() {
 
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
-      host: 'smtp.gmail.com',
-      secure: 'ssl',
-      port: '465',
-      auth: {
-          user: 'apptestmobikasa@gmail.com',
-          pass: '12345@9876'
-      }
+host: 'email-smtp.us-west-2.amazonaws.com',
+//        secure: 'tls',
+        port: '587',
+        auth: {
+            user: 'AKIAIKYWOZ4XZNQU4PYA',
+            pass: 'AmIuONqgAtBSs97LPOGYoAfPcWG8FcsDbEuLI5NACw9K'
+        }
   }));
 
   this.SITE_LANGUAGE = 1; // For english
