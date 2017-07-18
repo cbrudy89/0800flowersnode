@@ -599,7 +599,7 @@ function AdminController() {
 
                   var htmlToSend = template(replacements);
                   var mailOptions = {
-                      from: 'dinesh@mobikasa.com',
+                      from: config.ADMIN_FROM_EMAIL,
                       to : email,
                       subject : 'Your password reset link to change password.',
                       html : htmlToSend
