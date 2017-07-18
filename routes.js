@@ -226,9 +226,14 @@ module.exports = {
     
     /************************* Collection Page Routes ************************/
     // Load all home page data.
+    app.get('/collection_promotion/:langauge_code/:delivery_country_id', function(req, res){
+        collectionController.collection_promotion(req, res);
+    }); 
+
     app.post('/collections', function(req, res){
         collectionController.collections(req, res);
-    });  
+    });
+
     /************************* END of Collection Page ************************/    
          
     /********************* Customer Routes ************************/
