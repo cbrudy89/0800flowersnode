@@ -24,29 +24,6 @@ function UserController() {
     var password = req.body.password;
     var confirm_password = req.body.confirm_password;
 
-   /* var error = 0;
-    var errors = {};
-
-    if(email !== confirm_email){
-        errors['confirm_email'] = 'Please enter same email as above.';
-        error = 1;
-    }
-
-    if(password !== confirm_password){
-        errors['confirm_password'] = 'Please enter same password as above.';
-        error = 1;
-    }
-
-    if(error == 1){
-      res.status(config.HTTP_BAD_REQUEST).send({
-        status: config.ERROR,
-        code : config.HTTP_BAD_REQUEST, 
-        message: "Validation errors!",
-        errors: errors
-      });  
-      return false;    
-    }*/
-
     connection.acquire(function(err, con) {
       bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {
         if (err) {
@@ -477,6 +454,68 @@ function UserController() {
       }
     });    
     
+  }
+
+  // Customer Feedback
+  this.feedback = function(req, res){
+
+    var first_name=req.body.first_name;
+    var last_name=req.body.last_name;
+    var email=req.body.email;
+    var phone_number=req.body.phone_number;
+    var subject=req.body.subject;
+    var order_confirmation_no=req.body.order_confirmation_no;
+    var order_date=req.body.order_date;
+    var recipient_first_name=req.body.recipient_first_name;
+    var recipient_last_name=req.body.recipient_last_name;    
+    var comment=req.body.comment;
+
+    /*smtpTransport = config.SMTP_TRANSPORT;
+
+    // Send password reset email with verification link.
+    fs.readFile(config.PROJECT_DIR + '/templates/resetpassword.html', {encoding: 'utf-8'}, function (err, html) {
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+            status: config.ERROR, 
+            code : config.HTTP_SERVER_ERROR,          
+            message: "Unable to process request!"
+        });
+      } else {
+          
+        //console.log(smtpTransport);
+        var template = handlebars.compile(html);
+        var replacements = {
+             userName: results[0].first_name,
+             verification_link : config.SITE_URL+"/forgetpassword/"+confirmation_code,
+        };
+
+        var htmlToSend = template(replacements);
+        var mailOptions = {
+            from: 'dinesh@mobikasa.com',
+            to : email,
+            subject : 'Reset Password.',
+            html : htmlToSend
+         };
+      
+        smtpTransport.sendMail(mailOptions, function (error, response) {
+          if (error) {
+              console.log(error);
+              res.status(config.HTTP_SERVER_ERROR).send({
+                  status: config.ERROR, 
+                  code : config.HTTP_SERVER_ERROR,          
+                  message: "Unable to process request!",
+              });                                
+          }else{
+
+            res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS, 
+              code : config.HTTP_SUCCESS, 
+              message: "Reset password link sent to your email.Please check and reset your password!"
+            });
+          }
+        });
+      }*/
+
   }
 
 }

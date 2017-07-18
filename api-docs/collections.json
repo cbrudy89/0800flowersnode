@@ -1,0 +1,192 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Collection page APIs",
+      "description":"All APIs related to the Collection Page",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Collection",
+         "description":"API for Collection Pgae"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/collections":{
+         "post":{
+            "tags":[
+               "Collections"
+            ],
+            "description":"List all products with product filters",
+            "operationId":"collections",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"delivery_country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type": "integer"
+               },
+               {
+                  "name":"delivery_province_id",
+                  "in":"formData",
+                  "description":"Country province Id",
+                  "required":false,
+                  "type": "integer"
+               },
+               {
+                  "name":"langauge_code",
+                  "in":"formData",
+                  "description":"Language Id",
+                  "required":true,
+                  "type": "integer"
+               },
+               {
+                  "name":"currency_id",
+                  "in":"formData",
+                  "description":"Curent selected currency Id",
+                  "required":false,
+                  "type": "integer"
+               },
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number",
+                  "required":true,
+                  "type": "integer"
+               },
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Limit to show no of products",
+                  "required":true,
+                  "type": "integer"
+               }, 
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"For Sorting products (Default : default)",
+                  "required":true,
+                  "type": "string"
+               },
+               {
+                  "name":"filter_keyword",
+                  "in":"formData",
+                  "description":"Product name to search for.",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"delivery_methods",
+                  "in":"formData",
+                  "description":"Delivery methods",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"price",
+                  "in":"formData",
+                  "description":"Price range selected",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"occasions",
+                  "in":"formData",
+                  "description":"Occasions to be used for filter",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"sympathy",
+                  "in":"formData",
+                  "description":"Sympathy",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"colors",
+                  "in":"formData",
+                  "description":"Colors filter",
+                  "required":false,
+                  "type": "string"
+               },
+               {
+                  "name":"flower_types",
+                  "in":"formData",
+                  "description":"Flower type filter",
+                  "required":false,
+                  "type": "string"
+               }                                                                             
+               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found!",
+                  "schema":{
+                      "$ref":"#/definitions/200collections"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500collections"
+                  }
+               }               
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200collections":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "token":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },  
+      "500collections":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }
+   }
+}

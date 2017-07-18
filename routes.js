@@ -226,7 +226,7 @@ module.exports = {
     
     /************************* Collection Page Routes ************************/
     // Load all home page data.
-    app.get('/collections/:langauge_code/:delivery_country_id/:order_by', function(req, res){
+    app.post('/collections', function(req, res){
         collectionController.collections(req, res);
     });  
     /************************* END of Collection Page ************************/    
@@ -255,6 +255,11 @@ module.exports = {
     app.put('/customer/resetPassword', validate(customerValidation.resetPassword), function(req, res) {
         customerController.resetPassword(req, res);
     });
+
+    // Customer Feedback
+    app.post('/feedback', validate(customerValidation.feedback), function(req, res) {
+        customerController.feedback(req, res);
+    });    
 
     /************************* END of Customer *****************/
 

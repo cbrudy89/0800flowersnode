@@ -4,6 +4,7 @@ var async = require('async');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
+var commonModel = require('./../helpers/common-helper');
 
 function HomeController() {
 
@@ -149,10 +150,10 @@ function HomeController() {
       } else {
         if(results.length > 0 && results[0].id > 0){
           
-          res.status(config.HTTP_ALREADY_EXISTS).send({
-            status: config.ERROR, 
-            code : config.HTTP_ALREADY_EXISTS, 
-            message: "This email address is already registered."
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message: "Thankyou for registering with us."
           });
 
         }else{
@@ -222,6 +223,17 @@ function HomeController() {
 
       //This functions will be executed at the same time
       async.parallel([
+          function topbanner(callback){
+             commonModel.getPromoBanner(language_id, 'home', function(err, result) {
+                 if (err) return callback(err);
+                 else {
+                    if(result.length > 0 && result[0].description != ''){
+                      return_data.topbanner = result[0].description;
+                    }
+                    callback();                      
+                 }
+              });
+          },        
           function currencies(callback){
 
               dbModel.find('currency','id,currency_code,symbol,currency_name,default_currency', 'status=1', '', '', function(err, result) {
