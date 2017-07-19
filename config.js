@@ -24,13 +24,13 @@ function Config() {
 
 
   this.SMTP_TRANSPORT = nodemailer.createTransport(smtpTransport({
-      host: 'email-smtp.us-west-2.amazonaws.com',
-    //  secure: 'ssl',
-      port: '587',
-      auth: {
-          user: 'AKIAIKYWOZ4XZNQU4PYA',
-          pass: 'AmIuONqgAtBSs97LPOGYoAfPcWG8FcsDbEuLI5NACw9K'
-      }
+host: 'email-smtp.us-west-2.amazonaws.com',
+//        secure: 'tls',
+        port: '587',
+        auth: {
+            user: 'AKIAIKYWOZ4XZNQU4PYA',
+            pass: 'AmIuONqgAtBSs97LPOGYoAfPcWG8FcsDbEuLI5NACw9K'
+        }
   }));
 
   this.SITE_LANGUAGE = 1; // For english

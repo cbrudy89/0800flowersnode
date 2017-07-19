@@ -23,6 +23,51 @@
       "application/json"
    ],
    "paths":{
+      "/collection_promotion/{langauge_code}/{delivery_country_id}":{
+         "get":{
+            "tags":[
+               "Collections"
+            ],
+            "description":"List of Promotional offer displaying in collection page",
+            "operationId":"collection_promotion",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"langauge_code",
+                     "in":"path",
+                     "description":"Current language code",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"delivery_country_id",
+                     "in":"path",
+                     "description":"Current country id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               }                                                                           
+               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found!",
+                  "schema":{
+                      "$ref":"#/definitions/200collection_promotion"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500collection_promotion"
+                  }
+               }               
+            }
+         }
+      },      
       "/collections":{
          "post":{
             "tags":[
@@ -37,9 +82,10 @@
                {
                   "name":"delivery_country_id",
                   "in":"formData",
-                  "description":"Country Id",
+                  "description":"Country Id ( 4 for Canada)",
                   "required":true,
-                  "type": "integer"
+                  "type": "integer",
+                  "default": 4
                },
                {
                   "name":"delivery_province_id",
@@ -51,37 +97,42 @@
                {
                   "name":"langauge_code",
                   "in":"formData",
-                  "description":"Language Id",
+                  "description":"Language Id ( 1 For English)",
                   "required":true,
-                  "type": "integer"
+                  "type": "integer",
+                  "default": 1
                },
                {
                   "name":"currency_id",
                   "in":"formData",
                   "description":"Curent selected currency Id",
-                  "required":false,
-                  "type": "integer"
+                  "required":true,
+                  "type": "integer",
+                  "default": 1
                },
                {
                   "name":"page",
                   "in":"formData",
                   "description":"Page number",
                   "required":true,
-                  "type": "integer"
+                  "type": "integer",
+                  "default": 1
                },
                {
                   "name":"limit",
                   "in":"formData",
                   "description":"Limit to show no of products",
                   "required":true,
-                  "type": "integer"
+                  "type": "integer",
+                  "default": 30
                }, 
                {
                   "name":"order_by",
                   "in":"formData",
                   "description":"For Sorting products (Default : default)",
                   "required":true,
-                  "type": "string"
+                  "type": "string",
+                  "default": "default"
                },
                {
                   "name":"filter_keyword",
@@ -187,6 +238,42 @@
                "example":"Unable to process request, Please try again!"
             }
          }
-      }
+      },
+      "200collection_promotion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "token":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },  
+      "500collection_promotion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }      
    }
 }

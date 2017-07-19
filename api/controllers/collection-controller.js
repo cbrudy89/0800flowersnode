@@ -10,53 +10,95 @@ var commonModel = require('./../helpers/common-helper');
 
 function CollectionController() {
   // Collection page data
+  this.collection_promotion = function(req, res){
+
+    var return_data = {};
+    var delivery_country_id = req.params.delivery_country_id;
+    var province_id = req.params.delivery_province_id;
+    var language_id = req.params.langauge_code;
+
+    //This functions will be executed at the same time
+    async.parallel([
+      function topbanner(callback){
+         commonModel.getPromoBanner(language_id, 'collections', function(err, result) {
+             if (err) return callback(err);
+             else {
+                if(result.length > 0 && result[0].description != ''){
+                  return_data.topbanner = result[0].description;
+                  callback();                      
+                }
+             }
+          });
+      },
+      function upcomingoccasion(callback){
+        var date = new Date();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var upcomings_data = [];
+        var upcomings = "SELECT occasion_name,occasion_day,occasion_month FROM `occasions` INNER JOIN `occasion_country` ON(`occasions`.`id` = `occasion_country`.`occasion_id`) WHERE `occasion_country`.`country_id` = '"+delivery_country_id+"' AND `occasion_status` = 1 AND `i_mark` = 1 AND `occasion_month` >= '"+month+"' ORDER BY `occasion_month` ASC, `occasion_day` ASC LIMIT 3";
+        dbModel.rawQuery(upcomings, function(err, result) {
+          if (err) return callback(err);
+          else{
+            if(result.length > 0){
+              for ( var i=0 ; i < result.length; i++) {
+                  if(result[0].occasion_month>=month){
+                    if(result[0].occasion_month==month && result[0].occasion_day>day){
+                           upcomings_data.push(result);
+                        }else if(result[0].occasion_month>month){
+                           upcomings_data.push(result);
+                        }
+                  }
+               } 
+             return_data.upcomingoccasion = upcomings_data;
+            }
+             return_data.upcomingoccasion = result;
+             callback();
+          }
+        });
+      },
+      function homeoffer(callback){
+          dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
+            if (err) return callback(err);
+            else {
+              return_data.home_offer = result;
+              callback();
+            }
+          });
+
+      }     
+    ], function (err, result) {
+
+        if (err) {
+            res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to process request, Please try again!",
+                err: err
+            }); 
+        }else{
+          res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS, 
+              code : config.HTTP_SUCCESS, 
+              message: 'Record found!',
+              result : return_data
+          });           
+        }
+    });
+
+  }
+
   this.collections  = function(req, res) {
       var return_data = {};
       var delivery_country_id = req.body.delivery_country_id;
       var province_id = req.body.delivery_province_id;
       var language_id = req.body.langauge_code;
+      var currency_id = req.body.currency_id;
+
       var order_by = req.body.order_by;
       var page = req.body.page;
 
       //This functions will be executed at the same time
       async.parallel([
-          function topbanner(callback){
-             commonModel.getPromoBanner(language_id, 'collections', function(err, result) {
-                 if (err) return callback(err);
-                 else {
-                    if(result.length > 0 && result[0].description != ''){
-                      return_data.topbanner = result[0].description;
-                      callback();                      
-                    }
-                 }
-              });
-          },
-          function upcomingoccasion(callback){
-            var date = new Date();
-            var month = date.getMonth() + 1;
-            var day = date.getDate();
-            var upcomings_data = [];
-            var upcomings = "SELECT occasion_name,occasion_day,occasion_month FROM `occasions` INNER JOIN `occasion_country` ON(`occasions`.`id` = `occasion_country`.`occasion_id`) WHERE `occasion_country`.`country_id` = '"+delivery_country_id+"' AND `occasion_status` = 1 AND `i_mark` = 1 AND `occasion_month` >= '"+month+"' ORDER BY `occasion_month` ASC, `occasion_day` ASC LIMIT 3";
-            dbModel.rawQuery(upcomings, function(err, result) {
-              if (err) return callback(err);
-              else{
-                if(result.length > 0){
-                  for ( var i=0 ; i < result.length; i++) {
-                      if(result[0].occasion_month>=month){
-                        if(result[0].occasion_month==month && result[0].occasion_day>day){
-                               upcomings_data.push(result);
-                            }else if(result[0].occasion_month>month){
-                               upcomings_data.push(result);
-                            }
-                      }
-                   } 
-                 return_data.upcomingoccasion = upcomings_data;
-                }
-                 return_data.upcomingoccasion = result;
-                 callback();
-              }
-            });
-          },
           function getProductlistwithcountry(callback){
             
             var products = [];
@@ -129,72 +171,83 @@ function CollectionController() {
             
             //console.log(queryString);
 
-            dbModel.rawQuery(queryString, function(err, result) {
-              if (err) {
-                return callback(err);
-              } else {
+              dbModel.rawQuery(queryString, function(err, result) {
+                if (err) {
+                  return callback(err);
+                } else {
 
-                return_data.getProductlistwithcountry =  result;
+                  return_data.getProductlistwithcountry =  result;
 
-                Sync(function(){
-                  
-                  for ( var i=0 ; i < result.length; i++) {
+                  Sync(function(){
                     
-                      var item = [];                        
-                      item = result[i];
+                    for ( var i=0 ; i < result.length; i++) {
+                      
+                        var item = [];                        
+                        item = result[i];
 
-                      // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context 
+                        // Function.prototype.sync() interface is same as Function.prototype.call() - first argument is 'this' context 
 
-                      //console.log(result[i].product_id);
+                        //console.log(result[i].product_id);
 
-                      var price_data = getproductprices.sync(null, result[i].product_id, delivery_country_id, 0);
+                        var price_data = getproductprices.sync(null, result[i].product_id, delivery_country_id,currency_id, 0);
 
-                      if(price_data != ''){
+                        //console.log(price_data);
 
-                          var $actPrice = number_format((price_data.product_result[0].price_value * price_data.currency_result[0].exchange_rate), 2);
-                          var $compPrice = number_format((price_data.product_result[0].compare_price * price_data.currency_result[0].exchange_rate), 2);
+                        if(price_data != '' && price_data.currency_result.length > 0){
 
-                          //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
-                          var $current_currency = price_data.currency_result[0].currency_code;
+                            var $actPrice = number_format((price_data.product_result[0].price_value * price_data.currency_result[0].exchange_rate), 2);
+                            var $compPrice = number_format((price_data.product_result[0].compare_price * price_data.currency_result[0].exchange_rate), 2);
 
-                          var $currentCurrSymbl = price_data.currency_result[0].symbol;
-                          if($current_currency !== "USD"){ 
-                              $actPrice = roundToNineNine($actPrice, $current_currency);
-                          }
-                          if ($compPrice > $actPrice) {
-                             item.compPrice = $currentCurrSymbl + $compPrice;
-                             item.price = $currentCurrSymbl + $actPrice;
-                          } else {
-                             item.price = $currentCurrSymbl + $actPrice;
-                          }
-                          item.product_name = price_data.product_result[0].price_name;
+                            //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                            var $current_currency = price_data.currency_result[0].currency_code;
 
-                          //console.log(item);
+                            var $currentCurrSymbl = price_data.currency_result[0].symbol;
+                            if($current_currency !== "USD"){ 
+                                $actPrice = roundToNineNine($actPrice, $current_currency);
+                            }
+                            if ($compPrice > $actPrice) {
+                               item.compPrice = $currentCurrSymbl + $compPrice;
+                               item.price = $currentCurrSymbl + $actPrice;
+                            } else {
+                               item.price = $currentCurrSymbl + $actPrice;
+                            }
+                            item.product_name = price_data.product_result[0].price_name;
 
+                            //console.log(item);
+
+                        }else{
+                          //console.log('No price');
+                        }
+
+                        products.push(item);
+                      
                       }
 
-                      products.push(item);
-                    
-                    }
+                     return_data.getProductlistwithcountry =  products;
+                     callback();                        
+                   
+                  });
 
-                   return_data.getProductlistwithcountry =  products;
-                   callback();                        
-                 
-                });
-
-               }
-            });
-          },
-          function homeoffer(callback){
-              dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
-                if (err) return callback(err);
-                else {
-                  return_data.home_offer = result;
-                  callback();
-                }
+                 }
               });
-
           },
+          function getSortBy(callback){
+
+            var orderby = {
+              "default": "Our Favorite",
+              "name-asc": "Name: A to Z",
+              "name-desc": "Name: Z to A",
+              "price-asc": "Price: Low to High",
+              "price-desc": "Price: High to Low",
+            };
+
+            if(orderby !== undefined){
+
+              return_data.orderby = orderby;
+              callback();
+            }
+
+          },          
           function getColorFilterByCountryProvince(callback){
             
             var sql = "SELECT `colors`.`id`, `colors`.`color_name` FROM `products` INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id` INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id` INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id` WHERE `products`.`product_status` = 1 AND `products`.`frontend_show` = 1 and `vendor`.`status` = 1 and `products`.`admin_confirm` = 1 and `location_product`.`country_id` = "+delivery_country_id+" GROUP BY `colors`.`id`";
@@ -356,7 +409,7 @@ function CollectionController() {
   
 }
 
-function getproductprices($product_id = NULL, $country_id = null, $sale = NULL, callback)
+function getproductprices($product_id = null, $country_id = null, $currency_id = null, $sale = null, callback)
 {
     var data = {};
     // Select product price on basis of product id
@@ -375,18 +428,38 @@ function getproductprices($product_id = NULL, $country_id = null, $sale = NULL, 
 
           dbModel.rawQuery(sql, function(err, currency_result) {
             if (err) return callback(err);
-            if (currency_result.length > 0){
+            else if (currency_result.length > 0){
 
                data.product_result = product_result;
                data.currency_result = currency_result;
 
+              //console.log(data);
+
                callback(null, data);
                               
             }else{
-               data.product_result = product_result;
-               data.currency_result = [];
 
-               callback(null, data);              
+              // If Preferred Currency Id not found for selected country then Use selected Currency Rate
+              var $sql = "SELECT * from `currency` WHERE id = "+$currency_id;
+
+              dbModel.rawQuery($sql, function(err, currency_result) {
+                if (err) return callback(err);
+                else if (currency_result.length > 0){
+
+                     data.product_result = product_result;
+                     data.currency_result = currency_result;
+
+                     callback(null, data);
+                                    
+                }else{
+
+                   data.product_result = product_result;
+                   data.currency_result = [];
+
+                   callback(null, data);
+
+                }
+              });
             }
           });
        }
@@ -422,29 +495,44 @@ function number_format (number, decimals, decPoint, thousandsSep) { // eslint-di
 function roundToNineNine($actPrice, $current_currency){ 
     $newPrice = false;
     if($actPrice != '' && $actPrice != undefined){
-        //$parse = explode(".", $actPrice);
         $parse = $actPrice.split(".");
-/*        console.log($parse[0]);
-        console.log($parse[1]);*/
 
-        if($current_currency !== "INR"){
+        if($current_currency === "INR"){
             $price = $parse[0];
             $priceLength = $price.length;
-            //console.log($price);
                     
             switch ($priceLength) {
                 case 1: 
-                    //$newPrice = substr($price, 0, -1) . '9';
-                    $newPrice = $price.substring(0, -1) + '9';
-                    break;
-                case 2: 
-                    //$newPrice = substr($price, 0, -2) . '99';
-                    $newPrice = $price.substring(0, -2) + '99';
+                    $newPrice = $price.substring(0, 1) + '9';
                     
                     break;
-                default:
-                    //$newPrice = substr($price, 0, -2) . '99';
-                    $newPrice = $price.substring(0, -2) + '99';
+                case 2: 
+                    $newPrice = $price.substring(0, 2) + '99';
+                    
+                    break;                    
+                case 3: 
+                    $newPrice = $price.substring(0, 1) + '99'; // Below 999
+                    
+                    break;
+                case 4: 
+                    $newPrice = $price.substring(0, 2) + '99'; // For 1000 or < 9999
+                    
+                    break;                    
+
+                case 5: 
+                      $newPrice = $price.substring(0, 3) + '99'; // For 1,000/10000 or < 9,999
+                    
+                    break;
+                case 6: 
+                    $newPrice = $price.substring(0, 4) + '99'; // For 10,000/100000
+                    
+                    break;
+                case 7: 
+                    $newPrice = $price.substring(0, 5) + '99'; // For 1000000
+                    break;
+
+                case 8: 
+                    $newPrice = $price.substring(0, 6) + '99'; // For 1,00,000/10000000
                     break;
             }
         }else{ 
