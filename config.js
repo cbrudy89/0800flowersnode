@@ -43,7 +43,8 @@ function Config() {
   this.ZIPCODE_LENGHT = [0,1,2,3,4,5,6,7,8,9,10];
   this.ZIPCODE_TYPE = ['None','Numeric','Alphanumeric','Characters'];
   this.ADMIN_EMAIL = 'intlplatdev@gmail.com';
-  this.ADMIN_FROM_EMAIL = 'internationalmarketing@1800flowers.com';
+  //this.ADMIN_FROM_EMAIL = 'internationalmarketing@1800flowers.com';
+  this.ADMIN_FROM_EMAIL = 'devlopers@mobikasa.com';
 
   this.atlas_order = {
           /************************
