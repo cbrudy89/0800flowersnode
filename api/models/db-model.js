@@ -3,8 +3,8 @@ var connection = require('./../../database');
 
 function DbModel(){
 	
-	// Get records on the basis of condintion.
-	this.find = function(table = '', field = '', condintion = '', orderBy = '', limit = '' , callback) {
+	// Get records on the basis of condition.
+	this.find = function(table = '', field = '', condition = '', orderBy = '', limit = '' , callback) {
 		connection.acquire(function(err, con) {
 			if (err) {
 				callback(err);
@@ -24,15 +24,15 @@ function DbModel(){
 					}
 
 				
-					if(condintion != ''){
+					if(condition != ''){
 						
-						var len = condintion.length;
+						var len = condition.length;
 						var i = 1;
 
-						if(typeof condintion === 'object' && condintion instanceof Array){
+						if(typeof condition === 'object' && condition instanceof Array){
 
 							sql += " WHERE ";
-							condintion.forEach(function(item, index){
+							condition.forEach(function(item, index){
 
 								for( var key in item ) {
 									sql += key + item[key].cond + "'"+item[key].val+"'";
@@ -46,7 +46,7 @@ function DbModel(){
 							});
 
 						}else{
-							sql += " WHERE "+condintion;
+							sql += " WHERE "+condition;
 						}
 					}
 
@@ -139,7 +139,7 @@ function DbModel(){
 	}
 
 	// Delete record in table
-	this.delete = function(table, condintion = '', callback) {
+	this.delete = function(table, condition = '', callback) {
 		connection.acquire(function(err, con) {
 			if (err) {
 				callback(err);
@@ -152,16 +152,16 @@ function DbModel(){
 
 					var sql = "DELETE FROM "+table;
 				
-					if(condintion != ''){
+					if(condition != ''){
 						
-						var len = condintion.length;
+						var len = condition.length;
 						var i = 1;
 
-						//if(condintion.length > 1){
-						if(typeof condintion === 'object' && condintion instanceof Array){							
+						//if(condition.length > 1){
+						if(typeof condition === 'object' && condition instanceof Array){							
 
 							sql += " WHERE ";
-							condintion.forEach(function(item, index){
+							condition.forEach(function(item, index){
 
 								for( var key in item ) {
 									sql += key + item[key].cond + "'"+item[key].val+"'";
@@ -175,7 +175,7 @@ function DbModel(){
 							});
 
 						}else{
-							sql += 'WHERE '+condintion;
+							sql += 'WHERE '+condition;
 						}
 					}
 
