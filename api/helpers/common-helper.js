@@ -71,7 +71,7 @@ function CommonHelper(){
 
 	}
 
-	this.checkCalSurcharge = function($date, $vendor_id, $country_id, $product_id){
+	/*this.checkCalSurcharge = function($date, $vendor_id, $country_id, $product_id){
 
 	    var sql = "SELECT description FROM `snipes` inner join `snipe_language` on `snipes`.`id` = `snipe_language`.`snipe_id` WHERE (`snipes`.`type` = '"+type+"' and `snipes`.`status` = 1 and `snipe_language`.`language_id` = "+language_id+") order by RAND() limit 1";
 	    //console.log(sql);
@@ -82,7 +82,7 @@ function CommonHelper(){
 	        }
 	    });
 
-	}
+	}*/
 
 
 	/*this.getproductlanguage =function ($product_id = NULL, $language = NULL, $field = 'product_name')
