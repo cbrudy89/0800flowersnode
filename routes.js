@@ -267,7 +267,7 @@ module.exports = {
     });  
 
      // Update Profile
-    app.post('/updateProfile', validate(customerValidation.updateProfile), function(req, res) {
+    app.post('/customer/updateProfile', validate(customerValidation.updateProfile), function(req, res) {
         customerController.updateProfile(req, res);
     });  
 
@@ -281,7 +281,7 @@ module.exports = {
         orderTrackingController.trackOrder(req, res);
     });
     /*fetch order history for the specific user*/
-     app.post('/orderhistory',  function(req, res) {
+     app.post('/orderhistory', authenticateController.isAuthenticated,  function(req, res) {
         orderTrackingController.orderHistory(req, res);
     });
      /*end for the user realted data*/

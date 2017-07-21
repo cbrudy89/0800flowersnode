@@ -40,7 +40,15 @@
                      "description":"User id to fetc the orders for the same customer",
                      "required":true,
                      "type":"integer"
-                  }          
+                  }, 
+                  {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"Token get on login api response",
+                     "required":true,
+                     "type":"string"
+                  }    
+
                ],
                "responses":{
                   "200":{
