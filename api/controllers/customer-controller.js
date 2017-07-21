@@ -11,6 +11,7 @@ var connection = require('./../../database');
 //var userHelper = require('./../helpers/user-helper');
 var customerModel = require('./../models/customer-model');
 var notificationModel = require('./../models/admin/notification-model');
+var dbModel = require('./../models/db-model');
 
 function UserController() {
 
@@ -374,6 +375,38 @@ function UserController() {
       }
     });
   }
+    // Update Customer Profile
+  this.updateProfile = function(req, res){
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var user_id = req.body.user_id;
+    //console.log('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE user_id='+ user_id);return;
+    dbModel.rawQuery('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE id='+ user_id, function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        //console.log(results);return;
+        if(results.affectedRows > 0 ){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message : "You have successfully updated the profile."
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Something went wrong please check again.", 
+          });          
+        }
+      }
+    });
+  }
 
   // Reset Password
   this.resetPassword = function(req, res){
@@ -455,6 +488,7 @@ function UserController() {
     });    
     
   }
+
 
   // Customer Feedback
   this.feedback = function(req, res){

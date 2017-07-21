@@ -264,7 +264,14 @@ module.exports = {
     // Customer Feedback
     app.post('/feedback', validate(customerValidation.feedback), function(req, res) {
         customerController.feedback(req, res);
-    });    
+    });  
+
+     // Update Profile
+    app.post('/customer/updateProfile', validate(customerValidation.updateProfile), function(req, res) {
+        customerController.updateProfile(req, res);
+    });  
+
+    
 
     /************************* END of Customer *****************/
 
@@ -273,6 +280,11 @@ module.exports = {
     app.post('/trackOrder', validate(orderTrackingValidation.trackOrder), function(req, res) {
         orderTrackingController.trackOrder(req, res);
     });
+    /*fetch order history for the specific user*/
+     app.post('/orderhistory', authenticateController.isAuthenticated,  function(req, res) {
+        orderTrackingController.orderHistory(req, res);
+    });
+     /*end for the user realted data*/
 
     /************************* Order Tracking End ***************/
 
