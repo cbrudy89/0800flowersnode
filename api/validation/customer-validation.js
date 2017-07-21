@@ -28,6 +28,13 @@ module.exports = {
 	    confirmation_code: Joi.string().required()
 	  }  
   },
+  updateProfile: {
+	  body: {
+	    first_name: Joi.string().required(),
+	    last_name: Joi.string().required(),
+	    user_id: Joi.string().required()
+	  }  
+  },
   resetPassword: {
 	  body: {
 	    confirmation_code: Joi.string().required(),

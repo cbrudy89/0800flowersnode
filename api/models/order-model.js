@@ -18,6 +18,7 @@ function OrderModel(){
 		});	
 	}
 
+
 	// Get Atalas order Status
 	this.getOrderStatus = function(order_number, callback){
 
@@ -135,6 +136,24 @@ function OrderModel(){
 			}
 			else {					
 				con.query('UPDATE customers SET ? WHERE id = ?', [data, id], function (err, results) {
+		          	if (err) {
+		          		callback(err);
+		          	}else{
+		          		callback(null, results);
+		          	}
+		          	con.release();
+		      	});
+			}
+		});
+	}
+	this.fetchUserOrders = function(data, id, callback) {
+		connection.acquire(function(err, con) {
+			if (err) {
+				callback(err);
+			}
+			else {		
+				console.log("dfdf");return false;			
+				con.query('Select * FROM orders WHERE user_id = ?', [user_id], function (err, results) {
 		          	if (err) {
 		          		callback(err);
 		          	}else{
