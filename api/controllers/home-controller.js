@@ -286,7 +286,7 @@ function HomeController() {
             var country = [];
             
 
-              dbModel.rawQuery("SELECT id, country_name, CONCAT(country_name,',',country_alias) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, redirect_url, CONCAT(country_name,',',country_alias) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){
@@ -311,6 +311,7 @@ function HomeController() {
                               iso_code = countries[i].iso_code;
                               country_flag = countries[i].country_flag;
                               show_state = countries[i].show_state;
+                              redirect_url = countries[i].redirect_url;
 
 
                                 for ( var j=0 ; j < provinces.length; j++) {
@@ -335,7 +336,8 @@ function HomeController() {
                                   "iso_code": iso_code, 
                                   "country_flag": country_flag, 
                                   "show_state": show_state, 
-                                  "provinces": province
+                                  "provinces": province,
+                                  "redirect_url":redirect_url
                                 });
                             } 
 
