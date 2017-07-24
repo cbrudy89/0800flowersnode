@@ -117,9 +117,15 @@ function CollectionController() {
       if (page == undefined || page == '') {
          page = 1;
       }
+
+      var start = 0;
     
 
     Sync(function(){
+
+      if(page >1){
+        start = (page - 1) * limit;
+      }       
 
       // Getting Currency Details from current country
       var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
@@ -130,7 +136,7 @@ function CollectionController() {
         "language_id": language_id,
         "currency_id": $currency_details[0].id,
         "exchange_rate": $currency_details[0].exchange_rate,
-        "page": page,
+        "start": start,
         "limit": limit,
         "order_by":order_by,
         "filter_keyword": filter_keyword,
@@ -143,23 +149,86 @@ function CollectionController() {
         "mixed_bouquet_types": mixed_bouquet_types
       };
 
-      //var $result = getProductFilterList.sync(null, $data);
-      var $result = getProductlistwithfilters.sync(null, reqData, 30);
-      var product_ids = getProductIds.sync(null, $result);
-      var $colors = getColorFilterByCountryProvince.sync(null, delivery_country_id, product_ids);
-      var $flowers = getFlowerTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids);
-      var $occasions = getOccasionsFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids);
-      var $sympathy = getSympathyTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids);
-
-      var $orless_andabove = language.sync(null, language_id, "'andabove','orless'");
-      var $priceFilter = getPriceFilter.sync(null, $orless_andabove, $currency_details, $result);
+      var $result = getProductlistwithfilters.sync(null, reqData, false);
       
+      if($result.length <= 0){
 
-      var $sameday = getDeliveryMethodFilterByCountryProvince.sync(null, 0, delivery_country_id, province_id);
-      var $nextday = getDeliveryMethodFilterByCountryProvince.sync(null, 1, delivery_country_id, province_id);
-      var $delivery = getDeliveryFilters.sync(null, $sameday, $nextday);
+        
+        var final_data  = {
+          "page": 0,
+          "productList": [],
+          "filter_productdeliverymethod": [],
+          "filter_productprice": [],
+          "filter_productcolor": [],
+          "filter_productoccasion": [],
+          "filter_productsympahty": [],
+          "filter_productflowertype": []
+          //"filter_productmixedbouquet": $colors
+        };
 
-      console.log($delivery);
+        res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message: $result.length + " products found",
+            result : final_data
+        });
+
+      }else{
+
+        var $total_products = getProductlistwithfilters.sync(null, reqData, true);
+        var product_ids = getProductIds.sync(null, $result);
+
+        var $colors = getColorFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
+        var $flowers = getFlowerTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids,language_id);
+        var $occasions = getOccasionsFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
+        var $sympathy = getSympathyTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
+
+        //console.log($colors);
+
+        // Translating Text for Price filter on basis of key
+        var $orless_andabove = language.sync(null, language_id, "'andabove','orless'");
+        var $priceFilter = getPriceFilter.sync(null, $orless_andabove, $currency_details, $result);
+
+        //console.log($priceFilter);
+        
+        // Translating Text for delivery filter on basis of key
+        var $delivery_translation = language.sync(null, language_id, "'candeliver','delivertom'");
+        var $delivery = getDeliveryFilters.sync(null, $result, $delivery_translation);
+
+        //console.log($total_products.length);
+
+        if($total_products.length > limit*page){
+          page = parseInt(page)+1;
+        }else{
+          page = "";
+        }
+
+
+        var final_data  = {
+          "page": page,
+          "productList": $result,
+          "filter_productdeliverymethod": $delivery,
+          "filter_productprice": $priceFilter,
+          "filter_productcolor": $colors,
+          "filter_productoccasion": $occasions,
+          "filter_productsympahty": $sympathy,
+          "filter_productflowertype": $flowers
+          //"filter_productmixedbouquet": $colors
+        };
+
+        res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message: $result.length + " products found out of "+$total_products.length,
+            result : final_data
+        });
+
+        
+      }
+
+
+      //console.log($result);
+
 
       /*$productList = $result['product_list'];
       $total_pages = $result['total_pages'];
@@ -196,46 +265,6 @@ function CollectionController() {
     return $currentCurrSymbl . $newPrice;
 }*/
 
-function getDeliveryFilters($sameday, $nextday, callback){
-
-    if($sameday > 0){
-
-      callback(null, '{"0": "Can deliver today"}');
-
-    }else if($nextday > 0){
-
-      callback(null, '{"1": "Deliver tomorrow"}');      
-
-    }else if($sameday > 0 && $nextday > 0) {
-   
-      callback(null, '{"0": "Can deliver today","1": "Deliver tomorrow"}');  
-
-    } else{
-      callback(null);
-    }   
-
-}
-
-function getDeliveryMethodFilterByCountryProvince(day, delivery_country_id, province_id, callback){
-
-  var sql = "select count(*) as aggregate from `products` inner join `methods` on `methods`.`id` = `products`.`delivery_method_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
-    sql += " AND `methods`.`delivery_within` = "+day;
-    sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-    if(province_id != undefined && province_id != '' ){
-       sql += " AND ";
-       sql += "location_product.province_id = '"+province_id+"'";                  
-    }
-    sql += " GROUP BY `methods`.`id`";            
-
-    dbModel.rawQuery(sql, function(err, result) {
-      if (err) return callback(err);
-      else {
-        callback(null, result);
-      }
-    });
-
-}
-
 function language(language_id, lkey, callback){
 
   var sql = "SELECT lt.translated_text FROM language_translation lt INNER JOIN translation t ON(t.id = lt.translation_id) WHERE lt.language_id = "+language_id+" AND t.lkey IN ("+lkey+") ORDER BY lt.translated_text ASC";
@@ -249,6 +278,39 @@ function language(language_id, lkey, callback){
   });  
 
 }
+
+function getDeliveryFilters($result, $delivery_translation, callback){
+
+    $final_filter = [];
+
+    for(var i =0; i < $result.length; i++){    
+
+      if($result[i].delivery_within == 0)
+      {
+
+        key = 0;
+        value = $delivery_translation[0].translated_text;
+
+      }else {
+        key = 1;
+        value = $delivery_translation[1].translated_text;
+      }
+
+      var dataKey = {};
+      dataKey[key] = value;
+
+      $final_filter.push(dataKey);      
+
+    } 
+
+    // Removing Duplicate from Array Object
+    var myData = $final_filter;
+    $final_filter = Array.from(new Set(myData.map(JSON.stringify))).map(JSON.parse);
+
+    callback(null, $final_filter);
+
+}
+
 
 function getPriceFilter(orless_andabove, currency_details, filter_product_results, callback){
 
@@ -281,16 +343,17 @@ function getPriceFilter(orless_andabove, currency_details, filter_product_result
          $priceshow  = currency_details[0].symbol+$newPrice+" "+orless_andabove[0].translated_text;
 
       }else{
+         var $new_explode_min =  $new_explode_max = '';
 
          $pricearray = $filterPrices[key].split('-');
          $new_explode_min = number_format(($pricearray[0].trim() * currency_details[0].exchange_rate), 2);
          if(currency_details[0].currency_code !== "USD"){ 
-            $new_explode_min = roundToNineNine($newPrice, currency_details[0].currency_code); 
+            $new_explode_min = roundToNineNine($new_explode_min, currency_details[0].currency_code); 
          }
 
          $new_explode_max = number_format(($pricearray[1].trim() * currency_details[0].exchange_rate), 2);
          if(currency_details[0].currency_code !== "USD"){ 
-            $new_explode_max = roundToNineNine($newPrice, currency_details[0].currency_code); 
+            $new_explode_max = roundToNineNine($new_explode_max, currency_details[0].currency_code); 
          }         
 
          $priceshow  = currency_details[0].symbol+$new_explode_min+'-'+currency_details[0].symbol+$new_explode_max; 
@@ -340,15 +403,33 @@ function getProductIds(data, callback){
 
 }
 
-function getColorFilterByCountryProvince(delivery_country_id, product_ids, callback){
-  
-  var sql = "SELECT `colors`.`id`, `colors`.`color_name` FROM `products` INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id` INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id` INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id` WHERE `products`.`product_status` = 1 AND `products`.`frontend_show` = 1 and `vendor`.`status` = 1 and `products`.`admin_confirm` = 1 and `location_product`.`country_id` = "+delivery_country_id;
+function getColorFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  if(product_ids != '' && product_ids != undefined){  
-    sql += " AND `color_product`.`product_id` in ("+product_ids+")";
-  }
+  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name'";
+    sql += " FROM `products`"; 
+    sql += " INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id`"; 
+    sql += " INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id`"; 
+    sql += " INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id`"; 
+    sql += " INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id`"; 
+    sql += " INNER JOIN `translation` ON `translation`.`id` = `colors`.`translation_id`";
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+    sql += " WHERE `products`.`product_status` = 1"; 
+    sql += " AND `products`.`frontend_show` = 1"; 
+    sql += " and `vendor`.`status` = 1"; 
+    sql += " and `products`.`admin_confirm` = 1"; 
+    sql += " and `location_product`.`country_id` = "+delivery_country_id; 
 
-  sql += " GROUP BY `colors`.`id`";
+    if(province_id != undefined && province_id != '' ){
+       sql += " AND location_product.province_id = '"+province_id+"'";
+    } 
+
+    if(product_ids != '' && product_ids != undefined){  
+      sql += " AND `color_product`.`product_id` in ("+product_ids+")";
+    }
+
+    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " GROUP BY `colors`.`id`,`language_translation`.`translated_text`";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";
 
   //console.log(sql);
 
@@ -360,19 +441,35 @@ function getColorFilterByCountryProvince(delivery_country_id, product_ids, callb
     });            
 }
 
-function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids, callback){
+function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
+
+  var sql = "SELECT `flower_types`.`id`, `language_translation`.`translated_text` as 'name'";
+    sql += " FROM `products`"; 
+    sql += " INNER JOIN `flower_type_product` on `products`.`id` = `flower_type_product`.`product_id`"; 
+    sql += " INNER JOIN `flower_types` on `flower_types`.`id` = `flower_type_product`.`flower_type_id`"; 
+    sql += " INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id`"; 
+    sql += " INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id`"; 
+    sql += " INNER JOIN `translation` ON `translation`.`id` = `flower_types`.`translation_id`";
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+    sql += " WHERE `vendor`.`status` = 1"; 
+    sql += " and `products`.`product_status` = 1"; 
+    sql += " and `products`.`frontend_show` = 1"; 
+    sql += " and `products`.`admin_confirm` = 1"; 
+    sql += " AND `location_product`.`country_id` = "+delivery_country_id; 
+    
+    if(province_id != undefined && province_id != '' ){
+       sql += " AND location_product.province_id = '"+province_id+"'";
+    }    
+    
+    if(product_ids != '' && product_ids != undefined){    
+      sql += " AND `flower_type_product`.`product_id` in ("+product_ids+")";
+    }
+
+    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " GROUP BY `flower_types`.`id`,`language_translation`.`translated_text`";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";
   
-  var sql = "SELECT `flower_types`.`id`, `flower_types`.`flower_type` FROM `products` INNER JOIN `flower_type_product` on `products`.`id` = `flower_type_product`.`product_id` INNER JOIN `flower_types` on `flower_types`.`id` = `flower_type_product`.`flower_type_id` INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id` WHERE `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
-  sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-  if(province_id != undefined && province_id != '' ){
-     sql += " AND location_product.province_id = '"+province_id+"'";
-  }
-
-  if(product_ids != '' && product_ids != undefined){    
-    sql += " AND `flower_type_product`.`product_id` in ("+product_ids+")";
-  }
-
-  sql += " GROUP BY `flower_types`.`id`";            
+  //console.log(sql);       
 
   dbModel.rawQuery(sql, function(err, result) {
     if (err) return callback(err);
@@ -382,20 +479,36 @@ function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, 
   }); 
 }
 
-function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, product_ids, callback){
+function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
 
-  var sql = "select `occasions`.`id`, `occasions`.`occasion_name` from `products` inner join `occasion_product` on `products`.`id` = `occasion_product`.`product_id` inner join `occasions` on `occasions`.`id` = `occasion_product`.`occasion_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `occasion_country` on `occasions`.`id` = `occasion_country`.`occasion_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1 and `occasions`.`collection_filter` = 1";
-  sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-  sql += " AND `occasion_country`.`country_id` = "+delivery_country_id;
-  if(province_id != undefined && province_id != '' ){
-     sql += " AND location_product.province_id = '"+province_id+"'";                  
-  }
+  var sql = "select `occasions`.`id`,`language_translation`.`translated_text` as 'name'";
+    sql += " from `products`";
+    sql += " inner join `occasion_product` on `products`.`id` = `occasion_product`.`product_id`";
+    sql += " inner join `occasions` on `occasions`.`id` = `occasion_product`.`occasion_id` ";
+    sql += " inner join `location_product` on `products`.`id` = `location_product`.`product_id`";
+    sql += " inner join `occasion_country` on `occasions`.`id` = `occasion_country`.`occasion_id`";
+    sql += " inner join `vendor` on `vendor`.`id` = `products`.`vendor_id`";
+    sql += " INNER JOIN `translation` ON `translation`.`id` = `occasions`.`translation_id`";
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+    sql += " where `vendor`.`status` = 1";
+    sql += " and `products`.`product_status` = 1";
+    sql += " and `products`.`frontend_show` = 1";
+    sql += " and `products`.`admin_confirm` = 1";
+    sql += " and `occasions`.`collection_filter` = 1";
+    sql += " AND `location_product`.`country_id` = "+delivery_country_id;
+    sql += " AND `occasion_country`.`country_id` = "+delivery_country_id;
+    
+    if(province_id != undefined && province_id != '' ){
+       sql += " AND location_product.province_id = '"+province_id+"'";                  
+    }
 
-  if(product_ids != '' && product_ids != undefined){    
-    sql += " AND `occasion_product`.`product_id` in ("+product_ids+")";
-  }  
+    if(product_ids != '' && product_ids != undefined){    
+      sql += " AND `occasion_product`.`product_id` in ("+product_ids+")";
+    }     
 
-  sql += " GROUP BY `occasions`.`id`";  
+    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " GROUP BY `occasions`.`id`,`language_translation`.`translated_text`";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";
 
   //console.log(sql);
 
@@ -407,20 +520,33 @@ function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, p
   }); 
 }                   
   
-function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids, callback){
+function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  var sql = "SELECT `sympathy_types`.`id`, `sympathy_types`.`sympathy_type` FROM `products` inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id` inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id` inner join `location_product` on `products`.`id` = `location_product`.`product_id` inner join `vendor` on `vendor`.`id` = `products`.`vendor_id` where `vendor`.`status` = 1 and `products`.`product_status` = 1 and `products`.`frontend_show` = 1 and `products`.`admin_confirm` = 1";
-  sql += " AND `location_product`.`country_id` = "+delivery_country_id;
-  
-  if(province_id != undefined && province_id != '' ){
-     sql += " AND location_product.province_id = '"+province_id+"'";
-  }
+  var sql = "SELECT `sympathy_types`.`id`, `language_translation`.`translated_text` as 'name'";
+    sql += " FROM `products`";
+    sql += " inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id`";
+    sql += " inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id`";
+    sql += " inner join `location_product` on `products`.`id` = `location_product`.`product_id`"
+    sql += " inner join `vendor` on `vendor`.`id` = `products`.`vendor_id`";
+    sql += " INNER JOIN `translation` ON `translation`.`id` = `sympathy_types`.`translation_id`"
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`" 
+    sql += " where `vendor`.`status` = 1";
+    sql += " and `products`.`product_status` = 1"
+    sql += " and `products`.`frontend_show` = 1"
+    sql += " and `products`.`admin_confirm` = 1";
+    sql += " AND `location_product`.`country_id` = "+delivery_country_id;
+    
+    if(province_id != undefined && province_id != '' ){
+       sql += " AND location_product.province_id = '"+province_id+"'";
+    }
+    
+    if(product_ids != '' && product_ids != undefined){     
+      sql += " AND `sympathy_type_product`.`product_id` in ("+product_ids+")";
+    }
 
-  if(product_ids != '' && product_ids != undefined){    
-    sql += " AND `sympathy_type_product`.`product_id` in ("+product_ids+")";
-  }    
-
-  sql += " GROUP BY `sympathy_types`.`id`"; 
+    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " GROUP BY `sympathy_types`.`id`,`language_translation`.`translated_text`";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";
 
   //console.log(sql);             
 
@@ -540,17 +666,19 @@ function getCurrencyDetails($currency_id = null, $country_id, callback){
 }*/
 
 
-function getProductlistwithfilters($filters, $item_per_page = 15, callback) {
+function getProductlistwithfilters($filters, $find_total = false, callback) {
 
-    var $sql = "SELECT `products`.`id`, `products`.`product_picture`, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`, `methods`.`delivery_within` FROM `products`";
+    if($find_total == false){
+      
+      var $sql = "SELECT `products`.`id`, `products`.`product_picture`, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`,`methods`.`delivery_within`, (CASE WHEN `methods`.`delivery_within` = 0 THEN 'candeliver' WHEN `methods`.`delivery_within` = 1 THEN 'delivertom' WHEN `methods`.`delivery_within` = 2 THEN 'delivertom' END) AS 'delivery_within_key',`language_product`.`product_name`";
+    }else{
+      var $sql = "SELECT COUNT(*) AS total_products";
+    }
+
+    $sql += " FROM `products`";
     $sql += " INNER JOIN `product_prices` ON `products`.`id` = `product_prices`.`product_id`";
     $sql += " INNER JOIN `location_product` ON `location_product`.`product_id` = `products`.`id`";
-
-    //if($filters.delivery_methods != undefined && $filters.delivery_methods != ''){
-
-      $sql += " INNER JOIN `methods` ON `methods`.`id` = `products`.`delivery_method_id`";
-    //}
-
+    $sql += " INNER JOIN `methods` ON `methods`.`id` = `products`.`delivery_method_id`";
     $sql += " INNER JOIN `vendor` ON `vendor`.`id` = `products`.`vendor_id`";
     $sql += " INNER JOIN `language_product` ON `language_product`.`product_id` = `products`.`id`";
     
@@ -652,21 +780,26 @@ function getProductlistwithfilters($filters, $item_per_page = 15, callback) {
     $sql += " AND `products`.`product_status` = 1";
     $sql += " AND `products`.`admin_confirm` = 1";
     $sql += " AND `products`.`frontend_show` = 1";
-    $sql += " GROUP BY `products`.`id`";
+    $sql += " GROUP BY `products`.`id`,`language_product`.`product_name`";
     
-    if($filters.order_by != undefined && $filters.order_by != ''){
+    if($find_total == false){
+      
+      if($filters.order_by != undefined && $filters.order_by != ''){
 
-        if ($filters.order_by == 'name-asc') {
-            $sql += " ORDER BY `language_product`.`product_name` ASC";
-        } else if($filters.order_by == 'name-desc') {
-            $sql += " ORDER BY `language_product`.`product_name` DESC";
-        } else if($filters.order_by == 'price-asc') {
-            $sql += " ORDER BY `product_prices`.`price_value` ASC";
-        } else if($filters.order_by == 'price-desc') {
-            $sql += " ORDER BY `product_prices`.`price_value` DESC";
-        } else {
-           $sql += " ORDER BY `products`.`frontend_serial_number` ASC";
-        }
+          if ($filters.order_by == 'name-asc') {
+              $sql += " ORDER BY `language_product`.`product_name` ASC";
+          } else if($filters.order_by == 'name-desc') {
+              $sql += " ORDER BY `language_product`.`product_name` DESC";
+          } else if($filters.order_by == 'price-asc') {
+              $sql += " ORDER BY `product_prices`.`price_value` ASC";
+          } else if($filters.order_by == 'price-desc') {
+              $sql += " ORDER BY `product_prices`.`price_value` DESC";
+          } else {
+             $sql += " ORDER BY `products`.`frontend_serial_number` ASC";
+          }
+      }
+
+      $sql += " LIMIT "+$filters.start+","+$filters.limit;
     }
 
     //console.log($sql);
