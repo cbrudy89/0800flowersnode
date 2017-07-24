@@ -319,7 +319,7 @@ function UserController() {
                           res.status(config.HTTP_SUCCESS).send({
                             status: config.SUCCESS, 
                             code : config.HTTP_SUCCESS, 
-                            message: "Reset password link sent to your email.Please check and reset your password!"
+                            message: "The reset password link has been sent to your email. Please check and reset your password."
                           });
                         }
                       });
