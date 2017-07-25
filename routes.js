@@ -271,6 +271,18 @@ module.exports = {
         customerController.updateProfile(req, res);
     });  
 
+    // Customer fetch all Addresses 
+    app.post('/customer/fetchAllAddresses', authenticateController.isAuthenticated, function(req, res) {
+        customerController.fetchAllAddresses(req, res);
+    }); 
+
+    // Customer update address 
+    app.post('/customer/updateAddress', authenticateController.isAuthenticated,  function(req, res) {
+        customerController.updateAddress(req, res);
+    });  
+
+    
+
     
 
     /************************* END of Customer *****************/
@@ -281,8 +293,12 @@ module.exports = {
         orderTrackingController.trackOrder(req, res);
     });
     /*fetch order history for the specific user*/
-     app.post('/orderhistory', authenticateController.isAuthenticated,  function(req, res) {
+    app.post('/orderhistory', authenticateController.isAuthenticated,  function(req, res) {
         orderTrackingController.orderHistory(req, res);
+    });
+     /*fetch order history for the specific user*/
+    app.post('/fetchOrderDetails/', authenticateController.isAuthenticated,  function(req, res) {
+        orderTrackingController.fetchOrderDetails(req, res);
     });
      /*end for the user realted data*/
 
