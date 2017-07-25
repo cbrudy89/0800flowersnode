@@ -53,15 +53,78 @@ function ProductController() {
 					                Sync(function(){					                	
 					                	$currenydetails=getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);
 						                $resAtlasDDOrg=getCustomDeliveryDate.sync(null,$currenydetails,$product[0].product_code, $product[0].sku, $postalcode, $currentCountry);
+						                //console.log($resAtlasDDOrg);
+						                //if ($resAtlasDDOrg.statusCode == 200) {
+								             //response=JSON.parse(JSON.stringify($resAtlasDDOrg));
+								             body=JSON.parse($resAtlasDDOrg);
+								             responseStatus=body["getDlvrCalResponse"]["responseStatus"];
+								             $responseDlvrCal=body["getDlvrCalResponse"];
+								            if(responseStatus=='SUCCESS'){
+								           			$getDates=body["getDlvrCalResponse"]["getDlvrCalResult"]["dlvrCalDeliveryDates"]["dlvrCalDeliveryDate"];
+							                        if ($getDates.length > 0) {
+							                        	var $mobArray =[]; 
+							                        	var $dateArray =[]; 
+							                        	var $surchargeArray =[];
+							                        	var $infoArray = {};
+							                            //for ( var i=0 ; i < $getDates.length; i++) {
+							                             	for(var $item in $getDates) {
+							                             		$deldate=$getDates[$item].deliveryDate;
+							                             		//console.log($deldate);
+							                             		//////////////////////Mobile calendar////////////////
+															    /*var d = new Date($deldate),month =''+(d.getMonth()+1),day=''+d.getDate(),year=d.getFullYear();
+															    if (month.length < 2) month = '0' + month;
+															    if (day.length < 2) day = '0' + day;
+															    $deliveryDate= [day,month,year].join('-');
 
-						                $resAtlasDDOrg=getSurchargeConverted.sync(null,$resAtlasDDOrg);
-						                 //console.log($resAtlasDDOrg);
-						                if($resAtlasDDOrg != 'undefined'){
-						                    if($resAtlasDDOrg.deliveryCalendar && $resAtlasDDOrg.deliveryCalendar.dateArray) {
-						                        $AtlasDate  = $resAtlasDDOrg.deliveryCalendar.dateArray;
+															    var d=new Date($deldate);
+															    var weekday=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+															    var monthname=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+															    var $deliverydateformatted = weekday[d.getDay()] + ", "+d.getDate() + " "+monthname[d.getMonth()];
+
+								                                $mobArray = {'option' : $deliveryDate, 'text' : $deliverydateformatted };
+								                                $infoArray[$deldate] = {'deliveryDate' : $deldate, 'mobInfo' : $mobArray, 'totSurcharge' : $totSurcharge};*/
+								                                //////////////////////Mobile calendar END////////////////
+								                                var $totSurcharge ='';
+								                                $totSurcharge = $getDates[$item].totSurcharge;
+								                                
+									                            if ($totSurcharge != '0.0') {
+									                                $totSurcharge = getSurchargeConverted.sync(null,$totSurcharge);
+									                                //$totSurcharge = $totSurcharge.toFixed(2);
+									                            }
+								                               	
+								                               	//console.log($totSurcharge);
+
+								                                $infoArray[$deldate] = {'deliveryDate' : $deldate, 'totSurcharge' : $totSurcharge};
+
+								                                $dateArray.push($deldate);
+								                                $surchargeArray.push($totSurcharge);
+								                            }
+							                           // }
+							                           $deliveryCalendar = {'dateArray' : $dateArray, 'surchargeArray' : $surchargeArray, 'infoArray' : $infoArray, 'currencyPrefix' : $currenydetails[0].symbol, 'currencySuffix' : ''};
+							                           $AtlasDate  = $dateArray;
+							                            $result = true;
+							                        } else {
+							                            $deliveryCalendar = 'ZeroDeliveryDate';
+							                            $result = false;
+							                        }
+							                    
+							                    } else {
+								                         if($responseDlvrCal.length && $responseDlvrCal["getDlvrCalResponse"].length && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"] != ''){
+								                          $deliveryCalendar = $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"];
+								                          } 
+								                        $deliveryCalendar = 'SkuNotAvailable';
+								                        $result = false;
+								                }
+								      //  }
+							             //   return callback(null,{'result' : $result, 'deliveryCalendar' : $deliveryCalendar});
+			                ///////////////////API response end/////////////////////////////////
+						                /*console.log($responseDlvrCal);
+						                if($responseDlvrCal != 'undefined'){
+						                    if($responseDlvrCal.deliveryCalendar && $responseDlvrCal.deliveryCalendar.dateArray) {
+						                        $AtlasDate  = $responseDlvrCal.deliveryCalendar.dateArray;
 						                    }
-						                }
-
+						                }*/
+						                //console.log($AtlasDate);
 						                //Check Current Product Is Related To The Selected Country/Province Or Not
 						                //------------------------------------------------------------------------
 						               /* if ($province_id == '' || $province_id == 0) {
@@ -92,7 +155,7 @@ function ProductController() {
 					                	$productMethod = productMethod.sync(null, $sql, $delivery_method_id);
 
 					                	if ($province_id != undefined && $province_id != '') {
-					                		$stoppage_time = stoppageTimePart.sync(null,null, $province_id);
+					                		//$stoppage_time = stoppageTimePart.sync(null,null, $province_id);
                                           //  $currentTime = getCurrentDateTime($province_id);
                                         } else {
                                             $stoppage_time = stoppageTimePartForCountry.sync(null,null, $currentCountry);
@@ -421,14 +484,14 @@ function currentformatted_date(template, adddays=0){
 	if(template=='Y-m-d') return yyyy + '-' + mm + '-' + dd;
 }
 
-function getSurchargeConverted($resAtlasDDOrg, callback){
+function getSurchargeConverted($amount, callback){
 
 
 	// if ($resAtlasDDOrg.totSurcharge == '0.0') {
     //    $totSurcharge = $item.totSurcharge;
    // } else {
    //     $totSurcharge = number_format(currency(urlencode('USD'), urlencode('CAD'), $item.totSurcharge), 2);
-			/*var options = {
+			var options = {
 		        url: "http://www.google.com/finance/converter?a="+$amount+"&from=USD&to=CAD",
 		        method: 'POST'
 		    }
@@ -444,8 +507,10 @@ function getSurchargeConverted($resAtlasDDOrg, callback){
 		            result = result.replace('CAD\n', '');                 
 		            result = result.split('=');
 		        }
-		        console.log(result[1]);
-		    });*/
+		        var convertedamount=result[1];
+		        convertedamount=convertedamount.trim();
+		        callback(null, convertedamount);
+		    });
    // }
 }
 
@@ -821,9 +886,10 @@ function stoppageTimePartForCountry($vendor_id = null,$country_id,  callback)
 					                            if($method_vendor[0].delivery_within == 0){
 					                                $method_vendor[0].delivery_within   = 1;
 					                            }
+					                           // $cutoff_time= strtotime( date('Y-m-d H:i:s', strtotime('+'.$method_vendor['delivery_within'].' day',strtotime($time)) ) );
 					                            $cutoff_time = Date.parse( date('Y-m-d H:i:s', Date.parse('+'+$method_vendor[0].delivery_within+' day',Date.parse($time) / 1000) / 1000 ) ) / 1000;
 					                    
-					                            return $cutoff_time;
+					                            return callback(null,$cutoff_time);
 					                            exit;
 					                    
 					                        }else{
@@ -849,7 +915,7 @@ function stoppageTimePartForCountry($vendor_id = null,$country_id,  callback)
 							                            
 							                                $cutoff_time        = Date.parse( date('Y-m-d H:i:s', Date.parse('+'+$method_country[0].delivery_within+' day',Date.parse($time) / 1000) / 1000 ) ) / 1000;
 							                            
-							                                return $cutoff_time;
+							                                return callback(null,$cutoff_time);
 							                                exit;
 							                            
 							                            }else{
@@ -859,7 +925,7 @@ function stoppageTimePartForCountry($vendor_id = null,$country_id,  callback)
 							                                $time               = $stoppage_hour + ':' + $stoppage_minute + ':00';
 							                                $cutoff_time        = Date.parse( date('Y-m-d H:i:s', Date.parse('+1 day',Date.parse($time) / 1000) / 1000 ) ) / 1000;
 							                        
-							                                return $cutoff_time;
+							                                return callback(null,$cutoff_time);
 							                                exit;
 							                            }
 							                        }
@@ -1075,65 +1141,11 @@ function getCustomDeliveryDate($currenydetails,$product_code, $productSku, $zipC
 			            body: $curlData
 			        }
 			        // Start the request
-			        request(options, function (error, response, body) {			             
-			            if (response.statusCode == 200) {
-				             response=JSON.parse(JSON.stringify(response));
-				             body=JSON.parse(body);
-				             responseStatus=body["getDlvrCalResponse"]["responseStatus"];
-				             $responseDlvrCal=body["getDlvrCalResponse"];
-				            if(responseStatus=='SUCCESS'){
-				           			$getDates=body["getDlvrCalResponse"]["getDlvrCalResult"]["dlvrCalDeliveryDates"]["dlvrCalDeliveryDate"];
-			                        if ($getDates.length > 0) {
-			                        	var $mobArray =[]; 
-			                        	var $dateArray =[]; 
-			                        	var $surchargeArray =[];
-			                        	var $infoArray = {};
-			                            //for ( var i=0 ; i < $getDates.length; i++) {
-			                             	for(var $item in $getDates) {
-			                             		$deldate=$getDates[$item].deliveryDate;
-			                             		//////////////////////Mobile calendar////////////////
-											    /*var d = new Date($deldate),month =''+(d.getMonth()+1),day=''+d.getDate(),year=d.getFullYear();
-											    if (month.length < 2) month = '0' + month;
-											    if (day.length < 2) day = '0' + day;
-											    $deliveryDate= [day,month,year].join('-');
-
-											    var d=new Date($deldate);
-											    var weekday=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-											    var monthname=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-											    var $deliverydateformatted = weekday[d.getDay()] + ", "+d.getDate() + " "+monthname[d.getMonth()];
-
-				                                $mobArray = {'option' : $deliveryDate, 'text' : $deliverydateformatted };
-				                                $infoArray[$deldate] = {'deliveryDate' : $deldate, 'mobInfo' : $mobArray, 'totSurcharge' : $totSurcharge};*/
-				                                //////////////////////Mobile calendar END////////////////
-				                                $totSurcharge ='';
-				                                $totSurcharge = $getDates[$item].totSurcharge;
-				                               // if ($item.totSurcharge == '0.0') {
-				                                //    $totSurcharge = $item.totSurcharge;
-				                               // } else {
-				                               //     $totSurcharge = number_format(currency(urlencode('USD'), urlencode('CAD'), $item.totSurcharge), 2);
-				                               // }
-				                               	
-				                                $infoArray[$deldate] = {'deliveryDate' : $deldate, 'totSurcharge' : $totSurcharge};
-
-				                                $dateArray.push($deldate);
-				                                $surchargeArray.push($totSurcharge);
-				                            }
-			                           // }
-			                           $deliveryCalendar = {'dateArray' : $dateArray, 'surchargeArray' : $surchargeArray, 'infoArray' : $infoArray, 'currencyPrefix' : $currenydetails[0].symbol, 'currencySuffix' : ''};
-			                            $result = true;
-			                        } else {
-			                            $deliveryCalendar = 'ZeroDeliveryDate';
-			                            $result = false;
-			                        }
-			                    } else {
-				                         if($responseDlvrCal.length && $responseDlvrCal["getDlvrCalResponse"].length && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"] && $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"] != ''){
-				                          $deliveryCalendar = $responseDlvrCal["getDlvrCalResponse"]["getDlvrCalResult"]["flwsErrors"]["flwsError"]["errorMessage"];
-				                          } 
-				                        $deliveryCalendar = 'SkuNotAvailable';
-				                        $result = false;
-				                }
-				            }
-			                return callback(null,{'result' : $result, 'deliveryCalendar' : $deliveryCalendar});
+			        request(options, function (error, response, body) {	
+			        	if(error) callback(error);
+			        	else{
+			        		callback(null, body);
+			        	}
 			        });
                 
             }
