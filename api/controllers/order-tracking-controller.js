@@ -112,6 +112,47 @@ function OrderTrackingController() {
     
   }  
 
+  /*fetch order details*/
+
+  this.fetchOrderDetails = function(req,res,next){   
+    
+    var user_id=req.body.user_id;
+    var id=req.body.order_id;
+    var prepare_query = 'SELECT * FROM orders LEFT JOIN order_products ON orders.id = order_products.order_id WHERE orders.user_id = '+user_id+' AND orders.id ='+id;
+    dbModel.rawQuery(prepare_query, function(err, result) {
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR,          
+          message: "Unable to process request, Please try again!",
+          err: err
+        }); 
+      }else{
+        if(result.length > 0 && result[0].id > 0){
+         // Verify Order exist is atlas API.         
+                //console.log(result);
+                res.status(config.HTTP_SUCCESS).send({
+                    status: config.SUCCESS, 
+                    code : config.HTTP_SUCCESS, 
+                    message: 'Record found!',
+                    result : result
+                });
+      
+
+        }else{
+          res.status(config.HTTP_NOT_FOUND).send({
+            status: config.ERROR, 
+            code : config.HTTP_NOT_FOUND, 
+            message: 'No order can be found with this reference number. Please try again.',
+          });
+        }
+      }
+    });      
+    
+  }  
+
+  /*end*/
+
 }
 
 module.exports = new OrderTrackingController();
