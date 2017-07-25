@@ -1,0 +1,112 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Order APIs",
+      "description":"All APIs related to the order tracking controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"order",
+         "description":"API for orders"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+         "/orderhistory":{
+            "post":{
+               "tags":[
+                  "orders"
+               ],
+               "description":"How to get all orders for specific users",
+               "operationId":"fetchorderhistory",
+               "produces":[
+                  "application/json"
+               ],
+               "parameters":[
+                  {
+                     "name":"user_id",
+                     "in":"formData",
+                     "description":"User id to fetc the orders for the same customer",
+                     "required":true,
+                     "type":"integer"
+                  }, 
+                  {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"Token get on login api response",
+                     "required":true,
+                     "type":"string"
+                  }    
+
+               ],
+               "responses":{
+                  "200":{
+                     "description":"All order found",
+                     "schema":{
+                         "$ref":"#/definitions/ordersfound"
+                     }
+                  },
+                  "400":{
+                     "description":"Page not found",
+                     "schema":{
+                        "$ref":"#/definitions/400error"
+                     }
+                  }               
+               }
+            }
+         }  
+      },
+    
+      "definitions":{
+         "ordersfound":{
+            "properties":{
+               "status":{
+                  "type":"boolean",
+                  "example":"true"
+               },
+               "code":{
+                  "type":"integer",
+                  "example":"200"
+               },            
+               "message":{
+                  "type":"string",
+                  "example":"All orders found"
+               },
+               "result":{
+                  "type":"object",
+                  "example":[]
+               }
+            }
+         },
+         "400error":{
+            "properties":{
+               "status":{
+                  "type":"boolean",
+                  "example":"False"
+               },
+               "code":{
+                  "type":"integer",
+                  "example":"400"
+               },                        
+               "message":{
+                  "type":"string",
+                  "example":"400 Bad Request"
+               }
+            }
+         }
+
+      }
+   }
+
+

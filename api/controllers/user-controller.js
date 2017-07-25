@@ -6,11 +6,11 @@ var smtpTransport = require('nodemailer-smtp-transport');*/
 var handlebars = require('handlebars');
 var fs = require('fs');
 
-var config = require('./../../../config');
-var connection = require('./../../../database');
+var config = require('./../../config');
+var connection = require('./../../database');
 //var userHelper = require('./../helpers/user-helper');
-var commonHelper = require('./../../helpers/common-helper');
-var fileHelper = require('./../../helpers/file-helper');
+var commonHelper = require('./../helpers/common-helper');
+var fileHelper = require('./../helpers/file-helper');
 var base64Img = require('base64-img');
 //var userModel = require('./../../../user-model');
 
@@ -640,47 +640,6 @@ function AdminController() {
   }
 
 
-
-/*  this.create = function(users, res, colu) {    
-    address = colu.hdwallet.getAddress();
-    id = users.id;
-    connection.acquire(function(err, con) {
-      con.query('insert into users(address,user_id) values(?,?)', [address,id], function(err, result) {
-        con.release();
-        if (err) {
-          res.send({status: 1, message: 'User creation failed'});
-        } else {
-          res.send({status: 0, message: 'User created successfully'});
-        }
-      });
-    });
-  };*/
-
-/*  this.update = function(todo, res) {
-    connection.acquire(function(err, con) {
-      con.query('update todo_list set ? where id = ?', [todo, todo.id], function(err, result) {
-        con.release();
-        if (err) {
-          res.send({status: 1, message: 'TODO update failed'});
-        } else {
-          res.send({status: 0, message: 'TODO updated successfully'});
-        }
-      });
-    });
-  };
-
-  this.delete = function(id, res) {
-    connection.acquire(function(err, con) {
-      con.query('delete from todo_list where id = ?', [id], function(err, result) {
-        con.release();
-        if (err) {
-          res.send({status: 1, message: 'Failed to delete'});
-        } else {
-          res.send({status: 0, message: 'Deleted successfully'});
-        }
-      });
-    });
-  };*/
 }
 
 module.exports = new AdminController();

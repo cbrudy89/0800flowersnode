@@ -11,6 +11,7 @@ var connection = require('./../../database');
 //var userHelper = require('./../helpers/user-helper');
 var customerModel = require('./../models/customer-model');
 var notificationModel = require('./../models/admin/notification-model');
+var dbModel = require('./../models/db-model');
 
 function UserController() {
 
@@ -318,7 +319,7 @@ function UserController() {
                           res.status(config.HTTP_SUCCESS).send({
                             status: config.SUCCESS, 
                             code : config.HTTP_SUCCESS, 
-                            message: "Reset password link sent to your email.Please check and reset your password!"
+                            message: "The reset password link has been sent to your email. Please check and reset your password."
                           });
                         }
                       });
@@ -374,6 +375,114 @@ function UserController() {
       }
     });
   }
+    // Update Customer Profile
+  this.updateProfile = function(req, res){
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var user_id = req.body.user_id;
+    //console.log('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE user_id='+ user_id);return;
+    dbModel.rawQuery('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE id='+ user_id, function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        //console.log(results);return;
+        if(results.affectedRows > 0 ){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message : "You have successfully updated the profile."
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Something went wrong please check again.", 
+          });          
+        }
+      }
+    });
+  }
+  // Fetch all addresses
+  this.fetchAllAddresses = function(req, res){
+    var user_id = req.body.user_id;
+    //console.log('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE user_id='+ user_id);return;
+    dbModel.rawQuery('SELECT * FROM address_book WHERE user_id='+ user_id, function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        //console.log(results);return;
+        if(results.length > 0 && results[0].id > 0 ){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            results : results
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Something went wrong please check again.", 
+          });          
+        }
+      }
+    });
+  }
+
+  // Update address of customers
+  this.updateAddress = function(req, res){
+    var user_id = req.body.user_id;
+    var address_id = req.body.id;
+    var location_type = req.body.location_type;
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var address_line1 = req.body.address_line1;
+    var address_line2 = req.body.address_line2;
+    var city = req.body.city;
+    var province = req.body.province;
+    var province_delivery_id = req.body.province_delivery_id;
+    var country_delivery_id = req.body.country_id;
+    var zip_code = req.body.zip_code;
+    var phone = req.body.phone;
+    //console.log('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE user_id='+ user_id);return;
+    var prepare_query = 'UPDATE address_book SET delivery_type ="'+location_type+'", first_name ="'+first_name+'", last_name ="'+last_name+'", address_line1 ="'+address_line1+'", address_line2 ="'+address_line2+'", city ="'+city+'", province ="'+province+'",province_delivery_id ="'+province_delivery_id+'", country_delivery_id ="'+country_delivery_id+'", zip_code ="'+zip_code+'", phone_line ="'+phone+'" WHERE user_id= '+ user_id +' AND id= '+address_id;
+    //console.log(prepare_query);
+    dbModel.rawQuery(prepare_query, function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        //console.log(results);return;
+         if(results.affectedRows > 0 ){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message : "You have successfully updated your address."
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Something went wrong please check again.", 
+          });          
+        }
+      }
+    });
+  }
+
 
   // Reset Password
   this.resetPassword = function(req, res){
@@ -455,6 +564,7 @@ function UserController() {
     });    
     
   }
+
 
   // Customer Feedback
   this.feedback = function(req, res){
