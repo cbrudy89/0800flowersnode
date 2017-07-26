@@ -65,7 +65,57 @@
                   }               
                }
             }
-         }  
+         }, 
+         "/fetchOrderDetails":{
+            "post":{
+               "tags":[
+                  "orders"
+               ],
+               "description":"How to get details of the specific orders",
+               "operationId":"fetchOrderDetails",
+               "produces":[
+                  "application/json"
+               ],
+               "parameters":[
+                  {
+                     "name":"user_id",
+                     "in":"formData",
+                     "description":"User id to fetch the orders for the same customer",
+                     "required":true,
+                     "type":"integer"
+                  },
+                  {
+                     "name":"order_id",
+                     "in":"formData",
+                     "description":"Order id to fetch the specific orders for the same customer",
+                     "required":true,
+                     "type":"integer"
+                  },  
+                  {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"Token get on login api response",
+                     "required":true,
+                     "type":"string"
+                  }    
+
+               ],
+               "responses":{
+                  "200":{
+                     "description":"All order found",
+                     "schema":{
+                         "$ref":"#/definitions/specificorderfound"
+                     }
+                  },
+                  "400":{
+                     "description":"Page not found",
+                     "schema":{
+                        "$ref":"#/definitions/400error"
+                     }
+                  }               
+               }
+            }
+         } 
       },
     
       "definitions":{
@@ -102,6 +152,26 @@
                "message":{
                   "type":"string",
                   "example":"400 Bad Request"
+               }
+            }
+         },
+          "specificorderfound":{
+            "properties":{
+               "status":{
+                  "type":"boolean",
+                  "example":"true"
+               },
+               "code":{
+                  "type":"integer",
+                  "example":"200"
+               },            
+               "message":{
+                  "type":"string",
+                  "example":"Order found"
+               },
+               "result":{
+                  "type":"object",
+                  "example":[]
                }
             }
          }

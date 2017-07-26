@@ -449,12 +449,11 @@ function UserController() {
     var address_line2 = req.body.address_line2;
     var city = req.body.city;
     var province = req.body.province;
-    var province_delivery_id = req.body.province_delivery_id;
     var country_delivery_id = req.body.country_id;
     var zip_code = req.body.zip_code;
     var phone = req.body.phone;
     //console.log('UPDATE customers SET first_name ="'+first_name+'", last_name ="'+last_name+'" WHERE user_id='+ user_id);return;
-    var prepare_query = 'UPDATE address_book SET delivery_type ="'+location_type+'", first_name ="'+first_name+'", last_name ="'+last_name+'", address_line1 ="'+address_line1+'", address_line2 ="'+address_line2+'", city ="'+city+'", province ="'+province+'",province_delivery_id ="'+province_delivery_id+'", country_delivery_id ="'+country_delivery_id+'", zip_code ="'+zip_code+'", phone_line ="'+phone+'" WHERE user_id= '+ user_id +' AND id= '+address_id;
+    var prepare_query = 'UPDATE address_book SET delivery_type ="'+location_type+'", first_name ="'+first_name+'", last_name ="'+last_name+'", address_line1 ="'+address_line1+'", address_line2 ="'+address_line2+'", city ="'+city+'", province ="'+province+'", country_delivery_id ="'+country_delivery_id+'", zip_code ="'+zip_code+'", phone_line ="'+phone+'" WHERE user_id= '+ user_id +' AND id= '+address_id;
     //console.log(prepare_query);
     dbModel.rawQuery(prepare_query, function(err, results){
       if (err) {
