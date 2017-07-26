@@ -286,22 +286,42 @@ function HomeController() {
             var country = [];
             
 
-              dbModel.rawQuery("SELECT id, country_name, redirect_url, CONCAT(country_name,',',country_alias) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state FROM country_list WHERE status = 1", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){
 
-                      sql = "SELECT country_id,id,province_name FROM provinces WHERE status = 1";
+                  for ( var i=0 ; i < countries.length; i++) {
+                    country_id = countries[i].id;
+                    country_name = countries[i].country_name;
+                    alias = countries[i].alias;
+                    short_code = countries[i].short_code;
+                    iso_code = countries[i].iso_code;
+                    country_flag = countries[i].country_flag;
+                    show_state = countries[i].show_state;
+                    redirect_url = countries[i].redirect_url;
 
+
+                    country.push({
+                      "country_id": country_id, 
+                      "country_name": country_name, 
+                      "alias": alias, 
+                      "short_code": short_code, 
+                      "iso_code": iso_code, 
+                      "country_flag": country_flag, 
+                      "show_state": show_state,
+                      "redirect_url": redirect_url
+                    });
+                  }
+
+                      /*sql = "SELECT country_id,id,province_name FROM provinces WHERE status = 1";
                       //console.log(sql);
                         
                       dbModel.rawQuery(sql, function(err, provinces) {
                         if (err) return callback(err);
                         else 
                           if(provinces.length > 0){
-
                             for ( var i=0 ; i < countries.length; i++) {
-
                               var province = [];
 
                               country_id = countries[i].id;
@@ -311,8 +331,6 @@ function HomeController() {
                               iso_code = countries[i].iso_code;
                               country_flag = countries[i].country_flag;
                               show_state = countries[i].show_state;
-                              redirect_url = countries[i].redirect_url;
-
 
                                 for ( var j=0 ; j < provinces.length; j++) {
 
@@ -323,9 +341,7 @@ function HomeController() {
                                       "provience_id" : provinces[j].id,
                                       "provience_name" :  provinces[j].province_name
                                     });
-
                                   }
-                                    
                                 }                              
 
                                 country.push({
@@ -336,17 +352,18 @@ function HomeController() {
                                   "iso_code": iso_code, 
                                   "country_flag": country_flag, 
                                   "show_state": show_state, 
-                                  "provinces": province,
-                                  "redirect_url":redirect_url
+                                  "provinces": province
                                 });
-                            } 
+                            }
 
-
-                            return_data.countries_and_proviences = country;
+                            return_data.countries_and_provinces = country;
                             callback();
                          }
 
-                      });
+                      });*/
+
+                    return_data.countries_and_provinces = country;
+                    callback();  
                       
                     
 

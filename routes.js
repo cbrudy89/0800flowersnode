@@ -23,6 +23,7 @@ var validate = require('./api/helpers/validation-helper');
 var customerValidation = require('./api/validation/customer-validation');
 var homeValidation = require('./api/validation/home-validation');
 var orderTrackingValidation = require('./api/validation/order-tracking-validation');
+var productValidation = require('./api/validation/product-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
 
@@ -219,7 +220,8 @@ module.exports = {
 
     /************************* Product Details Page Routes ************************/
     // Load all home page data.
-    app.post('/productdetails', function(req, res){
+    
+    app.post('/productdetails', validate(productValidation.productdetails), function(req, res){
         productController.productdetails(req, res);
     });  
     /************************* END of Collection Page ************************/  

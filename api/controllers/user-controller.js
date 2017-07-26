@@ -620,7 +620,7 @@ function AdminController() {
                       res.status(config.HTTP_SUCCESS).send({
                         status: config.SUCCESS, 
                         code : config.HTTP_SUCCESS, 
-                        message: "Check your inbox for a password reset message!"
+                        message: "Check your inbox for a password reset message."
                       });
                     }
                   });
