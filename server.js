@@ -57,12 +57,12 @@ db.acquire(function(err, con){
 		    console.log('No --port=xxx specified, taking default port ' + port + '.')
 
 		// Set and display the application URL
-		var baseUrl = 'http://' + domain;
+		var baseUrl = 'https://' + domain;
 		var applicationUrl = baseUrl + ':' + port;
 
 		config.BASE_URL = baseUrl;
 		config.APPLICATION_URL = applicationUrl;
-		config.RESOURCE_URL = 'http://0800api.mobikasa.net'+ '/img';
+		config.RESOURCE_URL = 'https://0800api.mobikasa.net'+ '/img';
 
 		swagger.configure(applicationUrl, '1.0.0');
 

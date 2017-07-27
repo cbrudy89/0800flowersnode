@@ -295,9 +295,8 @@ function CollectionController() {
   }
 }
 
-/*function convertPriceToNineNine($price)
-{
-
+/*
+function convertPriceToNineNine($price){
     $currentCurrSymbl = Session::get('current_currencysymbol');
     $currentCurrId = Session::get('current_currency_id');
     $getCurrency = Currency::where(array('id' => $currentCurrId))->get();
@@ -311,7 +310,8 @@ function CollectionController() {
     Session::put('exchange_rate', $getCurrency[0]->exchange_rate);
 
     return $currentCurrSymbl . $newPrice;
-}*/
+}
+*/
 
 function getPriceFilterByCountryProvince(amount, delivery_country_id, province_id, product_ids, callback){
 
