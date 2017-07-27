@@ -437,6 +437,37 @@ function UserController() {
       }
     });
   }
+    // Fetch all addresses
+  this.editAddress = function(req, res){
+    var user_id = req.body.user_id;
+    var id = req.body.address_id;
+    //console.log('SELECT * FROM address_book WHERE id = '+id+ ' user_id = '+ user_id);return;
+    dbModel.rawQuery('SELECT * FROM address_book WHERE id ='+id+ ' AND user_id ='+ user_id, function(err, results){
+      if (err) {
+        res.status(config.HTTP_SERVER_ERROR).send({
+          status: config.ERROR, 
+          code : config.HTTP_SERVER_ERROR, 
+          message : "Unable to process request!", 
+          errors : err
+        });
+      }else{
+        //console.log(results);return;
+        if(results.length > 0 && results[0].id > 0 ){
+          res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            results : results
+          });
+        }else{
+          res.status(config.HTTP_BAD_REQUEST).send({
+            status: config.ERROR, 
+            code : config.HTTP_BAD_REQUEST, 
+            message : "Something went wrong please check again.", 
+          });          
+        }
+      }
+    });
+  }
 
   // Update address of customers
   this.updateAddress = function(req, res){
