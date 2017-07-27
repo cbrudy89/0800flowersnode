@@ -224,7 +224,30 @@ function CollectionController() {
         // Translating Text for Price filter on basis of key
         var $orless_andabove = language.sync(null, language_id, "'andabove','orless'");
         var $priceFilter = getPriceFilter.sync(null, $orless_andabove, $currency_details, $result);
+        
+        // Append Product Price in Price Filter
+        var priceFilter = [];        
+        if($priceFilter.length > 0) {
 
+          $priceFilter.forEach(function(pfilter, index){
+            for( var key in pfilter ) {
+              //console.log(key);
+
+              var item = {};
+              var price_filter = getPriceFilterByCountryProvince.sync(null, key, delivery_country_id, province_id, product_ids);
+
+              //console.log(price_filter);
+              if(price_filter.length > 0 && price_filter[0].aggregate > 0){
+                  item[key] = pfilter[key];
+                  priceFilter.push(item);
+              }          
+              
+            }
+          });
+
+        }
+
+        $priceFilter = priceFilter;
         //console.log($priceFilter);
         
         // Translating Text for delivery filter on basis of key
@@ -238,7 +261,7 @@ function CollectionController() {
           page = "";
         }
 
-        var $orderby_translation = language.sync(null, language_id, "'candeliver','delivertom'")
+        //var $orderby_translation = language.sync(null, language_id, "'candeliver','delivertom'")
 
         var $orderby = {
           "default": "Our Favorite",
@@ -272,9 +295,8 @@ function CollectionController() {
   }
 }
 
-/*function convertPriceToNineNine($price)
-{
-
+/*
+function convertPriceToNineNine($price){
     $currentCurrSymbl = Session::get('current_currencysymbol');
     $currentCurrId = Session::get('current_currency_id');
     $getCurrency = Currency::where(array('id' => $currentCurrId))->get();
@@ -288,7 +310,42 @@ function CollectionController() {
     Session::put('exchange_rate', $getCurrency[0]->exchange_rate);
 
     return $currentCurrSymbl . $newPrice;
-}*/
+}
+*/
+
+function getPriceFilterByCountryProvince(amount, delivery_country_id, province_id, product_ids, callback){
+
+  var priceArr = amount.split("-");
+  var sql = "SELECT COUNT(*) AS aggregate FROM `products`";
+  sql += " INNER JOIN `product_prices` ON `products`.`id` = `product_prices`.`product_id`";
+  sql += " INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id`";
+  sql += " INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id`";
+  sql += " WHERE `vendor`.`status` = 1";
+  sql += " AND `products`.`product_status` = 1";
+  sql += " AND `products`.`frontend_show` = 1";
+  sql += " AND `products`.`admin_confirm` = 1";
+  sql += " AND `product_prices`.`price_value` >= "+priceArr[0];
+  sql += " AND `product_prices`.`price_value` < "+parseInt(priceArr[1]+'0.01');
+  sql += " AND `location_product`.`country_id` = "+delivery_country_id;
+
+  if(province_id != undefined && province_id != '' ){
+     sql += " AND `location_product`.`province_id` = '"+province_id+"'";
+  }
+
+  if(product_ids != '' && product_ids != undefined){  
+    sql += " AND `products`.`id` in ("+product_ids+")";
+  }
+
+  sql += " GROUP BY `products`.`id`";
+  //console.log(sql);
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) return callback(err);
+    else 
+       callback(null, result);
+  });
+
+}
 
 function language(language_id, lkey, callback){
 
@@ -795,7 +852,7 @@ function getProductlistwithfilters($filters, $find_total = false, callback) {
         if($priceArr[0] == '150'){
           $sql += " AND `product_prices`.`price_value` >= "+$priceArr[0];
         }else{
-           var newprice = ($priceArr[1] + 0.01);
+           var newprice = parseInt($priceArr[1] + 0.01);
            $sql += " AND `product_prices`.`price_value` >= "+$priceArr[0]+" AND `product_prices`.`price_value` < "+newprice;
         }
 
