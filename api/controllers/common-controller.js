@@ -259,7 +259,7 @@ function CommonController() {
         function countriesprovinces(callback) {
           var country = [];
 
-            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
+            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag,CONCAT('"+config.RESOURCE_URL+"','/company_logo/',company_logo) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
               if (err) return callback(err);
               else 
                 if(countries.length > 0){
@@ -275,6 +275,7 @@ function CommonController() {
                     show_state = countries[i].show_state;
                     redirect_url = countries[i].redirect_url;
                     preferred_currency_id = countries[i].preferred_currency_id;
+                    company_logo = countries[i].company_logo;
 
 
                     country.push({
@@ -286,7 +287,8 @@ function CommonController() {
                       "country_flag": country_flag, 
                       "show_state": show_state,
                       "redirect_url": redirect_url,
-                      "preferred_currency_id": preferred_currency_id
+                      "preferred_currency_id": preferred_currency_id,
+                      "company_logo": company_logo
                     });
                   }
 
