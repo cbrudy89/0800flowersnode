@@ -300,10 +300,66 @@
             }
          }
       },
+      "/customer/editAddress":{
+         "post":{
+            "tags":[
+               "Store Customers Addresses"
+            ],
+            "description":"edit address of a specific customer.",
+            "operationId":"editAddress",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               
+               {
+                  "name":"user_id",
+                  "in":"formData",
+                  "description":"User id of customer",
+                  "required":true,
+                  "type":"integer"
+               }, 
+               {
+                  "name":"address_id",
+                  "in":"formData",
+                  "description":"Address id of customer",
+                  "required":true,
+                  "type":"integer"
+               },  
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Your have successfully updated your profile.",
+                  "schema":{
+                     "$ref":"#/definitions/200editaddress"
+                  }
+               },
+               "404":{
+                  "description":"Something went wrong. Please try again.",
+                  "schema":{
+                     "$ref":"#/definitions/404editaddress"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500editaddress"
+                  }
+               }                                    
+            }
+         }
+      },
       "/customer/updateAddress":{
          "post":{
             "tags":[
-               "Store update custom Address"
+               "Store Customers Addresses"
             ],
             "description":"Update any specific customer address",
             "operationId":"updateAddress",
@@ -842,6 +898,22 @@
             } 
          }
       },
+      "200editaddress":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You have successfully fetched your Address."
+            } 
+         }
+      },
       "200updateAddress":{
          "properties":{
             "status":{
@@ -874,6 +946,22 @@
             }
          }
       }, 
+      "404editaddress":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Nothing found."
+            }
+         }
+      }, 
       "404updateAddress":{
          "properties":{
             "status":{
@@ -891,6 +979,22 @@
          }
       },                 
       "500fetchedalladdresses":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+       "500editaddress":{
          "properties":{
             "status":{
                "type":"boolean",

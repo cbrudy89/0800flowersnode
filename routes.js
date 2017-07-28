@@ -281,8 +281,13 @@ module.exports = {
     // Customer update address 
     app.post('/customer/updateAddress', authenticateController.isAuthenticated,  function(req, res) {
         customerController.updateAddress(req, res);
+    }); 
+     // edit customer address 
+    app.post('/customer/editAddress', authenticateController.isAuthenticated,  function(req, res) {
+        customerController.editAddress(req, res);
     });  
 
+    
     
 
     
