@@ -15,6 +15,7 @@ var commonController = require('./api/controllers/common-controller');
 var collectionController = require('./api/controllers/collection-controller');
 var productController = require('./api/controllers/product-controller');
 var orderTrackingController = require('./api/controllers/order-tracking-controller');
+var wishlistController = require('./api/controllers/wishlist-controller');
 
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
@@ -24,6 +25,7 @@ var customerValidation = require('./api/validation/customer-validation');
 var homeValidation = require('./api/validation/home-validation');
 var orderTrackingValidation = require('./api/validation/order-tracking-validation');
 var productValidation = require('./api/validation/product-validation');
+var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
 
@@ -287,12 +289,21 @@ module.exports = {
         customerController.editAddress(req, res);
     });  
 
-    
-    
-
-    
-
     /************************* END of Customer *****************/
+
+    /************************* Wishlist Start******************/
+    app.post('/getwishlist', authenticateController.isAuthenticated, validate(wishlistValidation.getwishlist), function(req, res) {
+        wishlistController.getwishlist(req, res);
+    });
+
+    app.post('/addwishlistproduct', authenticateController.isAuthenticated, validate(wishlistValidation.addwishlistproduct), function(req, res) {
+        wishlistController.addwishlistproduct(req, res);
+    });
+
+    app.delete('/deletewishlistproduct', authenticateController.isAuthenticated, validate(wishlistValidation.deletewishlistproduct), function(req, res) {
+        wishlistController.deletewishlistproduct(req, res);
+    });
+    /************************* END of Wishlist *****************/
 
     /************************* Order Tracking ******************/
 

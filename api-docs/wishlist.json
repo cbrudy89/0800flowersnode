@@ -1,0 +1,301 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Wishlist APIs",
+      "description":"All APIs related to the Wishlist",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Wishlist",
+         "description":"API for Wishlist"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/getwishlist":{
+         "post":{
+            "tags":[
+               "Wishlist"
+            ],
+            "description":"Get User Wishlist Products",
+            "operationId":"wishlist",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"User token",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },               {
+                     "name":"user_id",
+                     "in":"formData",
+                     "description":"Current userID",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"country_id",
+                     "in":"formData",
+                     "description":"User country id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               },                                                                           
+               {
+                     "name":"language_id",
+                     "in":"formData",
+                     "description":"User language_id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found!",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }               
+            }
+         }
+      },
+      "/addwishlistproduct":{
+         "post":{
+            "tags":[
+               "Wishlist"
+            ],
+            "description":"Add/Update User Wishlist Product",
+            "operationId":"wishlist",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"User token",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },               {
+                     "name":"user_id",
+                     "in":"formData",
+                     "description":"Current userID",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"product_id",
+                     "in":"formData",
+                     "description":"Wishlist product id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               },                                                                           
+               {
+                     "name":"qty",
+                     "in":"formData",
+                     "description":"Product Quantity",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"wishlist product updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200add"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }               
+            }
+         }
+      },
+      "/deletewishlistproduct":{
+         "delete":{
+            "tags":[
+               "Wishlist"
+            ],
+            "description":"Delete User Wishlist Product",
+            "operationId":"wishlist",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"token",
+                     "in":"formData",
+                     "description":"User token",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },               {
+                     "name":"user_id",
+                     "in":"formData",
+                     "description":"Current userID",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"product_id",
+                     "in":"formData",
+                     "description":"Wishlist product id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 4
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"wishlist product deleted.",
+                  "schema":{
+                      "$ref":"#/definitions/200delete"
+                  }
+               },
+               "400":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/400delete"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }               
+            }
+         }
+      }      
+   },
+   "definitions":{
+      "200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "results":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },  
+      "500":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      },
+      "200add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"wishlist product updated successfully."
+            },
+            "results":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },
+      "200delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"wishlist product deleted."
+            },
+            "results":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },
+      "400delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"wishlist product not found."
+            },
+            "results":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      }       
+   }
+}
