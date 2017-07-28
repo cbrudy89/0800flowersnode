@@ -67,7 +67,7 @@ function WishlistController() {
       }else{
         //console.log(results);return;
         if(results.length > 0 && results[0].id > 0 ){ //////Update qty for old wishlist product
-              var productqty=results[0].qty;
+              /*var productqty=results[0].qty;
               productqty=parseInt(productqty)+parseInt(qty);
               var sql="UPDATE wishlist set qty="+productqty+" WHERE user_id = "+user_id+" AND product_id = "+product_id;
               dbModel.rawQuery(sql, function(err, result){
@@ -84,7 +84,7 @@ function WishlistController() {
                       message:'wishlist product updated successfully.'
                     });
                   }
-              });
+              });*/
 
         }else{ //////Insert wishlist product
               /*var post = {
@@ -101,15 +101,14 @@ function WishlistController() {
                       code: config.HTTP_SERVER_ERROR,
                       message:'Unable to insert wishlist product.'
                     });
-                }else{
-                    res.status(config.HTTP_SUCCESS).send({
-                      status:config.SUCCESS,
-                      code: config.HTTP_SUCCESS,
-                      message:'wishlist product inserted successfully.'
-                    });
                 }
               });          
         }
+        res.status(config.HTTP_SUCCESS).send({
+          status:config.SUCCESS,
+          code: config.HTTP_SUCCESS,
+          message:'wishlist product inserted successfully.'
+        });
       }
     });
   }
