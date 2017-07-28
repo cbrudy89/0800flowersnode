@@ -254,7 +254,7 @@
        "/customer/fetchAllAddresses":{
          "post":{
             "tags":[
-               "Store Customers Addresses"
+               "Store Customer"
             ],
             "description":"Fetch all address of a specific customer.",
             "operationId":"fetchAllAddresses",
@@ -303,7 +303,7 @@
       "/customer/editAddress":{
          "post":{
             "tags":[
-               "Store Customers Addresses"
+               "Store Customer"
             ],
             "description":"edit address of a specific customer.",
             "operationId":"editAddress",
@@ -359,7 +359,7 @@
       "/customer/updateAddress":{
          "post":{
             "tags":[
-               "Store Customers Addresses"
+               "Store Customer"
             ],
             "description":"Update any specific customer address",
             "operationId":"updateAddress",
@@ -683,6 +683,7 @@
             "result": {
                "type":"object",
                "example": {
+                  "id": "1",
                   "first_name": "Anil",
                   "last_name": "Tester",
                   "email": "vikram@mobikasa.com"

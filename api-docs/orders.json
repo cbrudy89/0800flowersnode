@@ -2,8 +2,8 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"Order APIs",
-      "description":"All APIs related to the order tracking controller",
+      "title":"MyAccount Order APIs",
+      "description":"All MyAccount APIs related to the order tracking controller",
       "termsOfService":"#"
    },
    "basePath":"/",
@@ -27,7 +27,7 @@
          "/orderhistory":{
             "post":{
                "tags":[
-                  "orders"
+                  "Orders"
                ],
                "description":"How to get all orders for specific users",
                "operationId":"fetchorderhistory",
@@ -70,7 +70,7 @@
          "/fetchOrderDetails":{
             "post":{
                "tags":[
-                  "orders"
+                  "Orders"
                ],
                "description":"How to get details of the specific orders",
                "operationId":"fetchOrderDetails",
