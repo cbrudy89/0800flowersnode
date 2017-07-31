@@ -200,6 +200,7 @@ function UserController() {
                     message:"Logged in successfully!",
                     token: token,
                     result:{
+                      id: results[0].id,
                       first_name: results[0].first_name,
                       last_name: results[0].last_name,
                       email: results[0].email
