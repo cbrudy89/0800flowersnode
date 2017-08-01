@@ -259,7 +259,7 @@ function CommonController() {
         function countriesprovinces(callback) {
           var country = [];
 
-            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"',country_flag) as country_flag,CONCAT('"+config.RESOURCE_URL+"',company_logo) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
+            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
               if (err) return callback(err);
               else 
                 if(countries.length > 0){

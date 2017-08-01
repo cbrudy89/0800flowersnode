@@ -156,7 +156,7 @@ function CollectionController() {
             }            
 
             // Get preferred_currency_id from country 
-            var queryString = "SELECT products.id AS 'product_id',products.product_code,products.slug,products.atlas_product_name,products.vendor_id, CONCAT('"+config.RESOURCE_URL+"',products.product_picture) as product_picture,methods.delivery_method,methods.delivery_within,methods.delivery_charge,methods.delivery_days,methods.delivery_hour,methods.delivery_minute,methods.delivery_policy_id FROM products INNER JOIN location_product ON (products.id = location_product.product_id) INNER JOIN methods ON(methods.id = products.delivery_method_id) INNER JOIN vendor ON(vendor.id = products.vendor_id)";
+            var queryString = "SELECT products.id AS 'product_id',products.product_code,products.slug,products.atlas_product_name,products.vendor_id, CONCAT('"+config.RESOURCE_URL+"', REPLACE(products.product_picture, '+','%2B')) as product_picture,methods.delivery_method,methods.delivery_within,methods.delivery_charge,methods.delivery_days,methods.delivery_hour,methods.delivery_minute,methods.delivery_policy_id FROM products INNER JOIN location_product ON (products.id = location_product.product_id) INNER JOIN methods ON(methods.id = products.delivery_method_id) INNER JOIN vendor ON(vendor.id = products.vendor_id)";
             queryString += " WHERE ";
             queryString += "products.product_status = 1";
             queryString += " AND ";
