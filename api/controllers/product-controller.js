@@ -40,7 +40,7 @@ function ProductController() {
             },
             function productdata(callback) {
 
-                $sql = "Select `product_prices`.`price_value`,`product_prices`.`compare_price`,`product_name`, `product_description`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`atlas_product_name`, CONCAT('"+config.RESOURCE_URL+"','/products/',`products`.`product_picture`) AS product_picture, `products`.`delivery_method_id`,`products`.`vendor_id`, sku from `products` ";
+                $sql = "Select `product_prices`.`price_value`,`product_prices`.`compare_price`,`product_name`, `product_description`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`atlas_product_name`, CONCAT('"+config.RESOURCE_URL+"',`products`.`product_picture`) AS product_picture, `products`.`delivery_method_id`,`products`.`vendor_id`, sku from `products` ";
                 $sql += "INNER JOIN `language_product` on `products`.`id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `product_prices` ON `product_prices`.`product_id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` ";
@@ -52,8 +52,8 @@ function ProductController() {
                     $sql += " AND `location_product`.`province_id` = '" + $province_id + "'";
                 }
 
-                $sql += " limit 1";
-                //console.log($sql);
+                $sql += " ORDER BY `product_prices`.`price_value` limit 1";
+                console.log($sql);
                 $product = [];
                 dbModel.rawQuery($sql, function(err, $product) {
                     if (err) return callback(err);

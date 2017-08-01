@@ -752,7 +752,7 @@ function getProductlistwithfilters($filters, $find_total = false, callback) {
 
     if($find_total == false){
       
-      var $sql = "SELECT `products`.`id`, CONCAT('"+config.RESOURCE_URL+"','/products/', `products`.`product_picture`) as product_picture, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`,`methods`.`delivery_within`, (CASE WHEN `methods`.`delivery_within` = 0 THEN 'candeliver' WHEN `methods`.`delivery_within` = 1 THEN 'delivertom' WHEN `methods`.`delivery_within` = 2 THEN 'delivertom' END) AS 'delivery_within_key',`language_product`.`product_name`";
+      var $sql = "SELECT `products`.`id`, CONCAT('"+config.RESOURCE_URL+"', `products`.`product_picture`) as product_picture, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`,`methods`.`delivery_within`, (CASE WHEN `methods`.`delivery_within` = 0 THEN 'candeliver' WHEN `methods`.`delivery_within` = 1 THEN 'delivertom' WHEN `methods`.`delivery_within` = 2 THEN 'delivertom' END) AS 'delivery_within_key',`language_product`.`product_name`";
     }else{
       var $sql = "SELECT COUNT(*) AS total_products";
     }
