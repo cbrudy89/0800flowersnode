@@ -253,7 +253,7 @@ function HomeController() {
           },
           function topcountries(callback){
 
-              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"','/trending_products/', tc.product_image) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"','/flag/',cl.country_flag) as country_flag, CONCAT('"+config.RESOURCE_URL+"','/company_logo/',cl.company_logo) as company_logo, cl.country_domain, cl.preferred_currency_id FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -264,7 +264,7 @@ function HomeController() {
           },
           function orderByPhone(callback){
 
-              sql = "SELECT country_name, CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
+              sql = "SELECT country_name, CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,phone FROM country_list WHERE status = 1 AND is_display = 1 LIMIT 4";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -286,7 +286,7 @@ function HomeController() {
             var country = [];
             
 
-              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"','/flag/',country_flag) as country_flag,CONCAT('"+config.RESOURCE_URL+"','/company_logo/',company_logo) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){

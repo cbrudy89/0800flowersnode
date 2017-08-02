@@ -62,7 +62,8 @@ db.acquire(function(err, con){
 
 		config.BASE_URL = baseUrl;
 		config.APPLICATION_URL = applicationUrl;
-		config.RESOURCE_URL = 'https://0800api.mobikasa.net'+ '/img';
+		//config.RESOURCE_URL = 'https://d2bk6p38au4j9k.cloudfront.net'+ '/img';
+		config.RESOURCE_URL = 'https://dxbh2rxgl5xwb.cloudfront.net/';
 
 		swagger.configure(applicationUrl, '1.0.0');
 

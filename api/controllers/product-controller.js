@@ -18,6 +18,13 @@ function ProductController() {
         var $province_id = req.body.province_id;
         var $postalcode = req.body.postalcode;
         var $currency_id = req.body.currency_id;
+        var $recent_products = req.body.recent_products;
+
+        var $current_date = currentformatted_date('Y-m-d');
+        var $next_date = currentformatted_date('Y-m-d',1);
+
+/*        console.log('Curr Date'+ $current_date);
+        console.log('Next Date'+ $next_date);*/
 
         async.parallel([
             function topbanner(callback) {
@@ -33,19 +40,20 @@ function ProductController() {
             },
             function productdata(callback) {
 
-                $sql = "Select `product_name`, `product_description`, `product_content`, products.*, sku from `products` ";
+                $sql = "Select `product_prices`.`price_value`,`product_prices`.`compare_price`,`product_name`, `product_description`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`atlas_product_name`, CONCAT('"+config.RESOURCE_URL+"', REPLACE(`products`.`product_picture`, '+','%2B')) AS product_picture, `products`.`delivery_method_id`,`products`.`vendor_id`, sku from `products` ";
                 $sql += "INNER JOIN `language_product` on `products`.`id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `product_prices` ON `product_prices`.`product_id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` ";
                 $sql += "WHERE (`product_status` = 1 and `language_product`.`language_id` = " + $sessLang + " and `products`.`slug` = '" + $slug + "') ";
                 $sql += "AND `location_product`.`country_id` = " + $currentCountry;
 
+
                 if ($province_id != undefined && $province_id != '') {
                     $sql += " AND `location_product`.`province_id` = '" + $province_id + "'";
                 }
 
-                $sql += " limit 1";
-                //console.log($sql);
+                $sql += " ORDER BY `product_prices`.`price_value` limit 1";
+                console.log($sql);
                 $product = [];
                 dbModel.rawQuery($sql, function(err, $product) {
                     if (err) return callback(err);
@@ -59,8 +67,8 @@ function ProductController() {
                             $postalcode = !($postalcode) ? $postalcode : config.DEFAULT_ZIPCODE;
                             // $resAtlasDDOrg={};
                             Sync(function() {
-                                $currenydetails = getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);
-                                $resAtlasDDOrg = getCustomDeliveryDate.sync(null, $currenydetails, $product[0].product_code, $product[0].sku, $postalcode, $currentCountry);
+                                $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);
+                                $resAtlasDDOrg = getCustomDeliveryDate.sync(null, $currencydetails, $product[0].product_code, $product[0].sku, $postalcode, $currentCountry);
                                 //console.log($resAtlasDDOrg);
                                 //if ($resAtlasDDOrg.statusCode == 200) {
                                 //response=JSON.parse(JSON.stringify($resAtlasDDOrg));
@@ -97,7 +105,7 @@ function ProductController() {
 
                                             if ($totSurcharge != '0.0') {
                                                 $totSurcharge = getSurchargeConverted.sync(null, $totSurcharge);
-                                                //$totSurcharge = $totSurcharge.toFixed(2);
+                                                $totSurcharge = parseFloat($totSurcharge).toFixed(2);
                                             }
 
                                             //console.log($totSurcharge);
@@ -112,10 +120,10 @@ function ProductController() {
                                         }
                                         // }
                                         $deliveryCalendar = {
-                                            'dateArray': $dateArray,
-                                            'surchargeArray': $surchargeArray,
+                                            //'dateArray': $dateArray,
+                                            //'surchargeArray': $surchargeArray,
                                             'infoArray': $infoArray,
-                                            'currencyPrefix': $currenydetails[0].symbol,
+                                            'currencyPrefix': $currencydetails[0].symbol,
                                             'currencySuffix': ''
                                         };
                                         $AtlasDate = $dateArray;
@@ -142,7 +150,7 @@ function ProductController() {
                                 }*/
                                 //console.log($AtlasDate);
 
-                                //$currenydetails=getCurrencyDetails.sync(null, $product[0].id, $currentCountry, $currentCountry);
+                                //$currencydetails=getCurrencyDetails.sync(null, $product[0].id, $currentCountry, $currentCountry);
 
 
                                 $vendorId = $product[0].vendor_id;
@@ -162,6 +170,8 @@ function ProductController() {
                                     $stoppage_time = stoppageTimePartForCountry.sync(null, null, $currentCountry);
                                     //$currentTime = getCurrentDateTimeForCountry.sync(null,null, $currentCountry);
                                 }
+
+                                //console.log('Stoppage Time'+ $stoppage_time);
 
                                 /**********/
                                 /*$param = array(
@@ -191,7 +201,9 @@ function ProductController() {
                                 ///////////////////////////////////////////////////////////////////////////// 
                                 //Check Today Date
                                 var d = new Date();
-                                $todayAnchorId = currentformatted_date("d-m-Y");
+
+                                //$todayAnchorId = currentformatted_date("d-m-Y");
+                                $todayAnchorId = $current_date;
                                 var formatter = new Intl.DateTimeFormat("en", {
                                         month: "short"
                                     }),
@@ -200,6 +212,7 @@ function ProductController() {
                                 $todayIsSaturday = d.getDay();
 
                                 // $todaySurcharge = checkCalSurcharge(date('Y-m-d'), $product->vendor_id, Session::get('delivery_to')['country_id'],$product->id); 
+                                //$admCalSurcharge_ctd = checkCalSurcharge.sync(null, $todayAnchorId, $vendorId, $currentCountry, $product[0].id);
                                 $admCalSurcharge_ctd = checkCalSurcharge.sync(null, $todayAnchorId, $vendorId, $currentCountry, $product[0].id);
 
                                 $todayExtraCharge = getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
@@ -218,7 +231,7 @@ function ProductController() {
                                 }
                                 //Check Today Is Restrict Date Or Not
                                 //----------------------------------- 
-                                $checkTodayEnableDate = checkTodayEnable($todayAnchorId, $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
+                                $checkTodayEnableDate = checkTodayEnable.sync(null, $todayAnchorId, $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
                                 if ($checkTodayEnableDate === false) {
                                     $todayRestrict = 'yes';
                                 } else {
@@ -226,195 +239,234 @@ function ProductController() {
                                 }
 
                                 //if today is unavailable then use it for first date
-                                $todayEnableDate = currentformatted_date("d-m-Y");
+                                $todayEnableDate = $current_date;
+    		//console.log("todayEnableDate"+ $todayEnableDate);
+
                                 if($todayRestrict == 'yes'){
-                                    $firstEnableDate = getNextEnableDate('', $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
+                                    $firstEnableDate = getNextEnableDate.sync(null, '', $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
                                 }else{
-                                    $firstEnableDate    = $todayEnableDate;
+                                    $firstEnableDate = $todayEnableDate;
                                 }
-                                /*
-				        $admCalSurcharge_cndd = checkCalSurcharge(date('Y-m-d', strtotime($firstEnableDate)), $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id);
-				        $firstExtraCharge = getSurcharge($product->id, Session::get('delivery_to')['country_id'], $product->vendor_id);
-				        if ($admCalSurcharge_cndd !== false) {
-				            $firstExtraCharge += $admCalSurcharge_cndd;
-				        }
-				        $firstIsSaturday = date('w', strtotime($firstEnableDate));
-				        //Check Next day Surcharge
-				        //------------------------
-				        if ($firstExtraCharge !== false) {
-				            if ($firstIsSaturday == 6) {
-				                $firstExtraCharge += Config::get('constants.saturday_charge');
-				            }
-				        } else {
-				            $firstExtraCharge = '0.00';
-				        }
-				        //Check Next Day Date
-				        //-------------------   
-				        $nextEnableDate = getNextEnableDate($firstEnableDate, json_decode($productMethod->delivery_days), $productMethod->delivery_within, $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id, $stoppage_time, $AtlasDate);
 
-				        $nextToNextEnableDate = getNextEnableDate($nextEnableDate, json_decode($productMethod->delivery_days), $productMethod->delivery_within, $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id, $stoppage_time, $AtlasDate);
+			//console.log("firstEnableDate"+ $firstEnableDate);                            
 
-				        $nextIsSaturday = date('w', strtotime($nextEnableDate));
-				        // $nextSurcharge = checkCalSurcharge(date('Y-m-d', strtotime($nextEnableDate)), $product->vendor_id, Session::get('delivery_to')
-				          ['country_id'], $product->id); 
+		                        //console.log($firstEnableDate);
+						        $admCalSurcharge_cndd = checkCalSurcharge.sync(null, $firstEnableDate, $vendorId, $currentCountry, $product[0].id);
+						        $firstExtraCharge = getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
+						        if ($admCalSurcharge_cndd !== false) {
+						            $firstExtraCharge += $admCalSurcharge_cndd;
+						        }
+						        
+						        //console.log($firstEnableDate);
+						        $firstIsSaturday = (new Date($firstEnableDate)).getDay(); // Wrong Day Coming 6 against 3.
+			//console.log("firstIsSaturday"+ $firstIsSaturday);
+						        //Check Next day Surcharge
+						        //------------------------
+						        if ($firstExtraCharge !== false) {
+						            if ($firstIsSaturday == 6) {
+						                $firstExtraCharge += config.saturday_charge;
+						            }
+						        } else {
+						            $firstExtraCharge = '0.00';
+						        }
+				        
+						        //Check Next Day Date
+						        //-------------------   
+						        $nextEnableDate = getNextEnableDate.sync(null, $firstEnableDate, $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
+			//console.log("nextEnableDate"+ $nextEnableDate);
 
-				        $admCalSurcharge_cndd = checkCalSurcharge(date('Y-m-d', strtotime($nextEnableDate)), $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id);
-				        $nextExtraCharge = getSurcharge($product->id, Session::get('delivery_to')['country_id'], $product->vendor_id);
-				        if ($admCalSurcharge_cndd !== false) {
-				            $nextExtraCharge += $admCalSurcharge_cndd;
-				        }
+						        $nextToNextEnableDate = getNextEnableDate.sync(null, $nextEnableDate, $productMethod[0].delivery_days, $productMethod[0].delivery_within, $vendorId, $currentCountry, $product[0].id, $stoppage_time, $AtlasDate);
+			//console.log("nextToNextEnableDate" + $nextToNextEnableDate);
+						        $nextIsSaturday = (new Date($nextEnableDate)).getDay();
+						        $admCalSurcharge_cndd = checkCalSurcharge.sync(null, $nextEnableDate, $vendorId, $currentCountry, $product[0].id);
+						        $nextExtraCharge = getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
+						        if ($admCalSurcharge_cndd !== false) {
+						            $nextExtraCharge += $admCalSurcharge_cndd;
+						        }
 
-				        //Check Next day Surcharge
-				        //------------------------
-				        if ($nextExtraCharge !== false) {
-				            if ($nextIsSaturday == 6) {
-				                $nextExtraCharge += Config::get('constants.saturday_charge');
-				            }
-				        } else {
-				            $nextExtraCharge = '0.00';
-				        }
+						        //Check Next day Surcharge
+						        //------------------------
+						        if ($nextExtraCharge !== false) {
+						            if ($nextIsSaturday == 6) {
+						                $nextExtraCharge += config.saturday_charge;
+						            }
+						        } else {
+						            $nextExtraCharge = '0.00';
+						        }
 
-				        //Check Next day Is Restrict Date Or Not
-				        //--------------------------------------
-				        $nextDay = strtotime(date('Y-m-d') . "+1 days");
+						        //Check Next day Is Restrict Date Or Not
+						        //--------------------------------------				    
 
-				        if (checkIsDateRestrict(date('Y-m-d', $nextDay), $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id) === true) {
-				            $nextRestrict = 'yes';
-				        } elseif (checkIsDaydisable(json_decode($productMethod->delivery_days), date('w', $nextDay)) === true) {
-				            $nextRestrict = 'yes';
-				        } elseif (checkIsDateHoliday(date('Y-m-d', $nextDay), $product->vendor_id, Session::get('delivery_to')['country_id']) === true) {
-				            $nextRestrict = 'yes';
-				        } else {
-				            $date_according_atlas           = date('j-F-y', strtotime($nextDay));
-				            $date_according_atlas_arr       = explode('-', $date_according_atlas);
-				            $date_according_atlas_arr[1]    = strtoupper($date_according_atlas_arr[1]);
-				            $date_according_atlas           = implode($date_according_atlas_arr, '-');
+							    //$nextDay = (new Date($current_date + ' Z')).getTime() / 1000;
+						        //$nextDay = strtotime(date('Y-m-d') . "+1 days");
 
-				            if(!empty($AtlasDate) && sizeof($AtlasDate)){
-				                if (in_array($date_according_atlas, $AtlasDate) ) {
-				                    $nextRestrict = 'no';
-				                }else{
-				                    $nextRestrict = 'yes';
-				                }
-				            }else{
-				                $nextRestrict = 'no';
-				            }
-				        }
+						        //console.log($AtlasDate);
+						        //console.log('Here 1');
+						        $dayNum = (new Date($current_date)).getDay();
 
-				        //Check Day After Tomorrow Date
-				        //-----------------------------  
-				        $datIsSaturday = date('w', strtotime($nextToNextEnableDate));
+						        if (checkIsDateRestrict($next_date, $vendorId, $currentCountry, $product[0].id) === true) {
+						            $nextRestrict = 'yes';
+									//console.log("1"+$product[0].id);
+						        } else if (checkIsDaydisable($productMethod[0].delivery_days, $dayNum) === true) {
+						            $nextRestrict = 'yes';
+						            //console.log("2"+$product[0].id);
+						        } else if (checkIsDateHoliday($current_date, $vendorId, $currentCountry) === true) {
+						            $nextRestrict = 'yes';
+						            //console.log("3"+$product[0].id);
+						        } else {
 
-				        // $datSurcharge = checkCalSurcharge(date('Y-m-d', strtotime($nextToNextEnableDate)), $product->vendor_id, Session::get
-				          ('delivery_to')['country_id'], $product->id); 
-				        $admCalSurcharge_cdatd = checkCalSurcharge(date('Y-m-d', strtotime($nextToNextEnableDate)), $product->vendor_id, Session::get('delivery_to')['country_id'], $product->id);
-				        $datExtraCharge = getSurcharge($product->id, Session::get('delivery_to')['country_id'], $product->vendor_id);
-				        if ($admCalSurcharge_cdatd !== false) {
-				            $datExtraCharge += $admCalSurcharge_cdatd;
-				        }
+						        	//Working Here
+								    var monthname=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+		                            var $nextDate = (new Date($next_date)).getDate();
+		                            var $nextMonth = (new Date($next_date)).getMonth();
+		                            var $nextYear = (new Date($next_date)).getFullYear();
 
-				        //Check Day After Tomorrow Surcharge
-				        //------------------------
-				        if ($datExtraCharge != false) {
-				            if ($datIsSaturday == 6) {
-				                $datExtraCharge += Config::get('constants.saturday_charge');
-				            }
-				        } else {
-				            $datExtraCharge = '0.00';
-				        }
+						            //$date_according_atlas           = date('j-F-y', strtotime($nextDay)); // Need to convert days
+								    $nextDay = $nextDate+'-'+monthname[$nextMonth]+'-'+$nextYear; // Formatting date 27-JUL-2017
+						            $date_according_atlas_arr       = $nextDay.split('-');
+						            $date_according_atlas_arr[1]    = $date_according_atlas_arr[1].toUpperCase();
+						            $date_according_atlas           = $date_according_atlas_arr.join('-');
 
-				        // For Related Products
-				        // --------------------
-				        $relatedProductsData = array();
-				        if ($product->relatedproduct):
-				            $counter = 0;
-				            foreach ($product->relatedproduct as $relProd):
-				                //if ($counter < 4):
-				                if (Session::get('delivery_to')['show_state'] == 1) {
-				                    $productlocation = new ProductLocation;
-				                    $counts = $productlocation->product_province_check(Session::get('delivery_to')['country_id'], Session::get('delivery_to')['province_id'], $relProd->related_product_id);
-				                    if ($counts > 0) {
-				                        $prds = relatedProductDetails($relProd->related_product_id, $sessLang);
-				                        $relatedProductsData[] = $prds;
-				                    }
-				                } else {
-				                    $prds = relatedProductDetails($relProd->related_product_id, $sessLang);
-				                    $relatedProductsData[] = $prds;
-				                }
-				                //endif;
-				                $counter++;
-				            endforeach;
-				        endif;
+						            if($AtlasDate != '' && $AtlasDate.length > 0){
+						                //if (in_array($date_according_atlas, $AtlasDate) ) {
+						                if ($AtlasDate.indexOf($date_according_atlas) > 0) {
+						                    $nextRestrict = 'no';
+						                }else{
+						                    $nextRestrict = 'yes';
+						                }
+						            }else{
+						                $nextRestrict = 'no';
+						            }
+						        }
 
-				        //To check if related product not associated              
-				        if (!sizeof($relatedProductsData)) {
-				            $productList = array();
-				            $productList = $product->getProductlistwithcountry(Session::get('delivery_to')['country_id'], Session::get('delivery_to')['province_id'], 'products.id', 6);
-				            foreach ($productList as $list) {//echo "<pre>";print_r($list->id);die;
-				                $prds = relatedProductDetails($list->id, $sessLang);
-				                $relatedProductsData[] = $prds;
-				            }
-				        }
-				        //End to check if relatated product not associated
+						        //Check Day After Tomorrow Date
+						        //-----------------------------  
+						        $datIsSaturday = (new Date($nextToNextEnableDate)).getDay();
 
-				        ////////////////// Recent viewed product Functionality //////////////////////////////
-				        $country_id = Session::get('delivery_to')['country_id'];
-				        $recent_views = array();
-				        $val = array();
+		//console.log($nextToNextEnableDate);
+						        $admCalSurcharge_cdatd = checkCalSurcharge.sync(null, $nextToNextEnableDate, $vendorId, $currentCountry, $product[0].id);
+						        $datExtraCharge = getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
+						        if ($admCalSurcharge_cdatd !== false) {
+						            $datExtraCharge += $admCalSurcharge_cdatd;
+						        }
 
-				        if (isset($_COOKIE['recent_view'])) {
-				            $val = unserialize($_COOKIE['recent_view']);
-				        }
-
-				        if (sizeof($val)) {
-				            if (is_array($val)) {
-				                $recent_views = $val;
-
-				                if (array_key_exists($country_id, $recent_views)) {
-				                    if (!in_array($product->id, $val[$country_id]))
-				                        $recent_views[$country_id][] = $product->id;
-				                }else {
-				                    $recent_views[$country_id][] = $product->id;
-				                }
-				            } else {
-				                $recent_views[$country_id][] = $product->id;
-				            }
-				        } else {
-				            $recent_views[$country_id][] = $product->id;
-				        }
-
-				        setcookie('recent_view', serialize($recent_views));
-
-				        //////////////////////// End Recent viewed product Functionality //////////////////////////
-				        if (isset($_COOKIE['recent_view'])) {
-				            $recent_views = unserialize($_COOKIE['recent_view']);
-				            $recent_views = $recent_views[$country_id];
-				        } else {
-				            if (isset($recent_views[$country_id])) {
-				                $recent_views = $recent_views[$country_id];
-				            } else {
-				                $recent_views = array();
-				            }
-				        }
-
-				        if (!in_array($product->id, $recent_views)) {
-				            $recent_views[] = $product->id;
-				        } else {
-				            $recent_views_key = array_search($product->id, $recent_views);
-				            unset($recent_views[$recent_views_key]);
-				            $recent_views[] = $product->id;
-				        }
+						        //Check Day After Tomorrow Surcharge
+						        //----------------------------------
+						        if ($datExtraCharge != false) {
+						            if ($datIsSaturday == 6) {
+						                $datExtraCharge += config.saturday_charge;
+						            }
+						        } else {
+						            $datExtraCharge = '0.00';
+						        }
 
 
-				        $recents = array();
-				        $k = 0;
-				        if (sizeof($recent_views)) {
-				            krsort($recent_views);
-				            foreach ($recent_views as $key => $value) {
-				                $recents[$k] = relatedProductDetails($value, $sessLang);
-				                $k++;
-				            }
-				        }*/
+						        // For Related Products
+						        // ---------------------
+						        //console.log($product[0].id);
+						        $delivery_country_show_state = 0;
+						        $relatedProductsData = [];
+						        $relatedProducts = getRelatedProducts.sync(null, $product[0].id);
+
+						        //console.log($relatedProducts);
+						        
+								if($relatedProducts.length > 0){
+									$counter = 0;
+									for(i=0; i<$relatedProducts.length; i++){
+										var $prds = {};
+										$counts = getCounts.sync(null, $currentCountry, $relatedProducts[i].related_product_id);
+							            //console.log($counts);
+						                if ($delivery_country_show_state == 1) {
+						                	if ($counts.length > 0 && $counts[0].aggregate > 0) {
+						                        $prds = getProduct.sync(null, null, $relatedProducts[i].related_product_id, $sessLang);
+						                        $relatedProductsData.push($prds);
+						                        //console.log($relatedProductsData);
+						                    }
+						                } else {
+						                    $prds = getProduct.sync(null, null, $relatedProducts[i].related_product_id, $sessLang);
+						                    $relatedProductsData.push($prds);
+						                }
+						                //endif;
+						                $counter++;
+									}
+
+								}else{
+
+									//To check if related product not associated
+									$productList = [];
+						            $productList = getProductlistwithcountry.sync(null, $currentCountry, 0, 6);
+						            for ( var i = 0; i < $productList.length; i++) {
+						            	var $prds = {};
+						                $prds = getProduct.sync(null, null, $productList[i].id, $sessLang);
+						                $relatedProductsData.push($prds);
+						                //console.log($relatedProductsData);
+						            }
+								}  
+
+								//console.log($relatedProductsData);
+						        
+						        //End to check if relatated product not associated
+
+						        ////////////////// Recent viewed product Functionality //////////////////////////////
+						        $recentlyViewedProducts = [];
+						        $recentViewed = $recent_products.split(',');
+						        for(var i=0; i< $recentViewed.length; i++){
+						        	var $prds = {};
+					                $prds = getProduct.sync(null, $currentCountry, $recentViewed[i], $sessLang);
+					                $recentlyViewedProducts.push($prds);
+					                
+						        }
+								//console.log($recentlyViewedProducts);
+
+								// Getting Currency Details from current country
+					      		//var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
+
+								//var price_data = getproductprices.sync(null, $product[i].id, currentCountry, $currency_details[0].id, 0);
+								if($product[0].price_value != '' && $currencydetails.length > 0){
+
+					              var $actPrice = commonHelper.number_format.sync(null, ($product[0].price_value * $currencydetails[0].exchange_rate), 2, '.', ',');
+					              var $compPrice = commonHelper.number_format.sync(null, ($product[0].compare_price * $currencydetails[0].exchange_rate), 2, '.', ',');
+
+					              //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+					              var $current_currency = $currencydetails[0].currency_code;
+
+					              var $currentCurrSymbl = $currencydetails[0].symbol;
+					              if($current_currency !== "USD"){ 
+					                  $actPrice = commonHelper.roundToNineNine.sync(null, $actPrice, $current_currency);
+					              }
+
+					              if ($compPrice > $actPrice) {
+					                 $product[0].compare_price = $currentCurrSymbl + $compPrice;
+					                 $product[0].price_value = $currentCurrSymbl + $actPrice;
+					              } else {
+					                 $product[0].price_value = $currentCurrSymbl + $actPrice;
+					              }
+					          	}	
+
+								$response = {
+							        //console.log('today': $today );
+							        'productDetails': $product,
+									'Weekday': JSON.stringify(config.week_days),
+							        'todayAnchorId': $todayAnchorId,
+							        'nextEnableDate': $nextEnableDate,
+							        'currentCountry': $currentCountry,
+							        'todayExtraCharge': $todayExtraCharge,
+							        'nextExtraCharge': $nextExtraCharge,
+							        'todayRestrict': $todayRestrict ,
+							        'nextRestrict': $nextRestrict,
+							        'nextExtraCharge': $nextExtraCharge,
+							        'nextToNextEnableDate': $nextToNextEnableDate,
+							        'datExtraCharge': $datExtraCharge,
+							        'deliveryCalendar': $deliveryCalendar,
+							        'AtlasDate': $AtlasDate,
+							        'firstEnableDate': $firstEnableDate,
+							        'firstExtraCharge': $firstExtraCharge,
+							        'relatedProductsData': $relatedProductsData,
+							        'recentlyViewedProducts': $recentlyViewedProducts
+								};
+
+								return_data.results = $response;								
+								callback();						
 
                             });
 
@@ -450,11 +502,106 @@ function ProductController() {
 
 }
 
-function relatedProducts(product_id, delivery_country_id, provience_id, language_id, callback) {
+function getProductlistwithcountry($country_id, $provience_id = 0 , $limit = 15, callback){
 
-    var sql = "SELECT * from `products` where `slug1` = premium-red-roses-12-long-stem limit 1";
+	//$sql = "SELECT p.*, lp.country_id, lp.province_id, m.delivery_method, m.delivery_within";
+	$sql = "SELECT p.*, lp.country_id, m.delivery_method, m.delivery_within";
+	$sql += " FROM products p";
+	$sql += " INNER JOIN location_product lp ON(p.id = lp.product_id)";
+	$sql += " INNER JOIN methods m ON(m.id = p.delivery_method_id)";
+	$sql += " INNER JOIN vendor v ON(v.id = p.vendor_id)";
+	$sql += " WHERE p.product_status = 1";
+	$sql += " AND p.admin_confirm = 1";
+	$sql += " AND frontend_show = 1";
+	$sql += " AND v.status = 1";
+	$sql += " AND lp.country_id = "+$country_id;
+
+	
+/*	if($provience_id != undefined && $provience_id > 0){
+		$sql += " AND lp.province_id = 6";
+	}
+*/
+	$sql += " GROUP BY lp.product_id";
+	$sql += " ORDER BY p.frontend_serial_number ASC";
+	$sql += " LIMIT 0,"+$limit;
+
+	//console.log($sql);
+	dbModel.rawQuery($sql, function(error, productList){
+		if(error) callback(error);
+		else{
+			callback(null, productList);
+		}
+	});
+}
+
+function getRelatedProducts(product_id, callback){
+
+	// Getting All related products for product_id
+	var $sql  = "SELECT * FROM `products` JOIN related_product";
+		$sql += " ON (products.id = related_product.product_id)";
+		$sql += " WHERE products.id = "+product_id;
+		$sql += " AND products.product_status = 1";
+		//console.log($sql);
+
+		dbModel.rawQuery($sql, function(error, related_products){
+			if(error) callback(error);
+			else{
+				callback(null, related_products);
+			}
+		});
+
 
 }
+
+function getCounts($delivery_country_id, $product_id, callback){
+
+	var $sql  = "SELECT COUNT(*) AS aggregate FROM `location_product`"
+		$sql += " INNER JOIN `products` ON `location_product`.`product_id` = `products`.`id`";
+		$sql += " WHERE `country_id` = "+$delivery_country_id;
+/*		if($province_id != undefined && $province_id > 0){
+			$sql += " AND `province_id` = "+$province_id;			
+		}*/
+		$sql += " AND `product_id` = "+$product_id;
+		//console.log($sql);
+
+		dbModel.rawQuery($sql, function(error, result){
+			if(error) callback(error);
+			else{
+				callback(null, result);
+			}
+		});
+
+}
+
+function getProduct($country_id = null, $product_id, $language_id, callback){
+
+	// For Getting Product 
+	var $sql = "SELECT `products`.`id` as product_id, `product_name`, `slug`, `product_picture`";
+		$sql +=	" FROM `products`";
+		$sql +=	" INNER JOIN `language_product` ON `products`.`id` = `language_product`.`product_id`";
+		if($country_id != undefined && $country_id != null){
+			$sql += " INNER JOIN location_product lp ON(`products`.id = lp.product_id)";
+		}
+		$sql +=	" WHERE (`product_status` = 1"
+		$sql +=	" AND `language_product`.`language_id` = "+$language_id;
+		$sql +=	" AND `language_product`.`product_id` = "+$product_id+")";
+
+		if($country_id != undefined && $country_id != null){
+			$sql += " AND lp.country_id = "+$country_id;
+		}
+
+		$sql += "  LIMIT 1";
+
+		//console.log($sql);
+
+		dbModel.rawQuery($sql, function(error, result){
+			if(error) callback(error);
+			else{
+				callback(null, result);
+			}
+		});
+}
+
 
 /**
  * Date to timestamp
@@ -476,7 +623,17 @@ function datetotime(template, date) {
 function currentformatted_date(template, adddays = 0) {
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth() + adddays; //January is 0!
+    var mm = today.getMonth() + 1;
+
+    if(adddays > 0){
+    	dd += adddays;
+    	if(dd > 31){
+    		dd = 1;
+    		mm += 1;
+    	}
+
+    }
+
     var yyyy = today.getFullYear();
 
     if (dd < 10) {
@@ -488,6 +645,7 @@ function currentformatted_date(template, adddays = 0) {
     if (template == 'd-m-Y') return dd + '-' + mm + '-' + yyyy;
     if (template == 'Y-m-d') return yyyy + '-' + mm + '-' + dd;
 }
+
 
 function getSurchargeConverted($amount, callback) {
 
@@ -548,18 +706,19 @@ function getSurcharge($product_id, $country_id, $vendor_id, callback) {
                 callback(null, formatPrice($productSurcharge[0].surcharge));
             } else {
                 $sql = "SELECT `id`, `status`, `surcharge` FROM `vendor` WHERE `id` = " + $vendor_id + " AND `status` = 1";
+	
                 dbModel.rawQuery($sql, function(err, $vendorSurcharge) {
-                    if (err) return callback(err);
+                    if (err) callback(err);
                     else {
                         if ($vendorSurcharge.length > 0 && $vendorSurcharge[0].surcharge > 0) {
                             callback(null, $vendorSurcharge[0].surcharge);
                         } else {
                             $sql = "SELECT `id`, `status`, `surcharge` FROM `country_list` WHERE `id` = " + $country_id + " AND `status` = 1";
                             dbModel.rawQuery($sql, function(err, $countrySurcharge) {
-                                if (err) return callback(err);
+                                if (err) callback(err);
                                 else {
                                     if ($countrySurcharge.length > 0) callback(null, formatPrice($countrySurcharge[0].surcharge));
-                                    else return callback(null, false);
+                                    else callback(null, false);
                                 }
                             });
                         }
@@ -579,7 +738,7 @@ function formatPrice($price) {
     }
 }
 
-function checkTodayEnable($checkCalDate, $delivery_days, $delivery_within, $vendor_id, $country_id, $product_id, $stoppage_time, $AtlasDate = '') {
+function checkTodayEnable($checkCalDate, $delivery_days, $delivery_within, $vendor_id, $country_id, $product_id, $stoppage_time, $AtlasDate = '',callback) {
 
     var d = new Date();
     $dayNum = d.getDay() + 1;
@@ -625,8 +784,9 @@ function checkTodayEnable($checkCalDate, $delivery_days, $delivery_within, $vend
     } else {
         $enable = false;
     }
+    
     //console.log($enable);
-    return $enable;
+    callback(null, $enable);
 }
 
 /* For currunt date is a restict day or not  */
@@ -640,7 +800,7 @@ function checkIsDateRestrict($date, $vendor_id, $country_id, $product_id) {
     $sql += " AND `restrict_calendar_dates`.`country_id` = " + $country_id + "";
     $sql += " AND `product_restrict_calendar_date`.`product_id` = " + $product_id + "";
     $sql += " AND `restrict_calendar_dates`.`status` = 1";
-
+//console.log($sql);
     dbModel.rawQuery($sql, function(err, $restrictCalDate) {
         if (err) return err;
         else {
@@ -652,6 +812,21 @@ function checkIsDateRestrict($date, $vendor_id, $country_id, $product_id) {
         }
     });
 }
+
+/* For currunt week day(Like sunday,monday) is available for delivery or not  */
+
+function checkIsDaydisable($method_days, $curruntday)
+{
+
+    if ($method_days.length > 0) {
+        if ($method_days.indexOf($curruntday + 1)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
 
 /* For currunt date  is not a holiday   */
 
@@ -677,33 +852,68 @@ function checkIsDateHoliday($date, $vendor_id, $country_id) {
 }
 
 
-/*function getNextEnableDate($checkCalDate='',$delivery_days,$delivery_within,$vendor_id,$country_id, $product_id, $stoppage_time, $AtlasDate = '')
+function getNextEnableDate($checkCalDate='',$delivery_days,$delivery_within,$vendor_id,$country_id, $product_id, $stoppage_time, $AtlasDate = '', callback)
 {
-
-    $dwCounter = 0;
-	//var d=new Date();
-	//$dayNum = d.getDay()+1;
-
-
+	//console.log('Input Date'+ $checkCalDate);
 
     if ($checkCalDate == '') {
-        $nextDay = Date.parse(currentformatted_date('Y-m-d', 1)) / 1000;
-        $checkCalDate = date('Y-m-d', $nextDay);
-        $dayNum = date('w', strtotime($checkCalDate));
-        $wdayNum = date('D', strtotime($checkCalDate));
+        $checkCalDate = currentformatted_date('Y-m-d',1);
     } else {
-        $delivery_within = 1;//for nextToNext checking
-        $nextDay = strtotime($checkCalDate + "+1 days");
-        $checkCalDate = date('Y-m-d', $nextDay);
-        $dayNum = date('w', strtotime($checkCalDate));
-        $wdayNum = date('D', strtotime($checkCalDate));
+		//console.log('Date:'+ $checkCalDate);
+
+		dd = (new Date($checkCalDate)).getDate();
+		mm = (new Date($checkCalDate)).getMonth() + 1;
+		yyyy = (new Date($checkCalDate)).getFullYear();
+
+/*		console.log('Day:'+ dd);
+		console.log('Month:'+ mm);
+		console.log('Year:'+ yyyy);*/
+
+    	dd += 1;
+    	if(dd > 31){
+    		dd = 1;
+    		mm += 1;
+    	}	    
+
+        if (dd < 10) {
+	        dd = '0' + dd
+	    }
+	    if (mm < 10) {
+	        mm = '0' + mm
+	    }
+
+		$checkCalDate = yyyy+'-'+mm+'-'+dd;
+
+		//console.log('FinalDate:'+$checkCalDate);
+
     }
 
+
+/*    $dwCounter = 0;
+
+	var $weekday=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+	//var monthname=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    var d = new Date();
+    var $current_hour = d.getHours();
+    var $current_minute = d.getMinutes();
+    var $current_date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + (d.getDate() + 1);
+    var $checkCalDate = '';
+
+    $nextDay = (new Date($current_date + ' Z')).getTime() / 1000;
+    $checkCalDate = $current_date;*/
+
+    //$dayNum = (new Date($current_date)).getDay();
+    //$wdayNum = $weekday[$dayNum];
+
+    callback(null, $checkCalDate);
+
+    /*
     if (date('H:i:s') < $stoppage_time) {
         $todayEnable = TRUE;
     } else {
         if ($delivery_within == 0) {
-            $nextDay = strtotime(date('Y-m-d') . "+1 days");
+            //$nextDay = strtotime(date('Y-m-d') . "+1 days");
             $checkCalDate = date('Y-m-d', $nextDay);
             $dayNum = date('w', strtotime($checkCalDate));
             $wdayNum = date('D', strtotime($checkCalDate));
@@ -713,7 +923,7 @@ function checkIsDateHoliday($date, $vendor_id, $country_id) {
         }
     }
 
-    if ($delivery_within == 0) {
+	if ($delivery_within == 0) {
         for ($i = 1; $i <= 60; $i++) {
             $dayNum += 1;
 
@@ -749,7 +959,7 @@ function checkIsDateHoliday($date, $vendor_id, $country_id) {
                 }
 
             } else {
-                $nextDay = strtotime($checkCalDate . "+1 days");
+                //$nextDay = strtotime($checkCalDate . "+1 days");
                 $checkCalDate = date('Y-m-d', $nextDay);
                 $dayNum = date('w', $nextDay);
                 $wdayNum = date('D', $nextDay);
@@ -794,15 +1004,15 @@ function checkIsDateHoliday($date, $vendor_id, $country_id) {
                 
             } else {
                 
-                $nextDay = strtotime($checkCalDate . "+1 days");
+               // $nextDay = strtotime($checkCalDate . "+1 days");
                 $checkCalDate = date('Y-m-d', $nextDay);
                 $dayNum = date('w', $nextDay);
                 $wdayNum = date('D', $nextDay);
             }
         }
-    }
+    }*/
+}
 
-}*/
 function productMethod($sql, $delivery_method_id, callback) {
 
     dbModel.rawQuery($sql, function(err, $productMethod) {
@@ -1104,7 +1314,7 @@ function stoppageTimePart($vendor_id = null, $province_id, callback) {
     return Date.parse($stoppageTime) / 1000;
 }
 
-function getCustomDeliveryDate($currenydetails, $product_code, $productSku, $zipCode, $currentCountry, callback) {
+function getCustomDeliveryDate($currencydetails, $product_code, $productSku, $zipCode, $currentCountry, callback) {
     if (!$productSku && !$zipCode) return callback(false);
     var $params = {};
     var $productSku = $zipCode = '';
@@ -1413,7 +1623,7 @@ function stoppageTimePart($vendor_id = null, $province_id) {
     
 }*/
 
-function getCurrencyDetails($currency_id = null, $country_id, callback) {
+/*function getCurrencyDetails($currency_id = null, $country_id, callback) {
 
     // Get price details from currency tables by country
     var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = " + $country_id + " AND c.status = 1";
@@ -1439,6 +1649,6 @@ function getCurrencyDetails($currency_id = null, $country_id, callback) {
         }
     });
 
-}
+}*/
 
 module.exports = new ProductController();
