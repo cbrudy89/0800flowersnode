@@ -28,10 +28,8 @@ function CommonHelper(){
 	    var sql = "SELECT description FROM `snipes` inner join `snipe_language` on `snipes`.`id` = `snipe_language`.`snipe_id` WHERE (`snipes`.`type` = '"+type+"' and `snipes`.`status` = 1 and `snipe_language`.`language_id` = "+language_id+") order by RAND() limit 1";
 	    //console.log(sql);
 	    dbModel.rawQuery(sql, function(err, result) {
-	        if (err) return callback(err);
-	        else{
-	        	callback(null, result);
-	        }
+	        if (err) callback(err);
+	        else callback(null, result);	        
 	    });
 
 	}

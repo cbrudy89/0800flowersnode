@@ -86,7 +86,7 @@
                   "description":"Country Id ( 4 for Canada)",
                   "required":true,
                   "type": "integer",
-                  "default": 4
+                  "default": 15
                },
                {
                   "name":"delivery_province_id",
