@@ -40,8 +40,7 @@
                      "in":"formData",
                      "description":"User token",
                      "required":true,
-                     "type":"integer",
-                     "default": 1
+                     "type":"integer"
                },               {
                      "name":"user_id",
                      "in":"formData",
@@ -64,7 +63,7 @@
                      "description":"User language_id",
                      "required":true,
                      "type":"integer",
-                     "default": 4
+                     "default": 1
                }
             ],
             "responses":{
@@ -99,8 +98,7 @@
                      "in":"formData",
                      "description":"User token",
                      "required":true,
-                     "type":"integer",
-                     "default": 1
+                     "type":"integer"
                },               {
                      "name":"user_id",
                      "in":"formData",
@@ -158,8 +156,7 @@
                      "in":"formData",
                      "description":"User token",
                      "required":true,
-                     "type":"integer",
-                     "default": 1
+                     "type":"integer"
                },               {
                      "name":"user_id",
                      "in":"formData",

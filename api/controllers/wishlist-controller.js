@@ -85,13 +85,13 @@ function WishlistController() {
                     });
                   }
               });*/
+                    res.status(config.HTTP_SUCCESS).send({
+                      status:config.SUCCESS,
+                      code: config.HTTP_SUCCESS,
+                      message:'This product is already added.'
+                    });
 
         }else{ //////Insert wishlist product
-              /*var post = {
-                user_id: req.body.user_id,
-                product_id: req.body.product_id,
-                qty: req.body.qty
-              };*/
               var sql="INSERT INTO wishlist (user_id, product_id, qty) VALUES ('"+user_id+"', '"+product_id+"', '"+qty+"')";
               //console.log(sql);
               dbModel.rawQuery(sql, function(err, result){
@@ -101,14 +101,15 @@ function WishlistController() {
                       code: config.HTTP_SERVER_ERROR,
                       message:'Unable to insert wishlist product.'
                     });
+                } else {                  
+                      res.status(config.HTTP_SUCCESS).send({
+                        status:config.SUCCESS,
+                        code: config.HTTP_SUCCESS,
+                        message:'wishlist product inserted successfully.'
+                      });
                 }
               });          
         }
-        res.status(config.HTTP_SUCCESS).send({
-          status:config.SUCCESS,
-          code: config.HTTP_SUCCESS,
-          message:'wishlist product inserted successfully.'
-        });
       }
     });
   }
