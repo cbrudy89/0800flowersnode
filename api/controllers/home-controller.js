@@ -153,7 +153,7 @@ function HomeController() {
           res.status(config.HTTP_SUCCESS).send({
             status: config.SUCCESS, 
             code : config.HTTP_SUCCESS, 
-            message: "Thankyou for registering with us."
+            message: "Confirmed- Thank You! You've been added to our email list!"
           });
 
         }else{
@@ -200,7 +200,8 @@ function HomeController() {
                   res.status(config.HTTP_SUCCESS).send({
                       status: config.SUCCESS, 
                       code : config.HTTP_SUCCESS, 
-                      message: email+' has been subscribed successfully'
+                      //message: email+' has been subscribed successfully'
+                      message: "Confirmed- Thank You! You've been added to our email list!"
                   });
                  }
               });
