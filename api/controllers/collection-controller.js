@@ -178,7 +178,7 @@ function CollectionController() {
       }else{
 
         // Append Product Price in Products result
-        var products = [];        
+        /*var products = [];        
         for ( var i=0 ; i < $result.length; i++) {
                     
           var item = [];                        
@@ -210,6 +210,55 @@ function CollectionController() {
           }else{
             //console.log('No price');
           }
+          products.push(item);
+        }*/
+
+
+        var products = [];        
+        for ( var j=0 ; j < $result.length; j++) {
+                    
+          var item = [];                        
+          item = $result[j];
+
+          var $variants=[];
+
+          $variantdetails = getVariantDetails.sync(null, $result[j].id);
+
+          //console.log($variantdetails);
+                                
+          if($variantdetails.length > 0 && $currency_details.length > 0){
+              var comPrice = price = '';
+              for(var i=0; i < $variantdetails.length; i++){
+                   //console.log($variantdetails[i].price_value);
+                  var $actPrice = commonHelper.number_format.sync(null, ($variantdetails[i].price_value * $currency_details[0].exchange_rate), 2, '.', ',');
+                  var $compPrice = commonHelper.number_format.sync(null, ($variantdetails[i].compare_price * $currency_details[0].exchange_rate), 2, '.', ',');
+
+                  //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                  var $current_currency = $currency_details[0].currency_code;
+
+                  var $currentCurrSymbl = $currency_details[0].symbol;
+                  if($current_currency !== "USD"){ 
+                      $actPrice = commonHelper.roundToNineNine.sync(null, $actPrice, $current_currency);
+                  }
+
+                  if ($compPrice > $actPrice) {
+                     comPrice += $currentCurrSymbl + $compPrice;
+                     price += $currentCurrSymbl + $actPrice;
+                  } else {
+                     price += $currentCurrSymbl + $actPrice;
+                  }
+
+                  if(i < ($variantdetails.length - 1)){
+                    comPrice += "-";
+                    price += "-";
+                  }
+                 
+              }
+              
+              item.compare_price = comPrice;  
+              item.price = price;
+          }
+
           products.push(item);
         }
 
@@ -1040,6 +1089,16 @@ function roundToNineNine($actPrice, $current_currency){
     return $newPrice;
 } 
 
+function getVariantDetails($product_id,callback){
+    $sql = "Select `product_prices`.`price_name`,`product_prices`.`price_value`,`product_prices`.`compare_price`,  CONCAT('"+config.RESOURCE_URL+"', REPLACE(`product_prices`.`image`, '+','%2B')) AS variant_picture,sku from `product_prices` ";
+    $sql += "INNER JOIN `products` ON `product_prices`.`product_id` = `products`.`id` ";
+    $sql += "WHERE  `products`.`id`="+$product_id;
+    //console.log("Variant Query: "+$sql);
+    dbModel.rawQuery($sql, function(err, $product_variant) {
+        if (err) return callback(err);
+        else callback(null,$product_variant);
+    });
+}
 
 
 module.exports = new CollectionController();
