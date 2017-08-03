@@ -128,6 +128,7 @@ function CollectionController() {
 
       // Getting Currency Details from current country
       var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
+      //console.log($currency_details);
 
       reqData = {
         "delivery_country_id": delivery_country_id,
@@ -152,6 +153,7 @@ function CollectionController() {
       if($result.length <= 0){
         
         var final_data  = {
+          "preferred_currency_code": $currency_details[0].currency_code,
           "page": 0,
           "productList": [],
           "filter_orderby": [],
@@ -238,8 +240,11 @@ function CollectionController() {
 
               //console.log(price_filter);
               if(price_filter.length > 0 && price_filter[0].aggregate > 0){
-                  item[key] = pfilter[key];
-                  priceFilter.push(item);
+                  //item[key] = pfilter[key];
+                  priceFilter.push({
+                    "id" : key,
+                    "name" : pfilter[key]
+                  });
               }          
               
             }
@@ -263,15 +268,16 @@ function CollectionController() {
 
         //var $orderby_translation = language.sync(null, language_id, "'candeliver','delivertom'")
 
-        var $orderby = {
-          "default": "Our Favorite",
-          "name-asc": "Name: A to Z",
-          "name-desc": "Name: Z to A",
-          "price-asc": "Price: Low to High",
-          "price-desc": "Price: High to Low",
-        };        
+        var $orderby = [
+          { "id": "default", "name": "Our Favorite"},
+          { "id": "name-asc", "name": "Name: A to Z"},
+          { "id": "name-desc", "name": "Name: Z to A"},
+          { "id": "price-asc", "name": "Price: Low to High"},
+          { "id": "price-desc", "name": "Price: High to Low"}
+        ];        
 
         var final_data  = {
+          "preferred_currency_code": $currency_details[0].currency_code,
           "page": page,
           "productList": $result,
           "filter_orderby": $orderby,
@@ -378,10 +384,13 @@ function getDeliveryFilters($result, $delivery_translation, callback){
         value = $delivery_translation[1].translated_text;
       }
 
-      var dataKey = {};
-      dataKey[key] = value;
+      /*var dataKey = {};
+      dataKey[key] = value;*/
 
-      $final_filter.push(dataKey);      
+      $final_filter.push({
+        "id": key,
+        "name" : value
+      });      
 
     } 
 

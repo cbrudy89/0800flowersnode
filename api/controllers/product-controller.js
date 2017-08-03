@@ -445,10 +445,10 @@ function ProductController() {
                                       }
                                 }
 
-                               //console.log($variants);
-
+                                //console.log($variants);
 
                                 $response = {
+                                	"preferred_currency_code" : currencydetails[0].currency_code,
                                     'productDetails': $product,
                                     'variants': $variants,
                                     'Weekday': JSON.stringify(config.week_days),
@@ -457,7 +457,7 @@ function ProductController() {
                                     'currentCountry': $currentCountry,
                                     'todayExtraCharge': $todayExtraCharge,
                                     'nextExtraCharge': $nextExtraCharge,
-                                    'todayRestrict': $todayRestrict ,
+                                    'todayRestrict': $todayRestrict,
                                     'nextRestrict': $nextRestrict,
                                     'nextExtraCharge': $nextExtraCharge,
                                     'nextToNextEnableDate': $nextToNextEnableDate,
@@ -469,7 +469,7 @@ function ProductController() {
                                     'relatedProductsData': $relatedProductsData,
                                     'recentlyViewedProducts': $recentlyViewedProducts
                                 };
-                              // console.log($response);
+                                // console.log($response);
 
 
                                 return_data.results = $response;    

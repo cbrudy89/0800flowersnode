@@ -253,7 +253,7 @@ function HomeController() {
           },
           function topcountries(callback){
 
-              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id, (SELECT currency_code FROM currency WHERE id = cl.preferred_currency_id) as preferred_currency_code FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -286,7 +286,7 @@ function HomeController() {
             var country = [];
             
 
-              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code FROM country_list WHERE status = 1", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){
@@ -301,12 +301,14 @@ function HomeController() {
                     show_state = countries[i].show_state;
                     redirect_url = countries[i].redirect_url;
                     preferred_currency_id = countries[i].preferred_currency_id;
+                    preferred_currency_code = countries[i].preferred_currency_code;
                     company_logo = countries[i].company_logo;
 
 
                     country.push({
                       "country_id": country_id, 
-                      "country_name": country_name, 
+                      "country_name": country_name,
+                      "country_slug": country_name.toLowerCase().replace(" ","-"),
                       "alias": alias, 
                       "short_code": short_code, 
                       "iso_code": iso_code, 
@@ -314,6 +316,7 @@ function HomeController() {
                       "show_state": show_state,
                       "redirect_url": redirect_url,
                       "preferred_currency_id": preferred_currency_id,
+                      "preferred_currency_code": preferred_currency_code,
                       "company_logo": company_logo
                     });
                   }
@@ -380,12 +383,30 @@ function HomeController() {
           },      
           function translation_content(callback){
 
+            var translated_content = [];
+
             sql = "SELECT translation.lkey as 'key',translated_text FROM language_translation, translation, languages WHERE language_translation.translation_id=translation.id AND language_translation.language_id=languages.id AND languages.id= "+language_id;
             //console.log(sql);
             dbModel.rawQuery(sql, function(err, result) {
                if (err) return callback(err);
-               return_data.translation_content = result;
-               callback();
+               else{
+                  if(result.length > 0){
+
+                    var data = {};
+                    for(var i=0; i<result.length;i++){
+
+                      data[result[i].key] = result[i].translated_text;
+
+                    }
+                    
+                    translated_content.push(data);
+                    return_data.translated_content = translated_content;
+
+                  }else{
+                    return_data.translation_content = [];
+                  }
+                callback();
+               }
             });           
 
           },            
