@@ -6,7 +6,7 @@ var Sync = require('sync');
 var config = require('./../../config');
 /*var connection = require('./../../database');*/
 var dbModel = require('./../models/db-model');
-var commonModel = require('./../helpers/common-helper');
+var commonHelper = require('./../helpers/common-helper');
 
 function CollectionController() {
   // Collection page data
@@ -20,13 +20,15 @@ function CollectionController() {
     //This functions will be executed at the same time
     async.parallel([
       function topbanner(callback){
-         commonModel.getPromoBanner(language_id, 'collections', function(err, result) {
+         commonHelper.getPromoBanner(language_id, 'collections', function(err, result) {
              if (err) return callback(err);
              else {
                 if(result.length > 0 && result[0].description != ''){
                   return_data.topbanner = result[0].description;
-                  callback();                      
+                }else{
+                  return_data.topbanner = '';
                 }
+                callback();
              }
           });
       },
