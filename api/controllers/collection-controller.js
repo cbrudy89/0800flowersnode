@@ -295,7 +295,8 @@ function CollectionController() {
         res.status(config.HTTP_SUCCESS).send({
             status: config.SUCCESS, 
             code : config.HTTP_SUCCESS, 
-            message: $result.length + " products found out of "+$total_products.length,
+            //message: $result.length + " products found out of "+$total_products.length,
+            message: $result.length + " products found",
             result : final_data
         });
       }
@@ -498,7 +499,7 @@ function getProductIds(data, callback){
 
 function getColorFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name'";
+  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name', `colors`.`color_code`";
     sql += " FROM `products`"; 
     sql += " INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id`"; 
     sql += " INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id`"; 
