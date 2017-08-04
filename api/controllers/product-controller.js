@@ -312,7 +312,6 @@ function ProductController() {
                                     $currentdateTime = commonHelper.getCurrentDateTimeForCountry.sync(null,null, $currentCountry);
                                 }
                                 $currenttime= commonHelper.getCurrentonlyTimeForCountry.sync(null,$currentCountry);
-
                                 /**********/
                                 /*$param = array(
                                     'date' => '',
@@ -490,96 +489,7 @@ function ProductController() {
                                     $datExtraCharge = '0.00';
                                 }
 
-                                // For Related Products
-                                // ---------------------
-                                //console.log($product[0].id);
-                                $delivery_country_show_state = 0;
-                                $relatedProductsData = $relatedProducts=[];
-                                $relatedProducts = getRelatedProducts.sync(null, $product[0].id);
-                               
-                                if($relatedProducts.length > 0){
-                                    $counter = 0;
-                                    for(i=0; i<$relatedProducts.length; i++){
-                                        var $prds = {};
-                                        $counts = getCounts.sync(null, $currentCountry, $relatedProducts[i].related_product_id);
-                                        //console.log($counts);
-                                        if ($delivery_country_show_state == 1) {
-                                            if ($counts.length > 0 && $counts[0].aggregate > 0) {
-                                                $prds = getProduct.sync(null, null, $relatedProducts[i].related_product_id, $sessLang);
-                                                $relatedProductsData.push($prds);
-                                                //console.log($relatedProductsData);
-                                            }
-                                        } else {
-                                            $prds = getProduct.sync(null, null, $relatedProducts[i].related_product_id, $sessLang);
-                                            $relatedProductsData.push($prds);
-                                        }
-                                        //endif;
-                                        $counter++;
-                                    }
-
-                                }else{
-
-                                    //To check if related product not associated
-                                    $productList = [];
-                                    $productList = getProductlistwithcountry.sync(null, $currentCountry, 0, 6);
-                                    for ( var i = 0; i < $productList.length; i++) {
-                                        var $prds = {};
-                                        $prds = getProduct.sync(null, null, $productList[i].id, $sessLang);
-                                        $relatedProductsData.push($prds);
-                                        //console.log($relatedProductsData);
-                                    }
-                                }  
-                                //End to check if relatated product not associated
-
-                                ////////////////// Recent viewed product Functionality //////////////////////////////
-                                $recentlyViewedProducts = [];
-                                $recentViewed = $recent_products.split(',');
-                                for(var i=0; i< $recentViewed.length; i++){
-                                    var $prds = {};
-                                    $prds = getProduct.sync(null, $currentCountry, $recentViewed[i], $sessLang);
-                                    $recentlyViewedProducts.push($prds);
-                                    
-                                }
-                                //console.log('recentlyViewedProducts--'+$recentlyViewedProducts);
-
-                                // Getting Currency Details from current country
-                                //var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
-
-                                //var price_data = getproductprices.sync(null, $product[i].id, currentCountry, $currency_details[0].id, 0);
-                                
-                                var $variants=[];
-                                
-                                if($variantdetails.length > 0 && $currencydetails.length > 0){
-                                    for(var i=0; i < $variantdetails.length; i++){
-                                           //console.log($variantdetails[i].price_value);
-                                          var $actPrice = commonHelper.number_format.sync(null, ($variantdetails[i].price_value * $currencydetails[0].exchange_rate), 2, '.', ',');
-                                          var $compPrice = commonHelper.number_format.sync(null, ($variantdetails[i].compare_price * $currencydetails[0].exchange_rate), 2, '.', ',');
-
-                                          //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
-                                          var $current_currency = $currencydetails[0].currency_code;
-
-                                          var $currentCurrSymbl = $currencydetails[0].symbol;
-                                          if($current_currency !== "USD"){ 
-                                              $actPrice = commonHelper.roundToNineNine.sync(null, $actPrice, $current_currency);
-                                          }
-
-                                          if ($compPrice > $actPrice) {
-                                             $variantdetails[i].compare_price = $currentCurrSymbl + $compPrice;
-                                             $variantdetails[i].price_value = $currentCurrSymbl + $actPrice;
-                                          } else {
-                                             $variantdetails[i].price_value = $currentCurrSymbl + $actPrice;
-                                          }
-                                         
-                                          $variants.push($variantdetails[i]);
-                                      }
-                                }
-
-                                //console.log($variants);
-
                                 $response = {
-                                	"preferred_currency_code" : currencydetails[0].currency_code,
-                                    'productDetails': $product,
-                                    'variants': $variants,
                                     'Weekday': JSON.stringify(config.week_days),
                                     //'adminRestictedRates': $adminRestictedRates,
                                     'currentdateTime': $currentdateTime,
