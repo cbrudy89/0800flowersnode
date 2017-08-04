@@ -850,7 +850,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
                     if (err) callback(err);
                     else {
                         if ($vendorSurcharge.length > 0 && $vendorSurcharge[0].surcharge > 0) {
-                            callback(null, $vendorSurcharge[0].surcharge);
+                            callback(null, parseFloat($vendorSurcharge[0].surcharge).toFixed(2));
                         } else {
                             $sql = "SELECT `id`, `status`, `surcharge` FROM `country_list` WHERE `id` = " + $country_id + " AND `status` = 1";
                             dbModel.rawQuery($sql, function(err, $countrySurcharge) {

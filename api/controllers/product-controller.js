@@ -16,7 +16,7 @@ function ProductController() {
         var $sessLang = req.body.language_id;
         var $currentCountry = req.body.country_id;
         var $currency_id = req.body.currency_id;
-        var $province_id = req.body.province_id;
+        var $province_id = '' //var $province_id = req.body.province_id;
         var $recent_products = req.body.recent_products;
 
         var $current_date = commonHelper.currentformatted_date('Y-m-d');
@@ -399,17 +399,16 @@ function ProductController() {
                                 $admCalSurcharge_cndd = commonHelper.checkCalSurcharge.sync(null, $firstEnableDate, $vendorId, $currentCountry, $product[0].id);
                                 $firstExtraCharge = commonHelper.getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
                                 if ($admCalSurcharge_cndd !== false) {
-                                    $firstExtraCharge += $admCalSurcharge_cndd;
+                                    $firstExtraCharge = $firstExtraCharge + $admCalSurcharge_cndd;
                                 }
                                 
-                                //console.log($firstEnableDate);
                                 $firstIsSaturday = (new Date($firstEnableDate)).getDay(); // Wrong Day Coming 6 against 3.
                                 //console.log("firstIsSaturday"+ $firstIsSaturday);
                                 //Check Next day Surcharge
                                 //------------------------
                                 if ($firstExtraCharge !== false) {
                                     if ($firstIsSaturday == 6) {
-                                        $firstExtraCharge += config.saturday_charge;
+                                        $firstExtraCharge = parseFloat($firstExtraCharge) + parseFloat(config.saturday_charge);
                                     }
                                 } else {
                                     $firstExtraCharge = '0.00';
@@ -495,20 +494,20 @@ function ProductController() {
                                     'currentdateTime': $currentdateTime,
                                     'currenttime': $currenttime,
                                     'stoppage_time': $stoppage_time,
-                                    'todayAnchorId': $todayAnchorId,
-                                    'nextEnableDate': $nextEnableDate,
                                     'currentCountry': $currentCountry,
+                                    'todayAnchorId': $todayAnchorId,
                                     'todayExtraCharge': $todayExtraCharge,
-                                    'nextExtraCharge': $nextExtraCharge,
                                     'todayRestrict': $todayRestrict,
-                                    'nextRestrict': $nextRestrict,
+                                    'firstEnableDate': $firstEnableDate,
+                                    'firstExtraCharge': $firstExtraCharge.toFixed(2),
+                                    'nextEnableDate': $nextEnableDate,
                                     'nextExtraCharge': $nextExtraCharge,
+                                    'nextRestrict': $nextRestrict,
                                     'nextToNextEnableDate': $nextToNextEnableDate,
+                                    'nextExtraCharge': $nextExtraCharge,
                                     'datExtraCharge': $datExtraCharge,
                                     'deliveryCalendar': $deliveryCalendar,
-                                    'AtlasDate': $AtlasDate,
-                                    'firstEnableDate': $firstEnableDate,
-                                    'firstExtraCharge': $firstExtraCharge
+                                    'AtlasDate': $AtlasDate
                                 };
 
                                 return_data.results = $response;    
