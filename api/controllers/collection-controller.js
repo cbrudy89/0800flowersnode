@@ -6,7 +6,7 @@ var Sync = require('sync');
 var config = require('./../../config');
 /*var connection = require('./../../database');*/
 var dbModel = require('./../models/db-model');
-var commonModel = require('./../helpers/common-helper');
+var commonHelper = require('./../helpers/common-helper');
 
 function CollectionController() {
   // Collection page data
@@ -20,13 +20,15 @@ function CollectionController() {
     //This functions will be executed at the same time
     async.parallel([
       function topbanner(callback){
-         commonModel.getPromoBanner(language_id, 'collections', function(err, result) {
+         commonHelper.getPromoBanner(language_id, 'collections', function(err, result) {
              if (err) return callback(err);
              else {
                 if(result.length > 0 && result[0].description != ''){
                   return_data.topbanner = result[0].description;
-                  callback();                      
+                }else{
+                  return_data.topbanner = '';
                 }
+                callback();
              }
           });
       },
@@ -128,6 +130,7 @@ function CollectionController() {
 
       // Getting Currency Details from current country
       var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
+      //console.log($currency_details);
 
       reqData = {
         "delivery_country_id": delivery_country_id,
@@ -152,6 +155,7 @@ function CollectionController() {
       if($result.length <= 0){
         
         var final_data  = {
+          "preferred_currency_code": $currency_details[0].currency_code,
           "page": 0,
           "productList": [],
           "filter_orderby": [],
@@ -174,7 +178,7 @@ function CollectionController() {
       }else{
 
         // Append Product Price in Products result
-        var products = [];        
+        /*var products = [];        
         for ( var i=0 ; i < $result.length; i++) {
                     
           var item = [];                        
@@ -207,6 +211,55 @@ function CollectionController() {
             //console.log('No price');
           }
           products.push(item);
+        }*/
+
+
+        var products = [];        
+        for ( var j=0 ; j < $result.length; j++) {
+                    
+          var item = [];                        
+          item = $result[j];
+
+          var $variants=[];
+
+          $variantdetails = getVariantDetails.sync(null, $result[j].id);
+
+          //console.log($variantdetails);
+                                
+          if($variantdetails.length > 0 && $currency_details.length > 0){
+              var comPrice = price = '';
+              for(var i=0; i < $variantdetails.length; i++){
+                   //console.log($variantdetails[i].price_value);
+                  var $actPrice = commonHelper.number_format.sync(null, ($variantdetails[i].price_value * $currency_details[0].exchange_rate), 2, '.', ',');
+                  var $compPrice = commonHelper.number_format.sync(null, ($variantdetails[i].compare_price * $currency_details[0].exchange_rate), 2, '.', ',');
+
+                  //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                  var $current_currency = $currency_details[0].currency_code;
+
+                  var $currentCurrSymbl = $currency_details[0].symbol;
+                  if($current_currency !== "USD"){ 
+                      $actPrice = commonHelper.roundToNineNine.sync(null, $actPrice, $current_currency);
+                  }
+
+                  if ($compPrice > $actPrice) {
+                     comPrice += $currentCurrSymbl + $compPrice;
+                     price += $currentCurrSymbl + $actPrice;
+                  } else {
+                     price += $currentCurrSymbl + $actPrice;
+                  }
+
+                  if(i < ($variantdetails.length - 1)){
+                    comPrice += "-";
+                    price += "-";
+                  }
+                 
+              }
+              
+              item.compare_price = comPrice;  
+              item.price = price;
+          }
+
+          products.push(item);
         }
 
         result = products;
@@ -238,8 +291,11 @@ function CollectionController() {
 
               //console.log(price_filter);
               if(price_filter.length > 0 && price_filter[0].aggregate > 0){
-                  item[key] = pfilter[key];
-                  priceFilter.push(item);
+                  //item[key] = pfilter[key];
+                  priceFilter.push({
+                    "id" : key,
+                    "name" : pfilter[key]
+                  });
               }          
               
             }
@@ -263,15 +319,16 @@ function CollectionController() {
 
         //var $orderby_translation = language.sync(null, language_id, "'candeliver','delivertom'")
 
-        var $orderby = {
-          "default": "Our Favorite",
-          "name-asc": "Name: A to Z",
-          "name-desc": "Name: Z to A",
-          "price-asc": "Price: Low to High",
-          "price-desc": "Price: High to Low",
-        };        
+        var $orderby = [
+          { "id": "default", "name": "Our Favorite"},
+          { "id": "name-asc", "name": "Name: A to Z"},
+          { "id": "name-desc", "name": "Name: Z to A"},
+          { "id": "price-asc", "name": "Price: Low to High"},
+          { "id": "price-desc", "name": "Price: High to Low"}
+        ];        
 
         var final_data  = {
+          "preferred_currency_code": $currency_details[0].currency_code,
           "page": page,
           "productList": $result,
           "filter_orderby": $orderby,
@@ -287,7 +344,8 @@ function CollectionController() {
         res.status(config.HTTP_SUCCESS).send({
             status: config.SUCCESS, 
             code : config.HTTP_SUCCESS, 
-            message: $result.length + " products found out of "+$total_products.length,
+            //message: $result.length + " products found out of "+$total_products.length,
+            message: $result.length + " products found",
             result : final_data
         });
       }
@@ -378,10 +436,13 @@ function getDeliveryFilters($result, $delivery_translation, callback){
         value = $delivery_translation[1].translated_text;
       }
 
-      var dataKey = {};
-      dataKey[key] = value;
+      /*var dataKey = {};
+      dataKey[key] = value;*/
 
-      $final_filter.push(dataKey);      
+      $final_filter.push({
+        "id": key,
+        "name" : value
+      });      
 
     } 
 
@@ -487,7 +548,7 @@ function getProductIds(data, callback){
 
 function getColorFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name'";
+  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name', `colors`.`color_code`";
     sql += " FROM `products`"; 
     sql += " INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id`"; 
     sql += " INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id`"; 
@@ -1028,6 +1089,16 @@ function roundToNineNine($actPrice, $current_currency){
     return $newPrice;
 } 
 
+function getVariantDetails($product_id,callback){
+    $sql = "Select `product_prices`.`price_name`,`product_prices`.`price_value`,`product_prices`.`compare_price`,  CONCAT('"+config.RESOURCE_URL+"', REPLACE(`product_prices`.`image`, '+','%2B')) AS variant_picture,sku from `product_prices` ";
+    $sql += "INNER JOIN `products` ON `product_prices`.`product_id` = `products`.`id` ";
+    $sql += "WHERE  `products`.`id`="+$product_id;
+    //console.log("Variant Query: "+$sql);
+    dbModel.rawQuery($sql, function(err, $product_variant) {
+        if (err) return callback(err);
+        else callback(null,$product_variant);
+    });
+}
 
 
 module.exports = new CollectionController();
