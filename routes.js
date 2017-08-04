@@ -225,6 +225,9 @@ module.exports = {
     
     app.post('/productdetails', validate(productValidation.productdetails), function(req, res){
         productController.productdetails(req, res);
+    });
+    app.post('/productdeliverycalender', validate(productValidation.productdeliverycalender), function(req, res){
+        productController.productdeliverycalender(req, res);
     });  
     /************************* END of Collection Page ************************/  
     

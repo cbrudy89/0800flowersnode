@@ -152,7 +152,7 @@ function OrderModel(){
 				callback(err);
 			}
 			else {		
-				console.log("dfdf");return false;			
+				//console.log("dfdf");return false;			
 				con.query('Select * FROM orders WHERE user_id = ?', [user_id], function (err, results) {
 		          	if (err) {
 		          		callback(err);

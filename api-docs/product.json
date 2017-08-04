@@ -1,0 +1,212 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Product Description and Calender APIs",
+      "description":"All APIs related to the Product Page",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Product",
+         "description":"API for product page"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/productdetails":{
+         "post":{
+            "tags":[
+               "Product"
+            ],
+            "description":"Product variant and desction api",
+            "operationId":"product_details",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                     "name":"slug",
+                     "in":"path",
+                     "description":"Product slug",
+                     "required":true,
+                     "type":"string",
+                     "default": "12-white-roses"
+               },
+               {
+                     "name":"country_id",
+                     "in":"path",
+                     "description":"Current country id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 15
+               },
+               {
+                     "name":"language_id",
+                     "in":"path",
+                     "description":"Current language id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"postalcode",
+                     "in":"path",
+                     "description":"Current postalcode",
+                     "required":true,
+                     "type":"string",
+                     "default": "00000"
+               },
+               {
+                     "name":"currency_id",
+                     "in":"path",
+                     "description":"Current currency id",
+                     "required":true,
+                     "type":"integer",
+                     "default": 1
+               },
+               {
+                     "name":"recent_products",
+                     "in":"path",
+                     "description":"Product recent products ids (ex. 20,21)",
+                     "required":true,
+                     "type":"string",
+                     "default": "0"
+               }                                                                                   
+               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found!",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }               
+            }
+         }
+      },      
+      "/productdeliverycalender":{
+         "post":{
+            "tags":[
+               "Product"
+            ],
+            "description":"Api for Delivery Calender",
+            "operationId":"productdeliverycalender",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id ( 15 for Ireland)",
+                  "required":true,
+                  "type": "integer",
+                  "default": 15
+               },
+               {
+                  "name":"sku",
+                  "in":"formData",
+                  "description":"Product variant SKU",
+                  "required":true,
+                  "type": "string",
+                  "default": 144778
+               },
+               {
+                  "name":"language_id",
+                  "in":"formData",
+                  "description":"Language Id ( 1 For English)",
+                  "required":true,
+                  "type": "integer",
+                  "default": 1
+               },
+               {
+                  "name":"currency_id",
+                  "in":"formData",
+                  "description":"Curent selected currency Id",
+                  "required":true,
+                  "type": "integer",
+                  "default": 1
+               },
+               {
+                  "name":"postalcode",
+                  "in":"formData",
+                  "description":"Product postal code",
+                  "required":true,
+                  "type": "string",
+                  "default": "00000"
+               }                                                                          
+               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Record found!",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }               
+            }
+         }
+      }
+   },
+   "definitions":{      
+      "200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found!"
+            },
+            "token":{
+               "type":"object",
+               "example":{}
+            }
+         }
+      },  
+      "500":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }      
+   }
+}

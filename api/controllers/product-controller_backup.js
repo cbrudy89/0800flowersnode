@@ -1,12 +1,11 @@
 var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
 var async = require('async');
+var Sync = require('sync');
+var request = require('request');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
 var commonHelper = require('./../helpers/common-helper');
-var request = require('request');
-var Sync = require('sync');
 
 function ProductController() {
 
@@ -31,8 +30,11 @@ function ProductController() {
                 commonHelper.getPromoBanner($sessLang, 'product_detail', function(err, result) {
                     if (err) return callback(err);
                     else {
-                        if (result.length > 0 && result[0].description != '') {
+                        if (result.length > 0 && result != null) {
                             return_data.topbanner = result[0].description;
+                            callback();
+                        } else {
+                            return_data.topbanner = '';
                             callback();
                         }
                     }
@@ -447,6 +449,7 @@ function ProductController() {
 
 
                                 $response = {
+                                    'currency_id': $currencydetails[0].id,
                                     'productDetails': $product,
                                     'variants': $variants,
                                     'Weekday': JSON.stringify(config.week_days),
@@ -467,7 +470,7 @@ function ProductController() {
                                     'relatedProductsData': $relatedProductsData,
                                     'recentlyViewedProducts': $recentlyViewedProducts
                                 };
-                               console.log($response);
+                              // console.log($response);
 
 
                                 return_data.results = $response;    

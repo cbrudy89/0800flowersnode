@@ -170,7 +170,7 @@ host: 'email-smtp.us-west-2.amazonaws.com',
   this.order_status = {
           '0' : 'pending', '1' : 'in-progress', '2' : 'completed', '3' : 'cancelled'
       };
-
+  this.monthnamecaps=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];    
   this.zipcode_type = ['None','Numeric','Alphanumeric','Characters'];
   this.mob_per_page = 14; //collection page search result pagination for mobile
   this.desk_per_page = 30; //collection page search result pagination for desktop
