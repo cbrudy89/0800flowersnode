@@ -16,6 +16,7 @@ var collectionController = require('./api/controllers/collection-controller');
 var productController = require('./api/controllers/product-controller');
 var orderTrackingController = require('./api/controllers/order-tracking-controller');
 var wishlistController = require('./api/controllers/wishlist-controller');
+var cartController = require('./api/controllers/cart-controller');
 
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
@@ -346,6 +347,30 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
+
+    /************************ Cart Functionality ********************************/
+
+    app.post('/addToCart', function(req, res){
+        cartController.addToCart(req, res);
+    });
+
+    app.put('/updateCartProductQuantity', function(req, res){
+        cartController.updateCartProductQuantity(req, res);
+    });    
+
+    app.put('/updateCart', function(req, res){
+        cartController.updateCart(req, res);
+    });    
+
+    app.delete('/removeCart', function(req, res){
+        cartController.removeCart(req, res);
+    });  
+
+    app.get('/getCart', function(req, res){
+        cartController.getCart(req, res);
+    });          
+
+    /*********************** Cart Functionality Ends Here ************************/
     
    }
 }

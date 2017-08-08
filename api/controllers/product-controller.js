@@ -193,6 +193,9 @@ function ProductController() {
         var $current_date = commonHelper.currentformatted_date('Y-m-d');
         var $next_date = commonHelper.currentformatted_date('Y-m-d',1);
 
+        //console.log("current_date "+ $current_date);
+        //console.log("next_date "+ $next_date);
+
         async.parallel([
             function calendardata(callback) {
 
@@ -343,6 +346,7 @@ function ProductController() {
 
                                 //$todayAnchorId = currentformatted_date("d-m-Y");
                                 $todayAnchorId = $current_date;
+
                                 var formatter = new Intl.DateTimeFormat("en", {
                                         month: "short"
                                 }),
@@ -446,7 +450,7 @@ function ProductController() {
 
                                 if ($isDateRestrict == true || $isDayDisable == true || $isDateHoliday == true) {
                                     $nextRestrict = 'yes';
-                                } else {                                    
+                                } else {                                
                                     var monthname=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                                     var $nextDate = (new Date($next_date)).getDate();
                                     var $nextMonth = (new Date($next_date)).getMonth();
@@ -499,28 +503,24 @@ function ProductController() {
                                     'todayExtraCharge': $todayExtraCharge,
                                     'todayRestrict': $todayRestrict,
                                     'firstEnableDate': $firstEnableDate,
-                                    'firstExtraCharge': $firstExtraCharge.toFixed(2),
+                                    'firstExtraCharge': parseFloat($firstExtraCharge).toFixed(2),
                                     'nextEnableDate': $nextEnableDate,
                                     'nextExtraCharge': $nextExtraCharge,
                                     'nextRestrict': $nextRestrict,
                                     'nextToNextEnableDate': $nextToNextEnableDate,
-                                    'nextExtraCharge': $nextExtraCharge,
                                     'datExtraCharge': $datExtraCharge,
                                     'deliveryCalendar': $deliveryCalendar,
                                     'AtlasDate': $AtlasDate
                                 };
 
-                                return_data.results = $response;    
-                                callback();                     
-
+                                return_data.results = $response;
+                                callback();
+                                
                             });
-
                         }
                     }
                 });
-
             }
-
 
         ], function(err, result) {
 
