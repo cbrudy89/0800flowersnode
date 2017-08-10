@@ -1,5 +1,6 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
+var adminVendorController = require('./api/controllers/admin/vendor-controller');
 var countryController = require('./api/controllers/admin/country-controller');
 
 // For Backend Controllers
@@ -29,6 +30,7 @@ var productValidation = require('./api/validation/product-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
+var adminVendorValidation = require('./api/validation/admin/vendor-validation');
 
 
 module.exports = {
@@ -371,6 +373,26 @@ module.exports = {
     });          
 
     /*********************** Cart Functionality Ends Here ************************/
+
+    /************************ Vendor Functionality ********************************/
+
+    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
+        adminVendorController.add(req, res);
+    });
+
+    app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
+        adminVendorController.list(req, res);
+    });    
+
+    app.get('/vendor/view/:token/:id', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+        adminVendorController.view(req, res);
+    });
+
+    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
+        adminVendorController.delete(req, res);
+    });
+
+    /*********************** Vendor Functionality Ends Here ************************/    
     
    }
 }

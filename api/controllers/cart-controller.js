@@ -27,7 +27,13 @@ function CartController() {
     var prod_delivery_method_id = req.body.prod_delivery_method_id ? req.body.prod_delivery_method_id : 0;
     var postalcode = req.body.postalcode ? req.body.postalcode : "00000";
 
+    var cart_key = req.body.cart_key ? req.body.cart_key : 0;
+
     Sync(function(){
+
+      // Check if cart is exist
+          
+      
 
       // Generate Unique cart key 
       var cart_key = crypto.createHash('sha256').update(Math.random().toString()).digest('hex');
@@ -143,9 +149,9 @@ function CartController() {
 
         // Update product in cart
 
-       /* dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
+        dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
 
-        });*/
+        });
 
 
       }else{
@@ -172,6 +178,36 @@ function CartController() {
   }
 
   this.getCart = function(req, res){
+
+    var cart_key = req.body.cart_key;
+    Sync(function(){
+      
+      // Check if cart key exist or not.
+      var isCartExist = isCartProductExist.sync(null, cart_key, product_id);
+      if(isCartExist){
+
+        // Working Here
+
+        // Update product in cart
+
+        dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
+
+        });
+
+
+      }else{
+
+        res.status(config.HTTP_NOT_FOUND).send({
+            status: config.ERROR, 
+            code : config.HTTP_NOT_FOUND,          
+            message: "Unable to process request, Please try again!",
+            err: []
+        });
+
+      }
+
+    });
+
 
   }
 
