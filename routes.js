@@ -30,13 +30,15 @@ var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
 
+var discountValidation = require('./api/validation/admin/discount-validation');
+
 
 module.exports = {
   configure: function(app, router) {
 
     app.get('/', function (req, res) {
         res.sendFile(__dirname + '/api-docs/index.html');
-    });    
+    });
 
     app.post('/admin/create', authenticateController.isAuthenticated, validate(adminValidation.create), function(req, res) {
         adminController.create(req, res);
@@ -68,20 +70,20 @@ module.exports = {
 
     app.post('/admin/forget', function(req, res) {
         adminController.forgetPassword(req, res);
-    });    
+    });
 
     app.post('/admin/reset/:key', function(req, res) {
         adminController.resetPassword(req, res);
-    });        
+    });
 
     app.get('/common/countries', function(req, res) {
         commonController.countries(req, res);
     });
-    
+
     app.get('/common/province/:country_id', function(req, res) {
         commonController.province(req, res);
     });
-    
+
     app.get('/common/allprovince', function(req, res) {
         commonController.allprovince(req, res);
     });
@@ -101,10 +103,10 @@ module.exports = {
     // Get CMS page data based on id
     app.get('/common/page/:langauge_code/:slug', function(req, res) {
         commonController.page(req, res);
-    });    
-    
+    });
+
     /************** Country **********/
-    
+
     app.post('/admin/country/list', authenticateController.isAuthenticated, function(req, res) {
         countryController.list(req, res);
     });
@@ -119,12 +121,12 @@ module.exports = {
 
     app.put('/admin/country/update', authenticateController.isAuthenticated, function(req, res) {
         countryController.update(req, res);
-    });    
+    });
 
     app.delete('/admin/country/delete', authenticateController.isAuthenticated, function(req, res) {
         countryController.delete(req, res);
     });
-    
+
     /************** Country End **********/
 
     /************************* START language *****************/
@@ -132,23 +134,23 @@ module.exports = {
     app.post('/admin/getlanguages', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguages(req, res);
     });
-    
+
     app.post('/admin/createlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.createlanguage(req, res);
     });
-    
+
     app.post('/admin/getlanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.getlanguage(req, res);
     });
-    
+
     app.post('/admin/updatelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.updatelanguage(req, res);
     });
-    
+
     app.delete('/admin/deletelanguage', authenticateController.isAuthenticated, function(req, res) {
         languageController.deletelanguage(req, res);
     });
-    
+
     /************************* END of language *****************/
 
     /************************* START timezone *****************/
@@ -156,83 +158,83 @@ module.exports = {
     app.post('/admin/gettimezones', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezones(req, res);
     });
-    
+
     app.post('/admin/gettimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.gettimezone(req, res);
     });
-    
+
     app.post('/admin/updatetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.updatetimezone(req, res);
     });
-    
+
     app.delete('/admin/deletetimezone', authenticateController.isAuthenticated, function(req, res) {
         timezoneController.deletetimezone(req, res);
     });
-    
+
     /************************* END of timezone *****************/
-    
+
     /************************* START colors *****************/
 
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolors(req, res);
     });
-    
+
     app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.createcolor(req, res);
     });
-    
+
     app.post('/admin/getcolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.getcolor(req, res);
     });
-    
+
     app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.updatecolor(req, res);
     });
-    
+
     app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
         colorController.deletecolor(req, res);
     });
-    
-    /************************* END of colors *****************/    
+
+    /************************* END of colors *****************/
 
      /************************* START Promo Code API's *****************/
 
-    app.get('/admin/discounts/list', authenticateController.isAuthenticated, function(req, res) {
+    app.get('/admin/discounts/list', authenticateController.isAuthenticated, validate(discountValidation.getPromoCodes), function(req, res) {
         discountController.getPromoCodes(req, res);
     });
 
-    app.post('/admin/discounts/create',  authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/discounts/create',  authenticateController.isAuthenticated, validate(discountValidation.createPromoCode), function(req, res) {
         discountController.createPromoCode(req, res);
     });
 
-    app.get('/admin/discounts/view/:id',  authenticateController.isAuthenticated, function(req, res) {
+    app.get('/admin/discounts/view/:id',  authenticateController.isAuthenticated, validate(discountValidation.getPromoCode), function(req, res) {
         discountController.getPromoCode(req, res);
     });
 
-    app.put('/admin/discounts/update',  authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/discounts/update',  authenticateController.isAuthenticated, validate(discountValidation.updatePromoCode), function(req, res) {
         discountController.updatePromoCode(req, res);
     });
 
-    app.delete('/admin/discounts/remove',  authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/discounts/remove',  authenticateController.isAuthenticated, validate(discountValidation.deletePromoCode), function(req, res) {
         discountController.deletePromoCode(req, res);
     });
 
-    app.get('/admin/restrictpromocodes/list', authenticateController.isAuthenticated, function(req, res) {
+    app.get('/admin/restrictpromocodes/list', authenticateController.isAuthenticated, validate(discountValidation.getRestrictPromoCodes), function(req, res) {
         discountController.getRestrictPromoCodes(req, res);
     });
 
-    app.post('/admin/restrictpromocodes/create', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/restrictpromocodes/create', authenticateController.isAuthenticated, validate(discountValidation.createRestrictPromoCode), function(req, res) {
         discountController.createRestrictPromoCode(req, res);
     });
 
-    app.put('/admin/restrictpromocodes/update', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/restrictpromocodes/update', authenticateController.isAuthenticated, validate(discountValidation.updateRestrictPromoCode), function(req, res) {
         discountController.updateRestrictPromoCode(req, res);
     });
 
-    app.delete('/admin/restrictpromocodes/remove',  authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/restrictpromocodes/remove',  authenticateController.isAuthenticated, validate(discountValidation.deleteRestrictPromoCode), function(req, res) {
         discountController.deleteRestrictPromoCode(req, res);
     });
-    /************************* END of promo code APIs *****************/
+    /************************* END of colors *****************/
 
     /************************* Home Page Routes ************************/
 
@@ -256,39 +258,39 @@ module.exports = {
     app.get('/home/:langauge_code', function(req, res){
         homeController.home(req, res);
     });
- 
 
-    /************************* END of Home Page *****************/    
+
+    /************************* END of Home Page *****************/
 
     /************************* Product Details Page Routes ************************/
     // Load all home page data.
-    
+
     app.post('/productdetails', validate(productValidation.productdetails), function(req, res){
         productController.productdetails(req, res);
     });
     app.post('/productdeliverycalender', validate(productValidation.productdeliverycalender), function(req, res){
         productController.productdeliverycalender(req, res);
-    });  
-    /************************* END of Collection Page ************************/  
-    
+    });
+    /************************* END of Collection Page ************************/
+
     /************************* Collection Page Routes ************************/
     // Load all home page data.
     app.get('/collection_promotion/:langauge_code/:delivery_country_id', function(req, res){
         collectionController.collection_promotion(req, res);
-    }); 
+    });
 
     app.post('/collections', function(req, res){
         collectionController.collections(req, res);
     });
 
-    /************************* END of Collection Page ************************/    
-         
+    /************************* END of Collection Page ************************/
+
     /********************* Customer Routes ************************/
 
     app.post('/customer/register', validate(customerValidation.register), function(req, res) {
         customerController.register(req, res);
     });
-    
+
     app.post('/customer/login', validate(customerValidation.login), function(req, res) {
         customerController.login(req, res);
     });
@@ -296,7 +298,7 @@ module.exports = {
     // Use to send forget password link to customer.
     app.post('/customer/forgetPassword', validate(customerValidation.forgetPassword), function(req, res) {
         customerController.forgetPassword(req, res);
-    });    
+    });
 
     // Use to validate verification code for forget password sent by customer.
     app.post('/customer/verifyCode', validate(customerValidation.verifyCode), function(req, res) {
@@ -311,26 +313,26 @@ module.exports = {
     // Customer Feedback
     app.post('/feedback', validate(customerValidation.feedback), function(req, res) {
         customerController.feedback(req, res);
-    });  
+    });
 
      // Update Profile
     app.post('/customer/updateProfile', validate(customerValidation.updateProfile), function(req, res) {
         customerController.updateProfile(req, res);
-    });  
+    });
 
-    // Customer fetch all Addresses 
+    // Customer fetch all Addresses
     app.post('/customer/fetchAllAddresses', authenticateController.isAuthenticated, function(req, res) {
         customerController.fetchAllAddresses(req, res);
-    }); 
+    });
 
-    // Customer update address 
+    // Customer update address
     app.post('/customer/updateAddress', authenticateController.isAuthenticated,  function(req, res) {
         customerController.updateAddress(req, res);
-    }); 
-     // edit customer address 
+    });
+     // edit customer address
     app.post('/customer/editAddress', authenticateController.isAuthenticated,  function(req, res) {
         customerController.editAddress(req, res);
-    });  
+    });
 
     /************************* END of Customer *****************/
 
@@ -380,12 +382,12 @@ module.exports = {
 
     app.put('/admin/province/updateprovince', authenticateController.isAuthenticated, function(req, res) {
         provinceController.updateprovince(req, res);
-    });    
+    });
 
     app.delete('/admin/province/deleteprovince', authenticateController.isAuthenticated, function(req, res) {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
-    
+
    }
 }

@@ -567,7 +567,7 @@
                {
                   "name":"product_ids",
                   "in":"formData",
-                  "description":"Product IDs with comma seperated.",
+                  "description":"Product IDs to restrict product with promo code",
                   "required":true,
                   "type": "array",
                   "minItems": 1,
@@ -654,7 +654,7 @@
                {
                   "name":"product_ids",
                   "in":"formData",
-                  "description":"Product IDs with comma seperated.",
+                  "description":"Product IDs to restrict product with promo code",
                   "required":true,
                   "type": "array",
                   "minItems": 1,
