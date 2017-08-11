@@ -961,6 +961,38 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
 	    });
     	return result;
     }*/
+    
+    
+    //  take user input in different format , make datetime for mysql using  new Date() Object
+    // for format 3 : need to pass current date object as inputDate 
+    // for format 1,2 : need to pass user input and then format into mysql date type
+    this.formatDateToMysqlDateTime = function( inputDate ,format ) {
+
+       if(format == 1){
+
+            // mm/dd/yyyy   03/16/2017
+           var dateArr = inputDate.split("/");
+           var newdate = dateArr[2]+'-'+ dateArr[0]+'-'+dateArr[1];
+       }
+       else if(format == 2){
+
+           // dd/mm/yyyy   13-01-2017
+           var dateArr = inputDate.split("/");
+           var newdate = dateArr[2]+'-'+ dateArr[1]+'-'+dateArr[0];
+       }    
+       else if(format == 3){
+
+           // new Date() 
+           // YYYY-MM-DD HH:MM:SS' 
+           
+           var newdate = inputDate.getFullYear()+'-'+ (inputDate.getMonth() + 1 )+ '-'+inputDate.getDate()+' '+inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+       }
+
+       return newdate;
+
+       //return datetime.toISOString().substring(0, 19).replace('T', ' ')
+   }                      
+   
 }
 
 function currentformatted_date(template, adddays = 0){

@@ -7,6 +7,8 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var restrictCalendarDateController = require('./api/controllers/admin/restrictcalendardate-controller');
+var surchargeCalendarDateController = require('./api/controllers/admin/surchargecalendarsdate-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -28,7 +30,8 @@ var productValidation = require('./api/validation/product-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
-
+var restrictcalendardateValidation = require('./api/validation/admin/restrictcalendardate-validation');
+var surchargecalendardateValidation = require('./api/validation/admin/surchargecalendardate-validation')
 
 module.exports = {
   configure: function(app, router) {
@@ -192,7 +195,71 @@ module.exports = {
         colorController.deletecolor(req, res);
     });
     
+    
     /************************* END of colors *****************/    
+
+    /************************  START Restrict Calendar Date  ****************************/
+   
+    // listing
+    app.post('/admin/getRestrictCalendarDates', authenticateController.isAuthenticated, function(req, res) {
+        restrictCalendarDateController.getRestrictCalendarDates(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createRestrictCalendarDate', authenticateController.isAuthenticated, validate(restrictcalendardateValidation.createRestrictCalendarDate),function(req, res) {
+        restrictCalendarDateController.createRestrictCalendarDate(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteRestrictCalendarDate', authenticateController.isAuthenticated, validate(restrictcalendardateValidation.deleteRestrictCalendarDate),function(req, res) {
+        restrictCalendarDateController.deleteRestrictCalendarDate(req, res);
+    });
+    
+    // get selected one
+    app.post('/admin/getSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(restrictcalendardateValidation.getSelectedRestrictCalendarDate) ,function(req, res) {
+        restrictCalendarDateController.getSelectedRestrictCalendarDate(req, res);
+    });
+    
+    // update one
+    app.post('/admin/updateSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(restrictcalendardateValidation.updateSelectedRestrictCalendarDate), function(req, res) {
+        restrictCalendarDateController.updateSelectedRestrictCalendarDate(req, res);
+    });
+    
+    /************************  END Restrict Calendar Date  ****************************/
+
+     /************************  START Surcharge Calendar Date  ****************************/
+   
+    // listing
+    app.post('/admin/getSurchargeCalendarDates', authenticateController.isAuthenticated, function(req, res) {
+        surchargeCalendarDateController.getSurchargeCalendarDates(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createSurchargeCalendarDate', authenticateController.isAuthenticated, validate(surchargecalendardateValidation.createSurchargeCalendarDate),function(req, res) {
+        surchargeCalendarDateController.createSurchargeCalendarDate(req, res);
+    });
+    
+     // update one
+    app.post('/admin/updateSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(surchargecalendardateValidation.updateSelectedSurchargeCalendarDate), function(req, res) {
+        surchargeCalendarDateController.updateSelectedSurchargeCalendarDate(req, res);
+    });
+    
+    
+    // get selected one
+    app.post('/admin/getSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(surchargecalendardateValidation.getSelectedSurchargeCalendarDate) ,function(req, res) {
+        surchargeCalendarDateController.getSelectedSurchargeCalendarDate(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteSurchargeCalendarDate', authenticateController.isAuthenticated, validate(surchargecalendardateValidation.deleteSurchargeCalendarDate),function(req, res) {
+        surchargeCalendarDateController.deleteSurchargeCalendarDate(req, res);
+    });
+    
+    
+    /************************  END Surcharge Calendar Date  ****************************/
+
+
+
 
     /************************* Home Page Routes ************************/
 
