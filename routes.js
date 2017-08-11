@@ -7,6 +7,7 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var discountController = require('./api/controllers/admin/discount-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -193,6 +194,45 @@ module.exports = {
     });
     
     /************************* END of colors *****************/    
+
+     /************************* START Promo Code API's *****************/
+
+    app.get('/admin/discounts/list', authenticateController.isAuthenticated, function(req, res) {
+        discountController.getPromoCodes(req, res);
+    });
+
+    app.post('/admin/discounts/create',  authenticateController.isAuthenticated, function(req, res) {
+        discountController.createPromoCode(req, res);
+    });
+
+    app.get('/admin/discounts/view/:id',  authenticateController.isAuthenticated, function(req, res) {
+        discountController.getPromoCode(req, res);
+    });
+
+    app.put('/admin/discounts/update',  authenticateController.isAuthenticated, function(req, res) {
+        discountController.updatePromoCode(req, res);
+    });
+
+    app.delete('/admin/discounts/remove',  authenticateController.isAuthenticated, function(req, res) {
+        discountController.deletePromoCode(req, res);
+    });
+
+    app.get('/admin/restrictpromocodes/list', authenticateController.isAuthenticated, function(req, res) {
+        discountController.getRestrictPromoCodes(req, res);
+    });
+
+    app.post('/admin/restrictpromocodes/create', authenticateController.isAuthenticated, function(req, res) {
+        discountController.createRestrictPromoCode(req, res);
+    });
+
+    app.put('/admin/restrictpromocodes/update', authenticateController.isAuthenticated, function(req, res) {
+        discountController.updateRestrictPromoCode(req, res);
+    });
+
+    app.delete('/admin/restrictpromocodes/remove',  authenticateController.isAuthenticated, function(req, res) {
+        discountController.deleteRestrictPromoCode(req, res);
+    });
+    /************************* END of promo code APIs *****************/
 
     /************************* Home Page Routes ************************/
 

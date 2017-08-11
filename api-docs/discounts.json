@@ -1,0 +1,957 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Promo Code APIs",
+      "description":"All APIs related to the promo code controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Promo Code",
+         "description":"API for promo codes"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/discounts/list":{
+         "get":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"How to get/search promo codes",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_code",
+                  "in":"query",
+                  "description":"Promo Code for search",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_value",
+                  "in":"query",
+                  "description":"Promo Code Value for search",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"limit_usage_by",
+                  "in":"query",
+                  "description":"Limit usage by for search",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"start_date",
+                  "in":"query",
+                  "description":"Start date for search",
+                  "required":false,
+                  "type":"string",
+                  "format":"date"
+               },
+               {
+                  "name":"expiry_date",
+                  "in":"query",
+                  "description":"Expiry date for search",
+                  "required":false,
+                  "type":"string",
+                  "format":"date"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"all promo_codes found",
+                  "schema":{
+                      "$ref":"#/definitions/searchresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/discounts/create":{
+         "post":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Create Promo Code",
+            "operationId":"create",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_code",
+                  "in":"formData",
+                  "description":"Promo Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_type",
+                  "in":"formData",
+                  "description":"Promo Code Type",
+                  "required":true,
+                  "type":"string"
+               },{
+                  "name":"discount_format",
+                  "in":"formData",
+                  "description":"Promo Code Format",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_value",
+                  "in":"formData",
+                  "description":"Promo Code Value",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_value_type",
+                  "in":"formData",
+                  "description":"Promo Code Value Type",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"apply_on",
+                  "in":"formData",
+                  "description":"Apply On",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"limit_usage_by",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_apply_on",
+                  "in":"formData",
+                  "description":"Apply on",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"product_sku",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"fixed_amount",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":false,
+                  "type":"number",
+                  "format":"float"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"Start date",
+                  "required":true,
+                  "type":"string",
+                  "format":"date"
+               },
+               {
+                  "name":"expiry_date",
+                  "in":"formData",
+                  "description":"Expiry date",
+                  "required":true,
+                  "type":"string",
+                  "format":"date"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"promo_code created",
+                  "schema":{
+                      "$ref":"#/definitions/createresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified promo_code already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/discounts/view/{id}":{
+         "get":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Get a single promo code",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"promo code ID",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"promo code found",
+                  "schema":{
+                      "$ref":"#/definitions/getpromocoderesponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/discounts/update":{
+         "put":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Update Promo Code",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+                  {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired promo code to update.",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_code",
+                  "in":"formData",
+                  "description":"Promo Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_type",
+                  "in":"formData",
+                  "description":"Promo Code Type",
+                  "required":true,
+                  "type":"string"
+               },{
+                  "name":"discount_format",
+                  "in":"formData",
+                  "description":"Promo Code Format",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"discount_value",
+                  "in":"formData",
+                  "description":"Promo Code Value",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_value_type",
+                  "in":"formData",
+                  "description":"Promo Code Value Type",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"apply_on",
+                  "in":"formData",
+                  "description":"Apply On",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"limit_usage_by",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"discount_apply_on",
+                  "in":"formData",
+                  "description":"Apply on",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"product_sku",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"fixed_amount",
+                  "in":"formData",
+                  "description":"Limit",
+                  "required":false,
+                  "type":"number",
+                  "format":"float"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"Start date",
+                  "required":true,
+                  "type":"string",
+                  "format":"date"
+               },
+               {
+                  "name":"expiry_date",
+                  "in":"formData",
+                  "description":"Expiry date",
+                  "required":true,
+                  "type":"string",
+                  "format":"date"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Promo Code has been updated",
+                  "schema":{
+                      "$ref":"#/definitions/updateresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"the specified promo code name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/discounts/remove":{
+         "delete":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Delete a promo code",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Promo code ID",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Promo code found",
+                  "schema":{
+                      "$ref":"#/definitions/deleteresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified promo code already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/restrictpromocodes/list":{
+         "get":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"How to get/search restrict promo codes",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"query",
+                  "description":"Country Id for search restrict promo codes",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"query",
+                  "description":"Vendor ID for search restrict promo codes",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"promo_code",
+                  "in":"query",
+                  "description":"Promo Code for search restrict promo codes",
+                  "required":false,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"all restrict promo_codes found",
+                  "schema":{
+                      "$ref":"#/definitions/listresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/restrictpromocodes/create":{
+         "post":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Create restrict promo code for products",
+            "operationId":"create",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"Vendor ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_ids",
+                  "in":"formData",
+                  "description":"Product IDs with comma seperated.",
+                  "required":true,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"promo_code",
+                  "in":"formData",
+                  "description":"Promo Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"all restrict promo_codes found",
+                  "schema":{
+                      "$ref":"#/definitions/addresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/restrictpromocodes/update":{
+         "put":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Update restrict promo code for products",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the restrict promo code to update.",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"Vendor ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_ids",
+                  "in":"formData",
+                  "description":"Product IDs with comma seperated.",
+                  "required":true,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"promo_code",
+                  "in":"formData",
+                  "description":"Promo Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Restrict promo_code found",
+                  "schema":{
+                      "$ref":"#/definitions/putresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/restrictpromocodes/remove":{
+         "delete":{
+            "tags":[
+               "Promo Code"
+            ],
+            "description":"Delete a restricted promo code",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Restricted promo code ID",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Restricted Promo codes deleted",
+                  "schema":{
+                      "$ref":"#/definitions/removeresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified promo code already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "searchresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"all promo codes found"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "createresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"new promo code has been created"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "getpromocoderesponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"promo code found!"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "updateresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"The promo codes has been updated"
+            },
+            "result":{
+               "type":"object",
+               "example":"array"
+            }
+         }
+      },
+      "deleteresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"204"
+            },
+            "message":{
+               "type":"string",
+               "example":"the promo code has been deleted"
+            }
+         }
+      },
+      "listresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"All restricted promo codes found"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "addresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"New restrict promo code has been created"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "putresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"The restrict promo codes has been updated"
+            },
+            "result":{
+               "type":"object",
+               "example":"array"
+            }
+         }
+      },
+      "removeresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"204"
+            },
+            "message":{
+               "type":"string",
+               "example":"The restrict promo code has been deleted"
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      },
+      "409error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },
+            "message":{
+               "type":"string",
+               "example":"The specified color already exists."
+            }
+         }
+      }
+   }
+}
