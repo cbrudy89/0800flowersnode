@@ -23,7 +23,7 @@ module.exports = {
 	  }
   },
   view : {
-	  params: {
+	  body: {
 	  	token: Joi.string().required(),
 	  	id: Joi.number().integer().required()
 	  }

@@ -384,7 +384,7 @@ module.exports = {
         adminVendorController.list(req, res);
     });    
 
-    app.get('/vendor/view/:token/:id', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+    app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         adminVendorController.view(req, res);
     });
 

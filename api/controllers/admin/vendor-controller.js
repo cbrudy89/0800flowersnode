@@ -346,54 +346,148 @@ function VendorController() {
         message: "You dont have permission to view vendor!"
       });     
     }else{
-      var id = req.params.id;
+      var vendor_id = req.body.id;
+      var country_id = 0;
+      var timezones  = newTimezones = vendor_secondary_contact = [];
 
       Sync(function(){
 
-        var sql = "SELECT * FROM `vendor` WHERE `vendor`.`id` = "+id+" LIMIT 1";
+        var vendor = getVendor.sync(null, vendor_id);
+        //console.log(vendor);
+        var vendorcountry = getVendorCountry.sync(null, vendor);
+        //console.log(vendorcountry);
 
+        if (vendorcountry.length > 0 && vendorcountry[0].country_id > 0) {
+           country_id = vendorcountry[0].country_id;
+        }
 
-      });
+        if(country_id){
+            timezones  = getTimezones.sync(null, country_id);
+            //console.log(timezones);
+            
+          if(timezones.length > 0){
+            
+            for( var i=0; i < timezones.length ; i++ ) {
+              var timezone = {};
+              timezone = timezones[i];
 
-      var sql = "SELECT * FROM `vendor` WHERE `vendor`.`id` = "+id+" LIMIT 1";
-      var sql = "SELECT `timezones`.* FROM `timezones` INNER JOIN `provinces` ON `provinces`.`timezone_id` = `timezones`.`id` WHERE `provinces`.`country_id` = 8 GROUP BY `provinces`.`timezone_id`";
+              var vendor_cut_off = groupVendor.sync(null, vendor_id, country_id, timezones[i].id);
 
-      var sql = "SELECT * FROM `group_vendor` WHERE `vendor_id` = 46 and `country_id` = 8 AND `timezone_id` = 79 LIMIT 1";
-      
-      dbModel.rawQuery(sql, function(err, result) {
-        if (err) {
-          res.status(config.HTTP_NOT_FOUND).send({
-            status:config.ERROR,
-            code: config.HTTP_NOT_FOUND,             
-            message:"No records found"
-         });
-        } else {
-          if(result.length > 0 && result[0].id > 0){
-            result[0].profile_image = '/uploads/profile_image/'+result[0].profile_image;
+              timezone.vendor_stoppage_hour = null;
+              timezone.vendor_stoppage_minute = null;
 
-            res.status(config.HTTP_SUCCESS).send({
-              status: config.SUCCESS,
-              code: config.HTTP_SUCCESS,
-              message:"User found",
-              result: result[0]                    
-            });
-          }else{
-            res.status(config.HTTP_BAD_REQUEST).send({
-                status:config.ERROR,
-                code: config.HTTP_BAD_REQUEST, 
-                message:"Failed to get Customer Information"
-            }); 
+              if(vendor_cut_off.length > 0){
+                timezone.vendor_stoppage_hour = vendor_cut_off[0].stoppage_hour;
+                timezone.vendor_stoppage_minute = vendor_cut_off[0].stoppage_minute;
+              }
+
+             newTimezones.push(timezone);
+
+            }            
+
           }
-        }        
-        con.release();
-      });
-      
+          //console.log(newTimezones);
+        }
+
+        var vendor_secondary_contact = getSecondaryContact.sync(null, vendor_id);
+
+      });            
     }
   }
 
 }
 
-function timezones(country_id, callback){
+function getVendor(vendor_id, callback){
+  var sql = "SELECT * FROM `vendor` WHERE `vendor`.`id` = "+vendor_id+" LIMIT 1";
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+}
+
+function getVendorCountry(vendor, callback){
+
+  if(vendor[0].parent_id == 0){
+    var vendor_id = vendor[0].id;
+  }else{
+    var vendor_id = vendor[0].parent_id;
+  }
+
+  var sql = "SELECT * FROM `country_vendor` WHERE `country_vendor`.`vendor_id` = "+vendor_id+" LIMIT 1";
+
+  //console.log(sql);
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+}
+
+function getTimezones(country_id, callback){
+
+  var sql = "SELECT `timezones`.* FROM `timezones` INNER JOIN `provinces` ON `provinces`.`timezone_id` = `timezones`.`id` WHERE `provinces`.`country_id` = "+country_id+" GROUP BY `provinces`.`timezone_id`";
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+
+}
+
+function groupVendor(vendor_id, country_id, timezone_id, callback){
+
+  var sql = "SELECT * FROM `group_vendor` WHERE `vendor_id` = "+vendor_id+" AND `country_id` = "+country_id+" AND `timezone_id` = "+timezone_id+" LIMIT 1";
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });  
+
+}
+
+function getSecondaryContact(vendor_id, callback){
+  var sql = "SELECT * FROM `vendor_secondary_contact` WHERE `vendor_id` = "+vendor_id;
+
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
 
 }
 
