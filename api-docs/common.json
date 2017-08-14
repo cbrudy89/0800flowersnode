@@ -169,7 +169,6 @@
             ],
             "parameters":[
                {
-
                      "name":"langauge_code",
                      "in":"path",
                      "description":"Site language id",
@@ -342,6 +341,7 @@
                      "show_state": 0,
                      "required_zipcode": "0",
                      "country_flag": "26-10-2015+06-38-30australia.jpg",
+                     "company_logo": "26-10-2015+06-38-30australia.jpg",
                      "surcharge": 0,
                      "phone": "1-800-858-5140",
                      "is_display": 1,

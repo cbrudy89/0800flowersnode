@@ -7,6 +7,7 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var currencyController = require('./api/controllers/admin/currency-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -169,6 +170,26 @@ module.exports = {
     });
     
     /************************* END of timezone *****************/
+    /************************* START currency *****************/
+
+    app.post('/admin/getallcurrencies', authenticateController.isAuthenticated, function(req, res) {
+        currencyController.getallcurrencies(req, res);
+    });
+    
+    app.post('/admin/editcurrency', authenticateController.isAuthenticated,validate(adminValidation.editcurrency), function(req, res) {
+        currencyController.editcurrency(req, res);
+    });
+
+    app.delete('/admin/deletecurrency', authenticateController.isAuthenticated,validate(adminValidation.deletecurrency), function(req, res) {
+        currencyController.deletecurrency(req, res);
+    });
+
+    app.post('/admin/addcurrency', authenticateController.isAuthenticated,validate(adminValidation.addcurrency), function(req, res) {
+        currencyController.addcurrency(req, res);
+    });
+    
+    
+    /************************* END of currency *****************/   
     
     /************************* START colors *****************/
 

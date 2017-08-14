@@ -31,6 +31,7 @@ function CountryController() {
         phone: req.body.phone,
         surcharge: req.body.surcharge,
         country_flag: req.body.country_flag, // 
+        company_logo: req.body.company_logo,
         ga_code: req.body.ga_code,
         zipcode_length: req.body.zipcode_length,
         zipcode_type: req.body.zipcode_type,
@@ -71,6 +72,20 @@ function CountryController() {
                             });
                           }else{
                             post.country_flag = result;
+                          }
+                        });
+                      }
+                      var company_logoPath = "uploads/company_logo";
+                      if(post.company_logo != ""){
+                        fileHelper.uploadImage(post.company_logo, company_logoPath, function(err, result){
+                          if(err){
+                            res.status(config.HTTP_BAD_REQUEST).send({
+                              status: config.ERROR, 
+                              code : config.HTTP_BAD_REQUEST, 
+                              message: err
+                            });
+                          }else{
+                            post.company_logo = result;
                           }
                         });
                       }
