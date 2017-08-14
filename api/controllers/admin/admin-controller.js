@@ -432,7 +432,7 @@ function AdminController() {
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to create user!"
+        message: "You dont have permission to view users!"
       });       
     }else{
 
@@ -489,7 +489,7 @@ function AdminController() {
         res.status(config.HTTP_FORBIDDEN).send({
           status: config.ERROR, 
           code : config.HTTP_FORBIDDEN, 
-          message: "You dont have permission to create Country!"
+          message: "You dont have permission to view user!"
         });       
       }else{
         var id = req.params.id;
@@ -498,7 +498,7 @@ function AdminController() {
                 res.status(config.HTTP_BAD_REQUEST).send({
                 status: config.ERROR, 
                 code : config.HTTP_BAD_REQUEST, 
-                message: "sdfsdf"
+                message: "Failed to get Customer Information"
               });  
             }   
             con.query('select id, name, email, country_id, province_id, address, phone_number, profile_image, status from users where id = ?', [id], function(err, result) {

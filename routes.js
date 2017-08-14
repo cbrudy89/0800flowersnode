@@ -1,5 +1,6 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
 var adminController = require('./api/controllers/admin/admin-controller');
+var adminVendorController = require('./api/controllers/admin/vendor-controller');
 var countryController = require('./api/controllers/admin/country-controller');
 
 // For Backend Controllers
@@ -17,6 +18,7 @@ var collectionController = require('./api/controllers/collection-controller');
 var productController = require('./api/controllers/product-controller');
 var orderTrackingController = require('./api/controllers/order-tracking-controller');
 var wishlistController = require('./api/controllers/wishlist-controller');
+var cartController = require('./api/controllers/cart-controller');
 
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
@@ -29,6 +31,7 @@ var productValidation = require('./api/validation/product-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
+var adminVendorValidation = require('./api/validation/admin/vendor-validation');
 
 
 module.exports = {
@@ -367,6 +370,50 @@ module.exports = {
         provinceController.deleteprovince(req, res);
     });
     /************************ END Admin Provinces/States ************************/
+
+    /************************ Cart Functionality ********************************/
+
+    app.post('/addToCart', function(req, res){
+        cartController.addToCart(req, res);
+    });
+
+    app.put('/updateCartProductQuantity', function(req, res){
+        cartController.updateCartProductQuantity(req, res);
+    });    
+
+    app.put('/updateCart', function(req, res){
+        cartController.updateCart(req, res);
+    });    
+
+    app.delete('/removeCart', function(req, res){
+        cartController.removeCart(req, res);
+    });  
+
+    app.get('/getCart', function(req, res){
+        cartController.getCart(req, res);
+    });          
+
+    /*********************** Cart Functionality Ends Here ************************/
+
+    /************************ Vendor Functionality ********************************/
+
+    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
+        adminVendorController.add(req, res);
+    });
+
+    app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
+        adminVendorController.list(req, res);
+    });    
+
+    app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+        adminVendorController.view(req, res);
+    });
+
+    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
+        adminVendorController.delete(req, res);
+    });
+
+    /*********************** Vendor Functionality Ends Here ************************/    
     
    }
 }

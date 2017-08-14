@@ -831,7 +831,9 @@ this.getNextEnableDate = function ($checkCalDate='',$delivery_days,$delivery_wit
 //////"d-m-Y"
 this.currentformatted_date= function (template, adddays = 0) {
 
-	currentformatted_date(template, adddays);
+	//console.log(template + ' asdf '+ adddays);
+
+	return currentformatted_date(template, adddays);
 }
 
 this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
@@ -964,6 +966,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
 }
 
 function currentformatted_date(template, adddays = 0){
+//console.log(template + ' asdf '+ adddays);	
 	var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth() + 1;
