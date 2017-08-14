@@ -8,11 +8,8 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
-<<<<<<< HEAD
 var currencyController = require('./api/controllers/admin/currency-controller');
-=======
 var discountController = require('./api/controllers/admin/discount-controller');
->>>>>>> promo_code_apis
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -179,7 +176,6 @@ module.exports = {
     });
 
     /************************* END of timezone *****************/
-<<<<<<< HEAD
     /************************* START currency *****************/
 
     app.post('/admin/getallcurrencies', authenticateController.isAuthenticated, function(req, res) {
@@ -201,9 +197,6 @@ module.exports = {
     
     /************************* END of currency *****************/   
     
-=======
-
->>>>>>> promo_code_apis
     /************************* START colors *****************/
 
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
@@ -420,7 +413,6 @@ module.exports = {
     });
     /************************ END Admin Provinces/States ************************/
 
-<<<<<<< HEAD
     /************************ Cart Functionality ********************************/
 
     app.post('/addToCart', function(req, res){
@@ -465,7 +457,6 @@ module.exports = {
 
     /*********************** Vendor Functionality Ends Here ************************/    
     
-=======
->>>>>>> promo_code_apis
+
    }
 }
