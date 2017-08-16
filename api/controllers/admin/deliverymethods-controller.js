@@ -161,86 +161,85 @@ function DeliveryMethodsController() {
               message: "You dont have permission."
             });       
         }else{
-            var id= req.body.id;
-            dbModel.delete('methods','id='+id, function(err, result) {
-              if (err) {
-                res.status(config.HTTP_BAD_REQUEST).send({
-                  status: config.ERROR, 
-                  code : config.HTTP_BAD_REQUEST, 
-                  message: err
+              var id= req.body.id;
+              // Getting Connection Object
+            dbModel.getConnection(function(error, con){
+              if (error) {
+                res.status(config.HTTP_SERVER_ERROR).send({
+                  status:config.ERROR,
+                  code: config.HTTP_SERVER_ERROR,
+                  message:'Unable to process result!',
+                  error : error
                 });
+              }else{
+
+                // Delete methods form table if found 
+                dbModel.beginTransaction(con, 'DELETE FROM methods WHERE id ='+id, function(error, result){
+                  if(error){
+                    res.status(config.HTTP_SERVER_ERROR).send({
+                      status:config.ERROR,
+                      code: config.HTTP_SERVER_ERROR,
+                      message:'Unable to delete methods.',
+                      error: error
+                    });                    
+                  }else{
+
+                    if(result.affectedRows > 0){
+
+                      // Delete methods specific entries
+                     
+                      var sql = "DELETE FROM language_method WHERE method_id ="+id+";";
+
+                      // Delete methods specific entries
+                      dbModel.transactionQuery(con, sql, function (error, result) {
+                        if (error) {
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to delete methods.',
+                            error: error
+                          });
+                        }else{
+
+                          dbModel.commit(con, function(err, response){
+                            if (error) {
+                              res.status(config.HTTP_SERVER_ERROR).send({
+                                status:config.ERROR,
+                                code: config.HTTP_SERVER_ERROR,
+                                message:'Unable to delete methods.',
+                                error: error
+                              });
+                            }else{
+                              res.status(config.HTTP_SUCCESS).send({
+                                status:config.SUCCESS,
+                                code: config.HTTP_SUCCESS,
+                                message:'methods deleted successfully.'
+                              });                                    
+                            }                                  
+
+                          });
+
+                        }    
+                      });
+                   
+                    }else{
+                      res.status(config.HTTP_NOT_FOUND).send({
+                        status:config.ERROR,
+                        code: config.HTTP_NOT_FOUND,
+                        message:'Vendor not found.'
+                      });
+                    }
+
+                  }
+
+                });
+
               }
-              else{
-                res.status(config.HTTP_SUCCESS).send({
-                      status: config.SUCCESS, 
-                      code : config.HTTP_SUCCESS, 
-                      message: 'method deleted'
-                });            
-              }
+
             });
+
         }
     }
-/*     //Add new delivery method
-    this.adddeliverymethod = function(req, res) {
-        if(req.decoded.role != config.ROLE_ADMIN){
-            res.status(config.HTTP_FORBIDDEN).send({
-              status: config.ERROR, 
-              code : config.HTTP_FORBIDDEN, 
-              message: "You dont have permission."
-            });       
-        }else{
-            var post = {
-                currency_code: req.body.currency_code,
-                currency_numeric_code: req.body.currency_numeric_code,
-                currency_name: req.body.currency_name,
-                symbol: req.body.symbol,
-                status: req.body.status,
-                prefix: req.body.prefix,
-                suffix: req.body.suffix,
-                exchange_rate: req.body.exchange_rate,
-                default_currency: req.body.default_currency
-            };  
-            var queryString="SELECT * FROM currency WHERE currency_code="+currency_code;
-            dbModel.rawQuery(queryString, function(err, result) {
-              if (err) {
-                res.status(config.HTTP_BAD_REQUEST).send({
-                  status: config.ERROR, 
-                  code : config.HTTP_BAD_REQUEST, 
-                  message: err
-                });
-              }
-              else{
-                    if(result.length > 0){
-                        res.status(config.HTTP_SUCCESS).send({
-                          status: config.SUCCESS,
-                          code: config.HTTP_SUCCESS,
-                          message:"The currency code has already been saved.",
-                          result: result
-                        });
-                    }
-                    else {
-                        dbModel.save('currency',post, '',function(err, result) {
-                          if (err) {
-                            res.status(config.HTTP_BAD_REQUEST).send({
-                              status: config.ERROR, 
-                              code : config.HTTP_BAD_REQUEST, 
-                              message: err
-                            });
-                          }
-                          else{
-                                res.status(config.HTTP_SUCCESS).send({
-                                      status: config.SUCCESS, 
-                                      code : config.HTTP_SUCCESS, 
-                                      message: 'Currency has been inserted successfully!'
-                                });               
-                          }
-                        });
-                    }
-              }
-            });
-            
-        }
-    }*/
 
 }
 //get all method language entry
