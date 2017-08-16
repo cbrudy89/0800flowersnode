@@ -7,8 +7,7 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
-var restrictCalendarDateController = require('./api/controllers/admin/restrictcalendardate-controller');
-var surchargeCalendarDateController = require('./api/controllers/admin/surchargecalendarsdate-controller');
+var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -29,9 +28,9 @@ var orderTrackingValidation = require('./api/validation/order-tracking-validatio
 var productValidation = require('./api/validation/product-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
+
 var adminValidation = require('./api/validation/admin/admin-validation');
-var restrictcalendardateValidation = require('./api/validation/admin/restrictcalendardate-validation');
-var surchargecalendardateValidation = require('./api/validation/admin/surchargecalendardate-validation')
+var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -202,28 +201,29 @@ module.exports = {
    
     // listing
     app.post('/admin/getRestrictCalendarDates', authenticateController.isAuthenticated, function(req, res) {
-        restrictCalendarDateController.getRestrictCalendarDates(req, res);
+        calendarsettingController.getRestrictCalendarDates(req, res);
     });
     
     // create new
-    app.post('/admin/createRestrictCalendarDate', authenticateController.isAuthenticated, validate(restrictcalendardateValidation.createRestrictCalendarDate),function(req, res) {
-        restrictCalendarDateController.createRestrictCalendarDate(req, res);
+    app.post('/admin/createRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createRestrictCalendarDate),function(req, res) {
+        calendarsettingController.createRestrictCalendarDate(req, res);
     });
     
     // delete
-    app.delete('/admin/deleteRestrictCalendarDate', authenticateController.isAuthenticated, validate(restrictcalendardateValidation.deleteRestrictCalendarDate),function(req, res) {
-        restrictCalendarDateController.deleteRestrictCalendarDate(req, res);
+    app.delete('/admin/deleteRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteRestrictCalendarDate),function(req, res) {
+        calendarsettingController.deleteRestrictCalendarDate(req, res);
     });
     
     // get selected one
-    app.post('/admin/getSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(restrictcalendardateValidation.getSelectedRestrictCalendarDate) ,function(req, res) {
-        restrictCalendarDateController.getSelectedRestrictCalendarDate(req, res);
-    });
+    app.post('/admin/getSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedRestrictCalendarDate) ,function(req, res) {
+        calendarsettingController.getSelectedRestrictCalendarDate(req, res);
+    }); 
     
     // update one
-    app.post('/admin/updateSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(restrictcalendardateValidation.updateSelectedRestrictCalendarDate), function(req, res) {
-        restrictCalendarDateController.updateSelectedRestrictCalendarDate(req, res);
+    app.post('/admin/updateSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedRestrictCalendarDate), function(req, res) {
+        calendarsettingController.updateSelectedRestrictCalendarDate(req, res);
     });
+    
     
     /************************  END Restrict Calendar Date  ****************************/
 
@@ -231,36 +231,48 @@ module.exports = {
    
     // listing
     app.post('/admin/getSurchargeCalendarDates', authenticateController.isAuthenticated, function(req, res) {
-        surchargeCalendarDateController.getSurchargeCalendarDates(req, res);
+        calendarsettingController.getSurchargeCalendarDates(req, res);
     });
     
     // create new
-    app.post('/admin/createSurchargeCalendarDate', authenticateController.isAuthenticated, validate(surchargecalendardateValidation.createSurchargeCalendarDate),function(req, res) {
-        surchargeCalendarDateController.createSurchargeCalendarDate(req, res);
+    app.post('/admin/createSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createSurchargeCalendarDate),function(req, res) {
+        calendarsettingController.createSurchargeCalendarDate(req, res);
     });
     
      // update one
-    app.post('/admin/updateSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(surchargecalendardateValidation.updateSelectedSurchargeCalendarDate), function(req, res) {
-        surchargeCalendarDateController.updateSelectedSurchargeCalendarDate(req, res);
+    app.post('/admin/updateSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedSurchargeCalendarDate), function(req, res) {
+        calendarsettingController.updateSelectedSurchargeCalendarDate(req, res);
     });
     
     
     // get selected one
-    app.post('/admin/getSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(surchargecalendardateValidation.getSelectedSurchargeCalendarDate) ,function(req, res) {
-        surchargeCalendarDateController.getSelectedSurchargeCalendarDate(req, res);
+    app.post('/admin/getSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedSurchargeCalendarDate) ,function(req, res) {
+        calendarsettingController.getSelectedSurchargeCalendarDate(req, res);
     });
     
     // delete
-    app.delete('/admin/deleteSurchargeCalendarDate', authenticateController.isAuthenticated, validate(surchargecalendardateValidation.deleteSurchargeCalendarDate),function(req, res) {
-        surchargeCalendarDateController.deleteSurchargeCalendarDate(req, res);
+    app.delete('/admin/deleteSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteSurchargeCalendarDate),function(req, res) {
+        calendarsettingController.deleteSurchargeCalendarDate(req, res);
     });
     
     
     /************************  END Surcharge Calendar Date  ****************************/
+    
+    
+   /************************* START Get vendors and prodcts lists for calendar setting  Routes ************************/
+   
+    // get vendors list by country id  (restrict calendar date and surcharge calendar date section)
+    app.post('/admin/venderListByCountryId', authenticateController.isAuthenticated,validate(calendarsettingValidation.venderListByCountryId) ,function(req, res) {
+        commonController.venderListByCountryId(req, res);
+    });   
+     // get products list by vendor id
+    app.post('/admin/productListByVendorId', authenticateController.isAuthenticated,validate(calendarsettingValidation.productListByVendorId), function(req, res) {
+        commonController.productListByVendorId(req, res);
+    }); 
 
-
-
-
+    /************************* END Get vendors and prodcts lists for calendar setting  Routes ************************/
+    
+    
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies', function(req, res) {

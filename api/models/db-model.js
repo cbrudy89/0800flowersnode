@@ -175,7 +175,7 @@ function DbModel(){
 							});
 
 						}else{
-							sql += 'WHERE '+condition;
+							sql += ' WHERE '+condition;
 						}
 					}
 
