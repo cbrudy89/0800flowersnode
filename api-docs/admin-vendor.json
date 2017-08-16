@@ -36,17 +36,24 @@
             ],
             "parameters":[
                {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },                
+               {
                   "name":"name",
                   "in":"formData",
                   "description":"Name of vendor",
-                  "required":true,
+                  "required":false,
                   "type": "string"
                },               
                {
                   "name":"email",
                   "in":"formData",
                   "description":"Email for vendor",
-                  "required":true,
+                  "required":false,
                   "type": "string"
                }         
             ],
@@ -74,7 +81,7 @@
                   "schema":{
                      "$ref":"#/definitions/500list"
                   }
-               },                           
+               }                         
 
             }
          }
@@ -82,7 +89,7 @@
       "/vendor/add":{
          "post":{
             "tags":[
-               "Add Vendor"
+               "Vendor"
             ],
             "description":"Add new vendor user",
             "operationId":"add",
@@ -90,6 +97,13 @@
                "application/json"
             ],
             "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
                {
                   "name":"parent_id",
                   "in":"formData",
@@ -187,6 +201,13 @@
             ],
             "parameters":[
                {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },                    
+               {
                   "name":"id",
                   "in":"path",
                   "description":"The Vendor ID.",
@@ -234,6 +255,13 @@
                "application/json"
             ],
             "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
                {
                   "name":"id",
                   "in":"formData",
@@ -449,7 +477,7 @@
                "example":"You don't have permission to delete vendor!"
             }
          }
-      },  
+      },
       "404delete":{
          "properties":{
             "status":{

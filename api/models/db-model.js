@@ -115,6 +115,7 @@ function DbModel(){
 				          		//console.log(err);
 				          		callback(err);
 				          	}else{
+				          		// console.log("1 record inserted, ID: " + result.insertId);
 				          		callback(null, results);
 				          	}
 				          	con.release();

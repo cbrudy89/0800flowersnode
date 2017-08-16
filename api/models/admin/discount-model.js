@@ -166,7 +166,7 @@ function discountModel() {
                     });
                 }
 
-                console.log(queryString);
+               // console.log(queryString);
 
                 con.query(queryString, function(err, results) {
                     if (err) {
@@ -198,7 +198,7 @@ function discountModel() {
     }
 
     this.createRestrictProducts = function(productIds, id, callback) {
-        console.log(productIds);
+        //console.log(productIds);
         connection.acquire(function(err, con) {
             if (err) {
                 callback(err);
@@ -304,8 +304,8 @@ function discountModel() {
                     if (err) {
                         callback(err);
                     } else {
-                      console.log("results")
-                      console.log(results)
+                     // console.log("results")
+                     // console.log(results)
                         callback(null, results);
                     }
                 });
