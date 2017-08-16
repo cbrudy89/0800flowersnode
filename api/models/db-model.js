@@ -95,7 +95,6 @@ function DbModel(){
 		});		
 	}	
 
-
 	// Insert/Update record in table
 	this.save = function(table, data, id, callback) {
 		connection.acquire(function(err, con) {
@@ -176,7 +175,7 @@ function DbModel(){
 							});
 
 						}else{
-							sql += 'WHERE '+condition;
+							sql += ' WHERE '+condition;
 						}
 					}
 

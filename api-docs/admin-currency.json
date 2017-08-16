@@ -1,0 +1,362 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin currency APIs",
+      "description":"All APIs related to the admin currency controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin currency",
+         "description":"API for admin currency usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getallcurrencies":{
+         "post":{
+            "tags":[
+               "Admin Currencies"
+            ],
+            "description":"Get all currencies list from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"currency_name",
+                  "in":"formData",
+                  "description":"currency name",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"currency_code",
+                  "in":"formData",
+                  "description":"currency code",
+                  "required":false,
+                  "type":"string"
+               }
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"data found",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },               
+               "500":{
+                  "description":"Some unknown error",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/editcurrency":{
+         "post":{
+            "tags":[
+               "Admin Currencies"
+            ],
+            "description":"Edit currency from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"currency id",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"currency_name",
+                  "in":"formData",
+                  "description":"currency name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"currency_code",
+                  "in":"formData",
+                  "description":"currency code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"currency_numeric_code",
+                  "in":"formData",
+                  "description":"currency numeric code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"symbol",
+                  "in":"formData",
+                  "description":"currency symbol",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"currency status",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"prefix",
+                  "in":"formData",
+                  "description":"currency prefix",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"suffix",
+                  "in":"formData",
+                  "description":"currency suffix",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"exchange_rate",
+                  "in":"formData",
+                  "description":"currency exchange rate",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"currency default currency",
+                  "required":true,
+                  "type":"integar"
+               }
+                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Currency has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200currency"
+                  }
+               },
+               "409":{
+                  "description":"The currency code has already been saved.",
+                  "schema":{
+                     "$ref":"#/definitions/409currency"
+                  }
+               },
+               "500":{
+                  "description":"Currency has not been inserted.",
+                  "schema":{
+                     "$ref":"#/definitions/500currency"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/list":{
+         "post":{
+            "tags":[
+               "Admin Currencies"
+            ],
+            "description":"List all countries",
+            "operationId":"post",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               },
+               "404":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/404"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/country/delete":{
+         "delete":{
+            "tags":[
+               "Admin Currencies"
+            ],
+            "description":"Delete Country",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired country to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Country deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200deletecountry"
+                  }
+               },
+               "500":{
+                  "description":"Unable to delete Country.",
+                  "schema":{
+                     "$ref":"#/definitions/500deletecountry"
+                  }
+               },
+               "404":{
+                  "description":"Country not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deletecountry"
+                  }
+               }                                
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200currency":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Currency has been inserted successfully."
+            }
+         }
+      },
+      "409currency":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The currency code has already been saved."
+            }
+         }
+      },
+      "500currency":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Country has been inserted successfully."
+            }
+         }
+      },
+      "200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Query executed."
+            }
+         }
+      },
+      "500":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"server error"
+            }
+         }
+      }           
+   }
+}
