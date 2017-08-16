@@ -353,53 +353,103 @@ function VendorController() {
       Sync(function(){
 
         var vendor = getVendor.sync(null, vendor_id);
-        //console.log(vendor);
-        var vendorcountry = getVendorCountry.sync(null, vendor);
-        //console.log(vendorcountry);
+        if(vendor.length > 0){
 
-        if (vendorcountry.length > 0 && vendorcountry[0].country_id > 0) {
-           country_id = vendorcountry[0].country_id;
-        }
+          //console.log(vendor);
+          var vendor_secondary_contact = getSecondaryContact.sync(null, vendor_id);
+          var vendorcountry = getVendorCountry.sync(null, vendor);
+          //console.log(vendorcountry);
 
-        if(country_id){
-            timezones  = getTimezones.sync(null, country_id);
-            //console.log(timezones);
-            
-          if(timezones.length > 0){
-            
-            for( var i=0; i < timezones.length ; i++ ) {
-              var timezone = {};
-              timezone = timezones[i];
-
-              var vendor_cut_off = groupVendor.sync(null, vendor_id, country_id, timezones[i].id);
-
-              timezone.vendor_stoppage_hour = null;
-              timezone.vendor_stoppage_minute = null;
-
-              if(vendor_cut_off.length > 0){
-                timezone.vendor_stoppage_hour = vendor_cut_off[0].stoppage_hour;
-                timezone.vendor_stoppage_minute = vendor_cut_off[0].stoppage_minute;
-              }
-
-             newTimezones.push(timezone);
-
-            }            
-
+          if (vendorcountry.length > 0 && vendorcountry[0].country_id > 0) {
+             country_id = vendorcountry[0].country_id;
           }
-          //console.log(newTimezones);
+
+          if(country_id){
+              timezones  = getTimezones.sync(null, country_id);
+              //console.log(timezones);
+              
+            if(timezones.length > 0){
+              
+              for( var i=0; i < timezones.length ; i++ ) {
+                var timezone = {};
+                timezone = timezones[i];
+
+                var vendor_cut_off = groupVendor.sync(null, vendor_id, country_id, timezones[i].id);
+
+                timezone.vendor_stoppage_hour = null;
+                timezone.vendor_stoppage_minute = null;
+
+                if(vendor_cut_off.length > 0){
+                  timezone.vendor_stoppage_hour = vendor_cut_off[0].stoppage_hour;
+                  timezone.vendor_stoppage_minute = vendor_cut_off[0].stoppage_minute;
+                }
+
+               newTimezones.push(timezone);
+
+              }            
+
+            }
+            //console.log(newTimezones);
+          }
+
+          vendor[0].timezones = newTimezones;
+          vendor[0].vendor_secondary_contact = vendor_secondary_contact;
+
+
+          res.status(config.HTTP_SUCCESS).send({
+            status:config.SUCCESS,
+            code: config.HTTP_SUCCESS,
+            message:'Vendor found.',
+            result : vendor
+
+          });            
+
+        }else{
+
+            res.status(config.HTTP_BAD_REQUEST).send({
+                status:config.ERROR,
+                code: config.HTTP_BAD_REQUEST, 
+                message:"Vendor not found"
+            });          
+          
         }
 
-        var vendor_secondary_contact = getSecondaryContact.sync(null, vendor_id);
+
+
+
 
       });            
     }
   }
 
+  // Update Vendor Data
+  this.update = function(req, res, next){
+
+    if(req.decoded.role != config.ROLE_ADMIN){
+      res.status(config.HTTP_FORBIDDEN).send({
+        status: config.ERROR, 
+        code : config.HTTP_FORBIDDEN, 
+        message: "You dont have permission to update vendor!"
+      });  
+    }else{
+      var vendor_id = req.body.id;
+      var name = req.body.name;
+      var country_id = req.body.country_id;
+      var surcharge = req.body.surcharge;
+      var status = req.body.status;
+
+      // Secondary Contact information
+      var new_contact_name = req.body.new_contact_name;
+      var new_contact_email = req.body.new_contact_email;
+      var new_contact_phone = req.body.new_contact_phone;
+
+    }    
+  }
 }
 
 function getVendor(vendor_id, callback){
   var sql = "SELECT * FROM `vendor` WHERE `vendor`.`id` = "+vendor_id+" LIMIT 1";
-
+  
   dbModel.rawQuery(sql, function(err, result) {
     if (err) {
       callback(err);
