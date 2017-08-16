@@ -71,16 +71,18 @@ function DeliveryMethodsController() {
             });
         }
     }
-    //edit delivery method
-    this.editmethod = function(req, res) {
+    //add/edit delivery method
+    this.addeditmethod = function(req, res) {
         if(req.decoded.role != config.ROLE_ADMIN){
             res.status(config.HTTP_FORBIDDEN).send({
               status: config.ERROR, 
               code : config.HTTP_FORBIDDEN, 
-              message: "You dont have permission to create Province!"
+              message: "You dont have permission!"
             });       
-        }else{
-            var id= req.body.id;
+        }else{  
+            
+            if(req.body.id == undefined) var id=0;
+            else var id= req.body.id;                                  
             var descriptionArr= req.body.descriptionArr;
             var post = {
                 delivery_method: req.body.delivery_method,
@@ -124,12 +126,14 @@ function DeliveryMethodsController() {
                                 });
                             }
                             else{
+                              if(id ==0) id=result.insertId;
                                 if(descriptionArr.length > 0){
                                   Sync(function(){
                                     var jsonData = JSON.parse(descriptionArr);
                                     for (var i = 0; i < jsonData.length; i++) {
                                       var lang = jsonData[i];
-                                      var response=checkLanguage_entry.sync(null,id,lang.language_id);                            
+                                      var response='';
+                                      if(id !=0) response=checkLanguage_entry.sync(null,id,lang.language_id);                            
                                       updateLanguage_entry.sync(null,id, lang,response);
                                     } 
                                   }); 
@@ -138,8 +142,8 @@ function DeliveryMethodsController() {
                                       status: config.SUCCESS, 
                                       code : config.HTTP_SUCCESS, 
                                       message: 'methods saved'
-                                    });               
-                                }
+                                });               
+                            }
                       });
                   }
               }
@@ -167,22 +171,22 @@ function DeliveryMethodsController() {
                 });
               }
               else{
-                  res.status(config.HTTP_SUCCESS).send({
-                        status: config.SUCCESS, 
-                        code : config.HTTP_SUCCESS, 
-                        message: 'currency deleted'
-                  });            
+                res.status(config.HTTP_SUCCESS).send({
+                      status: config.SUCCESS, 
+                      code : config.HTTP_SUCCESS, 
+                      message: 'method deleted'
+                });            
               }
             });
         }
     }
-/*     //Add new currency
-    this.addcurrency = function(req, res) {
+/*     //Add new delivery method
+    this.adddeliverymethod = function(req, res) {
         if(req.decoded.role != config.ROLE_ADMIN){
             res.status(config.HTTP_FORBIDDEN).send({
               status: config.ERROR, 
               code : config.HTTP_FORBIDDEN, 
-              message: "You dont have permission to create Province!"
+              message: "You dont have permission."
             });       
         }else{
             var post = {
@@ -251,6 +255,7 @@ function getLanguage_entry(method_id,callback){
 //check existing method language entry
 function checkLanguage_entry(method_id,language_id,callback){
     $sql = "SELECT id from `language_method` WHERE  `language_id`="+language_id+" AND method_id="+method_id;
+    //console.log($sql);
     dbModel.rawQuery($sql, function(err, $result) {
         if (err) callback(err);
         else {
@@ -264,10 +269,11 @@ function checkLanguage_entry(method_id,language_id,callback){
 //update/insert method language entry
 function updateLanguage_entry(method_id,descriptionArr,record_id='',callback){     
       var language_methodData = {
-          "method_id": descriptionArr.method_id,
+          "method_id": method_id,
           "language_id": descriptionArr.language_id,
           "description":descriptionArr.description
       };
+      //console.log(language_methodData);
       dbModel.save("language_method", language_methodData, record_id, function (err, $result) {
         if (err) callback(err);
         else callback(null,$result);

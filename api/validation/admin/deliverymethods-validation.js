@@ -2,9 +2,8 @@
 var Joi = require('joi');
 
 module.exports = { 
-  editmethod : {
+  addeditmethod : {
     body: {
-      id: Joi.number().integer().required(),
       descriptionArr: Joi.required(),
       delivery_method: Joi.required(),
       delivery_within: Joi.required(),

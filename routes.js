@@ -462,11 +462,14 @@ module.exports = {
         deliveryMethodsController.getalldeliverymethods(req, res);
     });
 
-    app.post('/admin/editmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
-        deliveryMethodsController.editmethod(req, res);
+    app.post('/admin/addeditmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
+        deliveryMethodsController.addeditmethod(req, res);
     });    
 
-    /*app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+    app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
+        deliveryMethodsController.deletemethod(req, res);
+    });
+        /*app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         deliveryMethodsController.view(req, res);
     });
 
