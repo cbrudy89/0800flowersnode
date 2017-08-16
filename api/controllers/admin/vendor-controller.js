@@ -52,7 +52,7 @@ function VendorController() {
           res.status(config.HTTP_SERVER_ERROR).send({
             status: config.ERROR, 
             code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to create vendor!", 
+            message : "Unable to create vendor!",
             errors : err
           });
         }else{
@@ -426,13 +426,22 @@ function VendorController() {
   this.update = function(req, res, next){
 
     if(req.decoded.role != config.ROLE_ADMIN){
-      res.status(config.HTTP_FORBIDDEN).send({
-        status: config.ERROR, 
-        code : config.HTTP_FORBIDDEN, 
+      
+      res.status(config.HTTP_FORBIDDEN).send({    
+        status: config.ERROR,
+        code : config.HTTP_FORBIDDEN,
         message: "You dont have permission to update vendor!"
-      });  
+      });
+
     }else{
+      
+      var parent_id = req.body.parent_id;
       var vendor_id = req.body.id;
+      
+      if(parent_id != '' && parent_id != 0){
+        vendor_id = parent_id;
+      }
+
       var name = req.body.name;
       var country_id = req.body.country_id;
       var surcharge = req.body.surcharge;
@@ -442,9 +451,89 @@ function VendorController() {
       var new_contact_name = req.body.new_contact_name;
       var new_contact_email = req.body.new_contact_email;
       var new_contact_phone = req.body.new_contact_phone;
+      var vendor_cutoff_time = req.body.vendor_cutoff_time;
 
-    }    
+
+      var jsonData = JSON.parse(vendor_cutoff_time);                                    
+      for (var i = 0; i < jsonData.length; i++) {                                      
+        var lang = jsonData[i];                                      
+        var response='';                                      
+        group_vendor = checkGroup_entry.sync(null,country_id, vendor_id, lang.timezone_id);
+        if(group_vendor !=''){
+          var cond = " country_id="+country_id+" AND vendor_id="+vendor_id+""
+          dbModel.delete("group_vendor", "country_id")
+        }else{
+          insertGroup_entry.sync(null,country_id, vendor_id, lang,response);
+        }
+        
+      }
+
+    }
+
   }
+
+}
+
+function insertGroup_entry(country_id, vendor_id, lang, callback){
+
+  var data = {
+    "country_id": country_id,
+    "timezone_id": lang.timezone_id,
+    "group_id": "",
+    "vendor_id": vendor_id,
+    "stoppage_hour": lang.stoppage_hour,
+    "stoppage_minute": lang.stoppage_minute,
+    "status": 1
+  };
+
+  dbModel.save("group_vendor", data, "", function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+
+}
+
+function updateGroup_entry(country_id, vendor_id, lang, callback){
+
+  var sql = "SELECT id FROM `group_vendor` WHERE country_id = "+country_id+" AND timezone_id = "+lang.timezone_id+" AND vendor_id = "+vendor_id+" LIMIT 1";
+  
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, result[0].id);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+
+}
+
+function checkGroup_entry(country_id, vendor_id, timezone_id, callback){
+
+  var sql = "SELECT id FROM `group_vendor` WHERE country_id = "+country_id+" AND timezone_id = "+timezone_id+" AND vendor_id = "+vendor_id+" LIMIT 1";
+  
+  dbModel.rawQuery(sql, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, result[0].id);
+      }else{
+        callback(null, []);
+      }
+    }
+  });
+
 }
 
 function getVendor(vendor_id, callback){
