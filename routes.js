@@ -10,7 +10,7 @@ var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
-
+var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
@@ -30,11 +30,10 @@ var homeValidation = require('./api/validation/home-validation');
 var orderTrackingValidation = require('./api/validation/order-tracking-validation');
 var productValidation = require('./api/validation/product-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
-
 var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
-
 var discountValidation = require('./api/validation/admin/discount-validation');
+var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
 
 
 module.exports = {
@@ -457,6 +456,24 @@ module.exports = {
 
     /*********************** Vendor Functionality Ends Here ************************/    
     
+    /************************ Delivery Methods Functionality ********************************/
 
+    app.post('/admin/getalldeliverymethods', authenticateController.isAuthenticated, function(req, res){
+        deliveryMethodsController.getalldeliverymethods(req, res);
+    });
+
+    app.post('/admin/editmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
+        deliveryMethodsController.editmethod(req, res);
+    });    
+
+    /*app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+        deliveryMethodsController.view(req, res);
+    });
+
+    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
+        deliveryMethodsController.delete(req, res);
+    });*/
+
+    /*********************** Delivery Methods Functionality Ends Here ************************/    
    }
 }

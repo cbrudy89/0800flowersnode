@@ -1,11 +1,8 @@
 var jwt = require('jsonwebtoken');
-var async = require('async');
-var Sync = require('sync');
 var request = require('request');
 var config = require('./../../../config');
 var connection = require('./../../../database');
 var dbModel = require('./../../models/db-model');
-var commonHelper = require('./../../helpers/common-helper');
 
 function CurrencyController() {
 
