@@ -438,10 +438,6 @@ module.exports = {
 
     /************************ Vendor Functionality ********************************/
 
-    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
-        adminVendorController.add(req, res);
-    });
-
     app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
         adminVendorController.list(req, res);
     });    
@@ -449,6 +445,14 @@ module.exports = {
     app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         adminVendorController.view(req, res);
     });
+
+    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
+        adminVendorController.add(req, res);
+    });
+
+    app.put('/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
+        adminVendorController.update(req, res);
+    });    
 
     app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
         adminVendorController.delete(req, res);
