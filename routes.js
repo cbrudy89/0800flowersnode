@@ -13,6 +13,8 @@ var flowerController = require('./api/controllers/admin/flower-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
+var promobannerController = require('./api/controllers/admin/promobanner-controller');
+
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
@@ -36,6 +38,7 @@ var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
 var discountValidation = require('./api/validation/admin/discount-validation');
 var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
+var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 
 
 module.exports = {
@@ -523,15 +526,22 @@ module.exports = {
 
     app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
         deliveryMethodsController.deletemethod(req, res);
-    });
-        /*app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
-        deliveryMethodsController.view(req, res);
+    });    
+    /*********************** Delivery Methods Functionality Ends Here ************************/  
+
+    /************************ Promo Banner Functionality ********************************/
+
+    app.post('/admin/getallpromobanners', authenticateController.isAuthenticated, function(req, res){
+        promobannerController.getallpromobanners(req, res);
     });
 
-    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
-        deliveryMethodsController.delete(req, res);
-    });*/
+    app.post('/admin/addeditpromobanner', authenticateController.isAuthenticated, validate(promobannerValidation.addeditpromobanner), function(req, res){
+        promobannerController.addeditpromobanner(req, res);
+    });    
 
-    /*********************** Delivery Methods Functionality Ends Here ************************/    
+    app.delete('/admin/deletepromobanner', authenticateController.isAuthenticated, function(req, res){
+        promobannerController.deletepromobanner(req, res);
+    });    
+    /*********************** Promo Banner Functionality Ends Here ************************/    
    }
 }

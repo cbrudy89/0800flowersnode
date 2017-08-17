@@ -2,15 +2,15 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"Admin delivery methods APIs",
-      "description":"All APIs related to the admin delivery methods controller",
+      "title":"Admin promo banners APIs",
+      "description":"All APIs related to the admin promo banners controller",
       "termsOfService":"#"
    },
    "basePath":"/",
    "tags":[
       {
-         "name":"Admin delivery methods",
-         "description":"API for admin delivery methods usage"
+         "name":"Admin promo banners",
+         "description":"API for admin promo banners usage"
       }
    ],
    "schemes":[
@@ -24,12 +24,12 @@
       "application/json"
    ],
    "paths":{
-      "/admin/getalldeliverymethods":{
+      "/admin/getallpromobanners":{
          "post":{
             "tags":[
-               "Admin Delivery method"
+               "Admin promo banners"
             ],
-            "description":"Get all delivery methods list from admin section",
+            "description":"Get all promo banners list from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -40,6 +40,20 @@
                   "in":"formData",
                   "description":"Token get on login api response",
                   "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"search_type",
+                  "in":"formData",
+                  "description":"search type section",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description text",
+                  "required":false,
                   "type":"string"
                }           
             ],
@@ -59,12 +73,12 @@
             }
          }
       },
-      "/admin/addeditmethod":{
+      "/admin/addeditpromobanner":{
          "post":{
             "tags":[
-               "Admin Delivery method"
+               "Admin promo banners"
             ],
-            "description":"Add/ Edit currency from admin section",
+            "description":"Add/ Edit promo banners from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -80,9 +94,9 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"send id with edit request",
+                  "description":"Send record id for edit request",
                   "required":false,
-                  "type":"integar"
+                  "type":"string"
                },
                {
                   "name":"descriptionArr",
@@ -92,60 +106,11 @@
                   "type":"string"
                },
                {
-                  "name":"delivery_method",
+                  "name":"type",
                   "in":"formData",
-                  "description":"delivery method name",
+                  "description":"type section",
                   "required":true,
                   "type":"string"
-               },
-               {
-                  "name":"infotext",
-                  "in":"formData",
-                  "description":"info text",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_within",
-                  "in":"formData",
-                  "description":"delivery within",
-                  "required":true,
-                  "type":"integar"
-               },
-               {
-                  "name":"delivery_charge",
-                  "in":"formData",
-                  "description":"delivery charge",
-                  "required":true,
-                  "type":"integar"
-               },
-               {
-                  "name":"delivery_days",
-                  "in":"formData",
-                  "description":"delivery days array ['1','2','3','4','5','6','7']",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_hour",
-                  "in":"formData",
-                  "description":"delivery_hour",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_minute",
-                  "in":"formData",
-                  "description":"delivery minute",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_policy_id",
-                  "in":"formData",
-                  "description":"delivery policy id",
-                  "required":true,
-                  "type":"integar"
                },
                {
                   "name":"status",
@@ -153,24 +118,17 @@
                   "description":"status",
                   "required":true,
                   "type":"integar"
-               },
-               {
-                  "name":"atlas_order",
-                  "in":"formData",
-                  "description":"atlas order id",
-                  "required":true,
-                  "type":"integar"
-               }                             
+               }                           
             ],
             "responses":{
                "200":{
-                  "description":"Delivery method has been inserted successfully!",
+                  "description":"promo banners has been inserted successfully!",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
                },
                "500":{
-                  "description":"Delivery method has not been inserted.",
+                  "description":"promo banners has not been inserted.",
                   "schema":{
                      "$ref":"#/definitions/500"
                   }
@@ -178,12 +136,12 @@
             }
          }
       },
-      "/admin/deletemethod":{
+      "/admin/deletepromobanner":{
          "delete":{
             "tags":[
-               "Admin Delivery method"
+               "Admin promo banners"
             ],
-            "description":"Delete Delivery method",
+            "description":"Delete promo banners",
             "operationId":"delete",
             "produces":[
                "application/json"
@@ -199,20 +157,20 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Id of the desired delivery method to delete.",
+                  "description":"Id of the desired promo banners to delete.",
                   "required":true,
                   "type":"integer"
                }
             ],
              "responses":{
                "200":{
-                  "description":"Delivery method deleted successfully.",
+                  "description":"promo banners deleted successfully.",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
                },
                "500":{
-                  "description":"Unable to delete Delivery method.",
+                  "description":"Unable to delete promo banners.",
                   "schema":{
                      "$ref":"#/definitions/500"
                   }
