@@ -8,6 +8,7 @@ var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
+var occasionController = require('./api/controllers/admin/occasion-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -31,6 +32,7 @@ var wishlistValidation = require('./api/validation/wishlist-validation');
 
 var adminValidation = require('./api/validation/admin/admin-validation');
 var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
+var occasionValidation = require('./api/validation/admin/occasion-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -272,6 +274,26 @@ module.exports = {
 
     /************************* END Get vendors and prodcts lists for calendar setting  Routes ************************/
     
+    
+    /************************  START Occasion  ****************************/
+   
+    // create new
+    app.post('/admin/createOccasion', authenticateController.isAuthenticated, validate(occasionValidation.createOccasion),function(req, res) {
+        occasionController.createOccasion(req, res);
+    });
+        
+    // update 
+    app.post('/admin/updateOccasion', authenticateController.isAuthenticated,validate(occasionValidation.updateOccasion), function(req, res) {
+        occasionController.updateOccasion(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteOccasion', authenticateController.isAuthenticated, validate(occasionValidation.deleteOccasion),function(req, res) {
+        occasionController.deleteOccasion(req, res);
+    });
+    
+    /************************  END Occasion  ****************************/
+
     
     /************************* Home Page Routes ************************/
 

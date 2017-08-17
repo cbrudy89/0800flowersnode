@@ -84,6 +84,12 @@ function CalendarSettingController() {
                 for ( var j=0 ; j < result.length; j++) { 
                   var product_restrict_calendar_date  = getProductRestrictCalendarDateDetails.sync(null, result[j].id);
                       result[j].product_restrict_calendar_date = product_restrict_calendar_date;
+                      
+                      if(result[j].status ==1){
+                          result[j].status ='Active';
+                      }else{
+                          result[j].status ='In-Active';
+                      } 
                 }
 
                 var final_data  = {
@@ -117,7 +123,8 @@ function CalendarSettingController() {
 
         });       
       }else{
-        // Insert into language table
+          
+        
         var curr_date  = new Date();
         var id=0;
 
@@ -153,9 +160,9 @@ function CalendarSettingController() {
           } 
           else
           {                 
-                var restrict_calendar_date_id = result.insertId;
-                var selected_products         = req.body.product_id;
-
+                var restrict_calendar_date_id = result.insertId;                                
+                var selected_products = req.body.product_id.split(',');
+                
                 if(selected_products.length >0 ){
                     for (i = 0; i < selected_products.length; i++) {
 
@@ -206,67 +213,104 @@ function CalendarSettingController() {
 
             var id = req.body.id;
             var sql ="SELECT * FROM restrict_calendar_dates WHERE id = "+id;
-        
-            dbModel.rawQuery(sql, function(err,restrictCalendarResult) {
-            if (err)
-            {
-                res.status(config.HTTP_SERVER_ERROR).send({
-                  status: config.ERROR, 
-                  code : config.HTTP_SERVER_ERROR, 
-                  message : "Unable to process request!", 
-                  errors : err
-                });
-            }
-            else 
-            { 
-                if(!restrictCalendarResult.length){
-                     res.status(config.HTTP_NOT_FOUND).send({
-                       status: config.ERROR, 
-                       code : config.HTTP_NOT_FOUND, 
-                       message: "The specified restrict calendar date not found."
-                     });
-                  }else{
-                      
-                     
-                      dbModel.delete('restrict_calendar_dates '," id="+id, function(err,deleteRestrictCalendarResult) {
-                       
-                        if(err) {
-                            res.status(config.HTTP_SERVER_ERROR).send({
-                             status: config.ERROR, 
-                             code : config.HTTP_SERVER_ERROR, 
-                             message : "Unable to process request!", 
-                             errors : err
-                           });
+
+            // Select vendor based on Id
+            dbModel.rawQuery(sql, function (error, restrictCalendarResult) {
+              if (error) {
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status:config.ERROR,
+                    code: config.HTTP_SERVER_ERROR,
+                    message:'Unable to process result!'
+                  });
+              }else{
+
+                if(restrictCalendarResult.length > 0 && restrictCalendarResult[0].id > 0){
+
+                  // Getting Connection Object
+                  dbModel.getConnection(function(error, con){
+                    if (error) {
+                      res.status(config.HTTP_SERVER_ERROR).send({
+                        status:config.ERROR,
+                        code: config.HTTP_SERVER_ERROR,
+                        message:'Unable to process result!',
+                        error : error
+                      });
+                    }else{
+
+                      // Delete vendor form table if found 
+                      dbModel.beginTransaction(con, ' DELETE FROM restrict_calendar_dates WHERE id ='+id, function(error, result){
+                        if(error){
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to delete restrict calendar date.',
+                            error: error
+                          });                    
                         }else{
+
+                          if(result.affectedRows > 0){
+
                             
-                             dbModel.delete('product_restrict_calendar_date '," restrict_calendar_date_id="+id, function(err,deleteProductRestrictCalendarResult) {
-                       
-                                if(err) {
+                            var sql = "DELETE FROM product_restrict_calendar_date WHERE restrict_calendar_date_id ="+id+";";                            
+
+                            // Delete vendor specific entries form group_vendor table
+                            dbModel.transactionQuery(con, sql, function (error, result) {
+                              if (error) {
+                                res.status(config.HTTP_SERVER_ERROR).send({
+                                  status:config.ERROR,
+                                  code: config.HTTP_SERVER_ERROR,
+                                  message:'Unable to delete restrict calendar date.',
+                                  error: error
+                                });
+                              }else{
+
+                                dbModel.commit(con, function(err, response){
+                                  if (error) {
                                     res.status(config.HTTP_SERVER_ERROR).send({
-                                     status: config.ERROR, 
-                                     code : config.HTTP_SERVER_ERROR, 
-                                     message : "Unable to process request!", 
-                                     errors : err
-                                   });
-                                }else{
+                                      status:config.ERROR,
+                                      code: config.HTTP_SERVER_ERROR,
+                                      message:'Unable to delete restrict calendar date.',
+                                      error: error
+                                    });
+                                  }else{
+                                    res.status(config.HTTP_SUCCESS).send({
+                                      status:config.SUCCESS,
+                                      code: config.HTTP_SUCCESS,
+                                      message:'Restrict calendar date deleted successfully.'
+                                    });                                    
+                                  }                                  
 
-                                   res.status(config.HTTP_SUCCESS).send({
-                                     status: config.SUCCESS, 
-                                     code : config.HTTP_SUCCESS, 
-                                     message: 'The restrict calendar date has been deleted',
-                                   });
-                                }
-                             });
-                              
+                                });
+
+                              }    
+                            });
+
+                          }else{
+                            res.status(config.HTTP_NOT_FOUND).send({
+                              status:config.ERROR,
+                              code: config.HTTP_NOT_FOUND,
+                              message:'Restrict calendar date not found.'
+                            });
+                          }
+
                         }
-                     });
-                }
 
-            }
+                      });
 
-          });
-          
-        
+                    }
+
+                  });
+
+                }else{
+                  res.status(config.HTTP_BAD_REQUEST).send({
+                      status:config.ERROR,
+                      code: config.HTTP_BAD_REQUEST, 
+                      message:"Restrict calendar date not found"
+                  });
+                }          
+              }
+            });
+
 
       } // else close    
 
@@ -287,9 +331,13 @@ function CalendarSettingController() {
         }else{
             
             var id=req.body.id;
-            var restrictCalendarSql ="SELECT * FROM restrict_calendar_dates WHERE id = "+id;
-
-            dbModel.rawQuery(restrictCalendarSql, function(err, restrictCalendarResult){
+            
+            var restrictCalendarSql ="SELECT restrict_calendar_dates.*,vendor.name vendor_name,country_list.country_name FROM restrict_calendar_dates ";
+                restrictCalendarSql += " LEFT JOIN `vendor` ON `vendor`.`id` = `restrict_calendar_dates`.`vendor_id` ";
+                restrictCalendarSql += " LEFT JOIN `country_list` ON `country_list`.`id` = `restrict_calendar_dates`.`country_id` "; 
+                restrictCalendarSql += " WHERE restrict_calendar_dates.id = "+id;
+                
+               dbModel.rawQuery(restrictCalendarSql, function(err, restrictCalendarResult){
 
                 if (err) {
                     res.status(config.HTTP_SERVER_ERROR).send({
@@ -307,8 +355,7 @@ function CalendarSettingController() {
                                 status:config.ERROR,
                                 code: config.HTTP_NOT_FOUND, 
                                 message:"No restrict calendar date found"
-                              });      
-                            
+                              });                                  
 
                        }else{
 
@@ -327,6 +374,12 @@ function CalendarSettingController() {
                               else 
                               { 
                                     restrictCalendarResult[0].product_restrict_calendar_date = productRestrictCalendarResult;
+                                    if(restrictCalendarResult[0].status ==1){
+                                        restrictCalendarResult[0].status ='Active';
+                                    }else{
+                                        restrictCalendarResult[0].status ='In-Active';
+                                    } 
+                                    
                                     var final_data= {
                                         restrict_calendar_date:restrictCalendarResult,                                        
                                     };
@@ -541,6 +594,12 @@ function CalendarSettingController() {
                 for ( var j=0 ; j < result.length; j++) { 
                   var product_surcharge_calendar_date  = getProductSurchargeCalendarDateDetails.sync(null, result[j].id);
                       result[j].product_surcharge_calendar_date = product_surcharge_calendar_date;
+                 
+                      if(result[j].status == 1){
+                          result[j].status ='Active';
+                      }else{
+                          result[j].status ='In-Active';
+                      } 
                 }
 
                 var final_data  = {
@@ -614,8 +673,8 @@ function CalendarSettingController() {
           else
           {                 
                 var surcharge_calendar_date_id = result.insertId;
-                var selected_products          = req.body.product_id;
-
+                var selected_products = req.body.product_id.split(',');
+                
                 if(selected_products.length >0 ){
                     for (i = 0; i < selected_products.length; i++) {
 
@@ -666,65 +725,104 @@ function CalendarSettingController() {
 
             var id = req.body.id;
             var sql ="SELECT * FROM surcharge_calendars WHERE id = "+id;
-        
-            dbModel.rawQuery(sql, function(err,result1) {
-            if (err)
-            {
-                res.status(config.HTTP_SERVER_ERROR).send({
-                  status: config.ERROR, 
-                  code : config.HTTP_SERVER_ERROR, 
-                  message : "Unable to process request!", 
-                  errors : err
-                });
-            }
-            else 
-            { 
-                if(!result1.length){
-                     res.status(config.HTTP_NOT_FOUND).send({
-                       status: config.ERROR, 
-                       code : config.HTTP_NOT_FOUND, 
-                       message: "The specified surcharge calendar date not found."
-                     });
-                  }else{
-                      
-                     
-                      dbModel.delete('surcharge_calendars '," id="+id, function(err,result2) {
-                       
-                        if(err) {
-                            res.status(config.HTTP_SERVER_ERROR).send({
-                             status: config.ERROR, 
-                             code : config.HTTP_SERVER_ERROR, 
-                             message : "Unable to process request!", 
-                             errors : err
-                           });
+
+            // Select vendor based on Id
+            dbModel.rawQuery(sql, function (error, result1) {
+              if (error) {
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status:config.ERROR,
+                    code: config.HTTP_SERVER_ERROR,
+                    message:'Unable to process result!'
+                  });
+              }else{
+
+                if(result1.length > 0 && result1[0].id > 0){
+
+                  // Getting Connection Object
+                  dbModel.getConnection(function(error, con){
+                    if (error) {
+                      res.status(config.HTTP_SERVER_ERROR).send({
+                        status:config.ERROR,
+                        code: config.HTTP_SERVER_ERROR,
+                        message:'Unable to process result!',
+                        error : error
+                      });
+                    }else{
+
+                      // Delete surcharge_calendars form table if found 
+                      dbModel.beginTransaction(con, ' DELETE FROM surcharge_calendars WHERE id ='+id, function(error, result2){
+                        if(error){
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to delete surcharge calendar date.',
+                            error: error
+                          });                    
                         }else{
+
+                          if(result2.affectedRows > 0){
+
                             
-                             dbModel.delete('product_surcharge_calendar '," surcharge_calendar_id="+id, function(err,result3) {
-                       
-                                if(err) {
+                            var sql = "DELETE FROM product_surcharge_calendar WHERE surcharge_calendar_id ="+id+";";                            
+
+                            // Delete vendor specific entries form product_surcharge_calendar table
+                            dbModel.transactionQuery(con, sql, function (error, result3) {
+                              if (error) {
+                                res.status(config.HTTP_SERVER_ERROR).send({
+                                  status:config.ERROR,
+                                  code: config.HTTP_SERVER_ERROR,
+                                  message:'Unable to delete surcharge calendar date.',
+                                  error: error
+                                });
+                              }else{
+
+                                dbModel.commit(con, function(err, response){
+                                  if (error) {
                                     res.status(config.HTTP_SERVER_ERROR).send({
-                                     status: config.ERROR, 
-                                     code : config.HTTP_SERVER_ERROR, 
-                                     message : "Unable to process request!", 
-                                     errors : err
-                                   });
-                                }else{
+                                      status:config.ERROR,
+                                      code: config.HTTP_SERVER_ERROR,
+                                      message:'Unable to delete surcharge calendar date.',
+                                      error: error
+                                    });
+                                  }else{
+                                    res.status(config.HTTP_SUCCESS).send({
+                                      status:config.SUCCESS,
+                                      code: config.HTTP_SUCCESS,
+                                      message:'Surcharge calendar date deleted successfully.'
+                                    });                                    
+                                  }                                  
 
-                                   res.status(config.HTTP_SUCCESS).send({
-                                     status: config.SUCCESS, 
-                                     code : config.HTTP_SUCCESS, 
-                                     message: 'The surcharge calendar date has been deleted',
-                                   });
-                                }
-                             });
-                              
+                                });
+
+                              }    
+                            });
+
+                          }else{
+                            res.status(config.HTTP_NOT_FOUND).send({
+                              status:config.ERROR,
+                              code: config.HTTP_NOT_FOUND,
+                              message:'Surcharge calendar date not found.'
+                            });
+                          }
+
                         }
-                     });
-                }
 
-            }
+                      });
 
-          });
+                    }
+
+                  });
+
+                }else{
+                  res.status(config.HTTP_BAD_REQUEST).send({
+                      status:config.ERROR,
+                      code: config.HTTP_BAD_REQUEST, 
+                      message:"Surcharge calendar date not found"
+                  });
+                }          
+              }
+            });
+
           
         
 
@@ -746,8 +844,12 @@ function CalendarSettingController() {
         }else{
             
             var id=req.body.id;
-            var sql1 ="SELECT * FROM surcharge_calendars WHERE id = "+id;
-
+            
+            var sql1 ="SELECT surcharge_calendars.*,vendor.name vendor_name,country_list.country_name FROM surcharge_calendars ";
+             sql1 += " LEFT JOIN `vendor` ON `vendor`.`id` = `surcharge_calendars`.`vendor_id` ";
+             sql1 += " LEFT JOIN `country_list` ON `country_list`.`id` = `surcharge_calendars`.`country_id` "; 
+             sql1 += " WHERE surcharge_calendars.id = "+id;
+              
             dbModel.rawQuery(sql1, function(err, surchargeCalendarDateResult){
 
                 if (err) {
@@ -785,6 +887,13 @@ function CalendarSettingController() {
                               else 
                               { 
                                    surchargeCalendarDateResult[0].product_surcharge_calendar= productSurchargeCalendarDateResult;
+                                    
+                                    if(surchargeCalendarDateResult[0].status ==1){
+                                        surchargeCalendarDateResult[0].status ='Active';
+                                    }else{
+                                        surchargeCalendarDateResult[0].status ='In-Active';
+                                    } 
+                                    
                                     var final_data= {
                                         surcharge_calendars:surchargeCalendarDateResult,                                        
                                     };
@@ -819,7 +928,7 @@ function CalendarSettingController() {
         }else{
 
             var curr_date  = new Date();
-            var id =req.body.id;
+            var id         = req.body.id;
 
             var surchargeCalendarDateData = {
               'vendor_id':req.body.vendor_id,
@@ -832,7 +941,6 @@ function CalendarSettingController() {
               'updated_at':commonHelper.formatDateToMysqlDateTime(curr_date,3),
             };
 
-      
       
             if(req.body.end_date !='' && req.body.end_date != undefined){                     
                   surchargeCalendarDateData.end_date = commonHelper.formatDateToMysqlDateTime(req.body.end_date,1);
@@ -872,8 +980,8 @@ function CalendarSettingController() {
 
                                   } else {                  
 
-                                      var surcharge_calendar_id     = id;
-                                      var selected_products         = req.body.product_id;
+                                      var surcharge_calendar_id = id;
+                                      var selected_products     = req.body.product_id.split(',');
 
 
                                       // delete existing all and instert new all
@@ -882,7 +990,6 @@ function CalendarSettingController() {
 
 
                                       for (i = 0; i < selected_products.length; i++) {
-
                                           var productData= {
                                               product_id :selected_products[i],
                                               surcharge_calendar_id :surcharge_calendar_id
@@ -923,16 +1030,17 @@ function CalendarSettingController() {
 }
 
 
-
 function getRestrictCalendarDatesDetails(filters, find_total = false, callback) {
 
     if(find_total == false){
-        var sql = "SELECT * ";
+        var sql = "SELECT restrict_calendar_dates.*,vendor.name vendor_name,country_list.country_name ";
     }else{
         var sql = "SELECT COUNT(*) AS total_restrict_calendar_dates";
     }
 
     sql += " FROM `restrict_calendar_dates`";
+    sql += "LEFT JOIN `vendor` ON `vendor`.`id` = `restrict_calendar_dates`.`vendor_id` ";
+    sql += "LEFT JOIN `country_list` ON `country_list`.`id` = `restrict_calendar_dates`.`country_id` ";  
     
     if(find_total == false){
       
@@ -980,12 +1088,15 @@ function getProductRestrictCalendarDateDetails(restrict_calendar_date_id, callba
 function getSurchargeCalendarDatesDetails(filters, find_total = false, callback) {
 
     if(find_total == false){
-        var sql = "SELECT * ";
+        var sql = "SELECT surcharge_calendars.*,vendor.name vendor_name,country_list.country_name ";
     }else{
         var sql = "SELECT COUNT(*) AS total_surcharge_calendars_dates";
     }
 
     sql += " FROM `surcharge_calendars`";
+    sql += "LEFT JOIN `vendor` ON `vendor`.`id` = `surcharge_calendars`.`vendor_id` ";
+    sql += "LEFT JOIN `country_list` ON `country_list`.`id` = `surcharge_calendars`.`country_id` ";  
+   
     
     if(find_total == false){
       

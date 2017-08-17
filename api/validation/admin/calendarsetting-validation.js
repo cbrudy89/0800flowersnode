@@ -13,7 +13,7 @@ module.exports = {
                 start_date: Joi.string().required(),                
                 status: Joi.number().integer().required(),
                 end_date: Joi.string(),
-                product_id: Joi.required(),  
+                product_id: Joi.string().required(),  
 	  }  	
   },
   
@@ -28,7 +28,7 @@ module.exports = {
                 start_date: Joi.string().required(),                
                 status: Joi.number().integer().required(),
                 end_date: Joi.string(), 
-                product_id: Joi.required(), 
+                product_id: Joi.string().required(),   
 	  }  	
   },
   
@@ -60,7 +60,7 @@ module.exports = {
                 status: Joi.number().integer().required(),
                 surcharge:Joi.string().required(),
                 end_date: Joi.string(), 
-                product_id: Joi.required(),  
+                product_id: Joi.string().required(),    
 	  }  	
   },
   
@@ -76,7 +76,7 @@ module.exports = {
                 status: Joi.number().integer().required(),
                 surcharge:Joi.string().required(),
                 end_date: Joi.string(),  
-                product_id: Joi.required(),  
+                product_id: Joi.string().required(),    
 	  }  	
   },
   
