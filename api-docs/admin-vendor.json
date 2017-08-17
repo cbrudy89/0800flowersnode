@@ -1,0 +1,514 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Vendor APIs",
+      "description":"All APIs related to the Admin Vendor",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Vendor",
+         "description":"API for Admin Vendor"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/vendor/list":{
+         "post":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"List API for Vendor",
+            "operationId":"/vendor/list",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },                
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of vendor",
+                  "required":false,
+                  "type": "string"
+               },               
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email for vendor",
+                  "required":false,
+                  "type": "string"
+               }         
+            ],
+            "responses":{
+               "200":{
+                  "description":"No of Vendors found",
+                  "schema":{
+                      "$ref":"#/definitions/200list"
+                  }
+               },
+               "400":{
+                  "description":"No vendors found",
+                  "schema":{
+                     "$ref":"#/definitions/400list"
+                  }
+               },
+               "403":{
+                  "description":"You don't have permission to list vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403list"
+                  }
+               },   
+               "500":{
+                  "description":"Unable to process result!",
+                  "schema":{
+                     "$ref":"#/definitions/500list"
+                  }
+               }                         
+
+            }
+         }
+      },
+      "/vendor/add":{
+         "post":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Add new vendor user",
+            "operationId":"add",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
+               {
+                  "name":"parent_id",
+                  "in":"formData",
+                  "description":"Parent Id",
+                  "required":true,
+                  "type":"int"
+               },               
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of vendor",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of vendor",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"Vendor password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"phone_no",
+                  "in":"formData",
+                  "description":"Phone number of vendor",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"Surcharge",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"User status active or inactive",
+                  "required":true,
+                  "type":"integer"
+               }                                                                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor created successfully!",
+                  "schema":{
+                     "$ref":"#/definitions/200add"
+                  }
+               },
+               "400":{
+                  "description":"Unable to create vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/400add"
+                  }
+               },
+               "403":{
+                  "description":"You don't have permission to list vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403add"
+                  }
+               },   
+               "500":{
+                  "description":"Unable to process result!",
+                  "schema":{
+                     "$ref":"#/definitions/500add"
+                  }
+               }              
+            }
+         }
+      },
+      "/vendor/delete":{
+         "delete":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Delete Vendor Details",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },                    
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The Vendor ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Vendor deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200delete"
+                  }
+               },
+               "403":{
+                  "description":"You don't have permission to delete vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403delete"
+                  }
+               },
+               "404":{
+                  "description":"Vendor not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404delete"
+                  }
+               },               
+               "500":{
+                  "description":"Unable to process result!",
+                  "schema":{
+                     "$ref":"#/definitions/500delete"
+                  }
+               }                                
+            }
+         }
+      },
+      "/vendor/view":{
+         "post":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Vendor view details",
+            "operationId":"view",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Vendor id",
+                  "required":true,
+                  "type":"integer"
+               }                                                                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor found.",
+                  "schema":{
+                     "$ref":"#/definitions/200view"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to view vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403view"
+                  }
+               },
+               "400":{
+                  "description":"Vendor not found",
+                  "schema":{
+                     "$ref":"#/definitions/400view"
+                  }
+               }                
+            }
+         }
+      } 
+   },
+   "definitions":{
+      "200list":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No of Vendors found"
+            },
+            "result":{
+               "type":"string",
+               "example":""
+            }
+         }
+      },
+      "400list":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No vendors found"
+            }
+         }
+      },
+      "403list":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You don't have permission to list vendor!"
+            }
+         }
+      },
+      "500list":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process result!"
+            }
+         }
+      },
+      "200add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor created successfully!"
+            },
+            "result": []
+            
+         }
+      },
+      "400add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to create vendor!"
+            }
+         }
+      },
+      "403add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You don't have permission to list vendor!"
+            }
+         }
+      },  
+      "500add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process result!"
+            }
+         }
+      },
+      "200add":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor created successfully!"
+            },
+            "result": []
+            
+         }
+      },
+      "200delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor deleted successfully."
+            }
+         }
+      },
+      "403delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You don't have permission to delete vendor!"
+            }
+         }
+      },
+      "404delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor not found."
+            }
+         }
+      },
+      "500delete":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process result!"
+            }
+         }
+      }  
+   }
+}
