@@ -1,0 +1,413 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Sympathy APIs",
+      "description":"All APIs related to the sympathy controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"sympathy",
+         "description":"API for sympathy"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getSympathys":{
+         "post":{
+            "tags":[
+               "sympathy"
+            ],
+            "description":"How to get sympathy",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"sympathy_type",
+                  "in":"formData",
+                  "description":"Sympathy type for search",
+                  "required":false,
+                  "type":"string"
+               }             
+            ],
+            "responses":{
+               "200":{
+                  "description":"All sympathy found",
+                  "schema":{
+                      "$ref":"#/definitions/200getSympathys"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/createSympathy":{
+         "post":{
+            "tags":[
+               "sympathy"
+            ],
+            "description":"Create sympathy",
+            "operationId":"createSympathy",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"sympathy_type",
+                  "in":"formData",
+                  "description":"Sympathy type",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":true,
+                  "type":"integer"
+               }                 
+            ],
+            "responses":{
+               "200":{
+                  "description":"New sympathy has been created",
+                  "schema":{
+                      "$ref":"#/definitions/200createSympathy"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400createSympathy"
+                  }
+               },
+               "409":{
+                  "description":"The specified color already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409createSympathy"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/getSympathy":{
+         "post":{
+            "tags":[
+               "sympathy"
+            ],
+            "description":"Get sympathy",
+            "operationId":"getSympathy",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Sympathy ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Sympathy found!",
+                  "schema":{
+                      "$ref":"#/definitions/200getSympathy"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400getSympathy"
+                  }
+               },
+               "500":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/500getSympathy"
+                  }
+               }                 
+            }
+         }
+      },
+      "/admin/updateSympathy":{
+         "post":{
+            "tags":[
+               "sympathy"
+            ],
+            "description":"Update sympathy",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"color ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"sympathy_type",
+                  "in":"formData",
+                  "description":"Sympathy Type",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Sympathy status",
+                  "required":true,
+                  "type":"integer"
+               }                     
+            ],
+            "responses":{
+               "200":{
+                  "description":"the sympathy has been updated",
+                  "schema":{
+                      "$ref":"#/definitions/200updateSympathy"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400updateSympathy"
+                  }
+               },
+               "409":{
+                  "description":"the specified color name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409updateSympathy"
+                  }
+               }               
+            }
+         }
+      },
+      "/admin/deleteSympathy":{
+         "delete":{
+            "tags":[
+               "color"
+            ],
+            "description":"Delete a color",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"color ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"color found",
+                  "schema":{
+                      "$ref":"#/definitions/deleteresponse"
+                  }
+               },
+               "400":{
+                  "description":"Page not found",
+                  "schema":{
+                     "$ref":"#/definitions/400error"
+                  }
+               },
+               "409":{
+                  "description":"The specified color already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409error"
+                  }
+               }              
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200getSympathys":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"all colors found"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "createcolorresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"new colors has been created"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "getcolorresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"color found!"
+            },
+            "result":{
+               "type":"object",
+               "example":[]
+            }
+         }
+      },
+      "updateresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the colors has been updated"
+            },
+            "result":{
+               "type":"object",
+               "example":"array"
+            }
+         }
+      },
+      "deleteresponse":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"the colors has been deleted"
+            }
+         }
+      },
+      "400error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"400 Bad Request"
+            }
+         }
+      },
+      "409error":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"False"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },                        
+            "message":{
+               "type":"string",
+               "example":"The specified color already exists."
+            }
+         }
+      }
+   }
+}

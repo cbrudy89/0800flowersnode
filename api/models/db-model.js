@@ -180,6 +180,7 @@ function DbModel(){
 						}
 					}
 
+					//console.log(sql);
 					con.query(sql, function (err, result) {
 			          	if (err) {
 			          		callback(err);
@@ -225,7 +226,7 @@ function DbModel(){
 
 	// Query to use when using transactions
 	this.transactionQuery = function(con, sql, callback) {
-		
+		//console.log(sql);
 		con.query(sql, function (err, result) {
 	      	if (err) {
 				con.rollback(function() {

@@ -8,6 +8,8 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var sympathyController = require('./api/controllers/admin/sympathy-controller');
+var flowerController = require('./api/controllers/admin/flower-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
@@ -219,6 +221,55 @@ module.exports = {
     });
 
     /************************* END of colors *****************/
+
+    /************************* START Sympathy Types *****************/
+
+    app.post('/admin/getSympathys', authenticateController.isAuthenticated, function(req, res) {
+        sympathyController.getSympathys(req, res);
+    });
+
+    app.post('/admin/createSympathy', authenticateController.isAuthenticated, function(req, res) {
+        sympathyController.createSympathy(req, res);
+    });
+
+    app.post('/admin/getSympathy', authenticateController.isAuthenticated, function(req, res) {
+        sympathyController.getSympathy(req, res);
+    });
+
+    app.put('/admin/updateSympathy', authenticateController.isAuthenticated, function(req, res) {
+        sympathyController.updateSympathy(req, res);
+    });
+
+    app.delete('/admin/deleteSympathy', authenticateController.isAuthenticated, function(req, res) {
+        sympathyController.deleteSympathy(req, res);
+    });
+
+    /************************* END of Sympathy *****************/
+
+    /************************* START Flowers Types *****************/
+
+    app.post('/admin/getFlowerTypes', authenticateController.isAuthenticated, function(req, res) {
+        flowerController.getFlowerTypes(req, res);
+    });
+
+    app.post('/admin/createFlowerType', authenticateController.isAuthenticated, function(req, res) {
+        flowerController.createFlowerType(req, res);
+    });
+
+    app.post('/admin/getFlowerType', authenticateController.isAuthenticated, function(req, res) {
+        flowerController.getFlowerType(req, res);
+    });
+
+    app.put('/admin/updateFlowerType', authenticateController.isAuthenticated, function(req, res) {
+        flowerController.updateFlowerType(req, res);
+    });
+
+    app.delete('/admin/deleteFlowerType', authenticateController.isAuthenticated, function(req, res) {
+        flowerController.deleteFlowerType(req, res);
+    });
+
+    /************************* END of Flowers *****************/    
+
 
      /************************* START Promo Code API's *****************/
 
