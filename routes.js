@@ -488,6 +488,10 @@ module.exports = {
 
     /************** Category **********/
 
+    app.get('/admin/category/list', authenticateController.isAuthenticated, function(req, res) {
+        categoryController.list(req, res);
+    });
+
     app.post('/admin/category/create', authenticateController.isAuthenticated, validate(categoryValidation.create), function(req, res) {
         categoryController.create(req, res);
     });
@@ -504,6 +508,6 @@ module.exports = {
         categoryController.delete(req, res);
     });
 
-    /************** Country End **********/
+    /************** Category End **********/
    }
 }

@@ -8,6 +8,44 @@ var commonHelper = require('./../../helpers/common-helper');
 var fileHelper = require('./../../helpers/file-helper');
 
 function CategoryController() {
+
+    //List Category
+    this.list = function(req,res){
+
+        if(req.decoded.role != config.ROLE_ADMIN){
+          res.status(config.HTTP_FORBIDDEN).send({
+            status: config.ERROR,
+            code : config.HTTP_FORBIDDEN,
+            message: "You dont have permission to get all categories!"
+          });
+        } else {
+            DbModel.find('categories', '', '', '', '', function(err, result) {
+                if (err) {
+                    res.status(config.HTTP_SERVER_ERROR).send({
+                        status:config.ERROR,
+                        code: config.HTTP_SERVER_ERROR,
+                        message:"No records found"
+                   });
+                } else {
+                    if(result.length > 0){
+                        res.status(config.HTTP_SUCCESS).send({
+                            status: config.SUCCESS,
+                            code: config.HTTP_SUCCESS,
+                            message:"Categories found",
+                            result:result
+                        });
+                    }else{
+                        res.status(config.HTTP_BAD_REQUEST).send({
+                            status:config.ERROR,
+                            code: config.HTTP_BAD_REQUEST,
+                            message:"Failed to get categories"
+                        });
+                    }
+                }
+            });
+        }
+    }
+
     // View Main Category
     this.view = function(req, res) {
         if (req.decoded.role != config.ROLE_ADMIN) {
@@ -259,7 +297,6 @@ function CategoryController() {
                         var cond = [
                           { 'id' : { 'val': id, 'cond': '='} }
                         ];
-
                         DbModel.delete('categories', cond, function(error, result) {
                             if (error) {
                                 res.status(config.HTTP_SERVER_ERROR).send({

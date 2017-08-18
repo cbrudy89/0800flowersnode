@@ -24,6 +24,47 @@
       "application/json"
    ],
    "paths":{
+      "/admin/category/list":{
+         "get":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"List all categories",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Categories found.",
+                  "schema":{
+                      "$ref":"#/definitions/200listcategories"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500listcategories"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get categories.",
+                  "schema":{
+                     "$ref":"#/definitions/400listcategories"
+                  }
+               }
+            }
+         }
+      },
       "/admin/category/create/":{
          "post":{
             "tags":[
@@ -366,6 +407,54 @@
       }
    },
    "definitions":{
+      "200listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Categories found."
+            }
+         }
+      },
+      "500listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get categories."
+            }
+         }
+      },
       "200category":{
          "properties":{
             "status":{
@@ -426,7 +515,7 @@
             },
             "message":{
                "type":"string",
-               "example":"Countries found."
+               "example":"Category found."
             }
          }
       },
