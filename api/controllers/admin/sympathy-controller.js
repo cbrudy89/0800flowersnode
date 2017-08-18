@@ -1,7 +1,9 @@
 var jwt=require('jsonwebtoken');
+var Sync = require('sync');
 var bcrypt = require('bcrypt');
 var config = require('./../../../config');
 var connection = require('./../../../database');
+var dbModel = require('./../../models/db-model');
 //var userHelper = require('./../helpers/user-helper');
 var sympathyModel = require('./../../models/admin/sympathy-model');
 
@@ -18,7 +20,7 @@ function SympathyController() {
     }else{
       var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
 
-      sympathyModel.getSympathys(sympathy_type, function(err, result){
+      sympathyModel.getSympathys(sympathy_type, function(err, results){
          if(err) {
         
           res.status(config.HTTP_SERVER_ERROR).send({
@@ -29,85 +31,135 @@ function SympathyController() {
           });
         
          }else{
+
+          Sync(function(){
+            for(var i=0; i < results.length; i++) {
+              var languagedata = sympathyModel.getLanguageData.sync(null,results[i].id);
+              results[i].sympathy_type = languagedata;
+            }
+            
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS, 
               code : config.HTTP_SUCCESS, 
               message: 'All sympathy found',
-              result : result
+              result : results
             });
+
+          });
+
          }
       });
     } // else close    
 
   }
-  // Create new sympathy
+  
+  // Create sympathy
   this.createSympathy=function(req,res){
 
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to create sympathy!"
+        message: "You dont have permission to perform action!"
       });       
     }else{
       
       // Insert into sympathy table
       var curr_date  = new Date();
-      var id=0;
 
-      var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
+      //var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
+      var sympathyArray= req.body.sympathyArray;
       var status = req.body.status;
 
-      sympathyData = {
-        'sympathy_type': sympathy_type,
-        'translation_id': 0,
-        'status': status,
-        'created_at':curr_date,
-        'updated_at':curr_date
-      };
-      
-      sympathyModel.checkSympathy(sympathy_type,id, function(err, result){
-        if(err){
-          //console.log(err);
-          res.status(config.HTTP_SERVER_ERROR).send({
-            status: config.ERROR, 
-            code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to create sympathy!",
-            errors : err
-          });          
-        }else {
-           if(result.length > 0 && result[0].id > 0){
+      Sync(function(){
+
+          var found = 0;
+          //var jsonData = JSON.parse(sympathyArray);
+          var jsonData = sympathyArray;
+          for (var i = 0; i < jsonData.length; i++) {
+            var lang = jsonData[i];
+            var isExist = isSympathyExist.sync(null, '', lang);
+            //console.log(isExist);
+            if(isExist == 'true') found++;
+          }
+
+          // Check Sympathy already exist.
+          if(found > 0){
+
               res.status(config.HTTP_ALREADY_EXISTS).send({
                 status: config.ERROR, 
                 code : config.HTTP_ALREADY_EXISTS, 
                 message: "The specified sympathy already exists."
               });
-           }else{
-              sympathyModel.createSympathy(sympathyData, function(err, result){
-                //console.log(err);
-                 if(err) {
+
+          }else{
+
+            //console.log('asdf');
+            var sympathyData = {
+              'status': status,
+              'created_at':curr_date,
+              'updated_at':curr_date
+            };
+
+            dbModel.save('sympathy_types', sympathyData, "", function(err, result) {
+              if (err) {                
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
                     message : "Unable to create sympathy!",
-                    errors : err
                   }); 
-                 }else{
-                    res.status(config.HTTP_SUCCESS).send({
-                      status: config.SUCCESS, 
-                      code : config.HTTP_SUCCESS, 
-                      message: 'New sympathy has been created',
-                    });
-                 }
-              });
-           }
-        }
-      }); 
 
+              }else{
+
+                if(result.insertId > 0){
+                  var type_id = result.insertId;
+
+                  if(sympathyArray.length > 0){
+
+                     Sync(function(){
+                    
+                      //var jsonData = JSON.parse(sympathyArray);
+                      var jsonData = sympathyArray;
+                      for (var i = 0; i < jsonData.length; i++) {
+                        var sympathy = jsonData[i];
+                        var data = {
+                          "type": "sympathy",
+                          "type_id": type_id,
+                          "language_id": sympathy.language_id,
+                          "name": sympathy.name,                          
+                          "description": "",
+                        };
+
+                        sympathyModel.createSympathy.sync(null, data);
+                      } 
+
+                    });
+                    
+                  }
+
+                  res.status(config.HTTP_SUCCESS).send({
+                    status: config.SUCCESS, 
+                    code : config.HTTP_SUCCESS, 
+                    message: 'New sympathy has been created'
+                  });
+                
+                }else{
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_SERVER_ERROR, 
+                    message : "Unable to create sympathy!",
+                  }); 
+
+                }
+
+              }              
+            });
+          }
+      });
     }    
   }
 
- 
+
   // Update sympathy
   this.updateSympathy=function(req,res){
 
@@ -115,60 +167,104 @@ function SympathyController() {
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to update sympathy!"
+        message: "You dont have permission to perform action!"
       });       
     }else{
+      
+      // Insert into sympathy table
       var curr_date  = new Date();
-      var id =req.body.id;
-      sympathyData = {
-          'sympathy_type':req.body.sympathy_type,
-          'status':req.body.status,
-          'updated_at':curr_date
-      };
-      sympathyModel.checkSympathy(sympathyData,id, function(err, result){
-        if(err){
-          //console.log(err);
-          res.status(config.HTTP_SERVER_ERROR).send({
-            status: config.ERROR, 
-            code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to update sympathy!",
-            errors : err
-          });
+      var id= req.body.id;
 
-        }else {
+      //var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
+      var sympathyArray= req.body.sympathyArray;
+      var status = req.body.status;
 
-           if(result.length > 0 && result[0].id > 0){
+      Sync(function(){
+
+          var found = 0;
+          //var jsonData = JSON.parse(sympathyArray);
+          var jsonData = sympathyArray;
+          for (var i = 0; i < jsonData.length; i++) {
+            var lang = jsonData[i];
+            var isExist = isSympathyExist.sync(null, id, lang);
+            //console.log(isExist);
+            if(isExist == 'true') found++;
+          }
+
+          // Check Sympathy already exist.
+          if(found > 0){
+
               res.status(config.HTTP_ALREADY_EXISTS).send({
                 status: config.ERROR, 
                 code : config.HTTP_ALREADY_EXISTS, 
-                message: "the specified sympathy name already exists."
+                message: "The specified sympathy already exists."
               });
-           }else{
-              sympathyModel.updateSympathy(sympathyData, id, function(err, result){
-                //console.log(err);
-                 if(err) {
+
+          }else{
+
+            //console.log('asdf');
+            var sympathyData = {
+              'status': status,
+              'updated_at':curr_date
+            };
+
+            dbModel.save('sympathy_types', sympathyData, id, function(err, result) {
+              if (err) {                
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
                     message : "Unable to update sympathy!",
-                    errors : err
-                  });
-                 }else{
-                    res.status(config.HTTP_SUCCESS).send({
-                      status: config.SUCCESS, 
-                      code : config.HTTP_SUCCESS, 
-                      message: 'the sympathy has been updated',
+                  }); 
+
+              }else{
+
+                //console.log(result);
+
+                if(result.affectedRows > 0){
+
+                  if(sympathyArray.length > 0){
+
+                     Sync(function(){
+                    
+                      //var jsonData = JSON.parse(sympathyArray);
+                      var jsonData = sympathyArray;
+                      for (var i = 0; i < jsonData.length; i++) {
+                        var sympathy = jsonData[i];
+                        var data = {
+                          "type": "sympathy",
+                          "name": sympathy.name,                          
+                          "description": "",
+                        };
+
+                        sympathyModel.updateSympathy.sync(null, data, id, sympathy.language_id);
+                      } 
+
                     });
-                 }
-              });
-           }
-         }
+                    
+                  }
+
+                  res.status(config.HTTP_SUCCESS).send({
+                    status: config.SUCCESS, 
+                    code : config.HTTP_SUCCESS, 
+                    message: 'The sympathy has been updated'
+                  });
+                
+                }else{
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_SERVER_ERROR, 
+                    message : "Unable to update sympathy!",
+                  }); 
+
+                }
+
+              }              
+            });
+          }
       });
-
-      
-    }  
+    }    
   }
-
+ 
   // delete sympathy 
   this.deleteSympathy = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
@@ -214,7 +310,7 @@ function SympathyController() {
                     res.status(config.HTTP_SUCCESS).send({
                       status: config.SUCCESS, 
                       code : config.HTTP_SUCCESS, 
-                      message: 'the sympathy has been deleted',
+                      message: 'The sympathy has been deleted',
                     });
                  }
               });
@@ -242,17 +338,27 @@ function SympathyController() {
           });
         } else {
           if(result.length > 0){
-              res.status(config.HTTP_SUCCESS).send({
-                status: config.SUCCESS, 
-                code : config.HTTP_SUCCESS, 
-                message: 'Sympathy found!',
-                result: result
+
+              Sync(function(){
+
+                var languagedata = sympathyModel.getLanguageData.sync(null,result[0].id);
+                result[0].sympathy_type = languagedata;
+
+                res.status(config.HTTP_SUCCESS).send({
+                  status: config.SUCCESS, 
+                  code : config.HTTP_SUCCESS, 
+                  message: 'Sympathy found!',
+                  result: result
+                });
+
               });
+
+
           }else{
-            res.status(config.HTTP_SERVER_ERROR).send({
+            res.status(config.HTTP_NOT_FOUND).send({
               status: config.ERROR, 
-              code : config.HTTP_SERVER_ERROR, 
-              message : "Unable to get sympathy!",
+              code : config.HTTP_NOT_FOUND, 
+              message : "Sympathy not found.",
               errors : err
             });
           }
@@ -262,5 +368,31 @@ function SympathyController() {
   };
 
 }
+
+function isSympathyExist(id = '', data, callback){
+
+  //var sql = "SELECT id FROM language_types WHERE type='sympathy' AND name = '"+data.name+"'";
+  var sql = "SELECT id FROM language_types WHERE type='sympathy' AND language_id ="+data.language_id+" AND name = '"+data.name+"' AND name != ''";
+  //console.log(sql);
+  if(id != '' && id > 0){
+    sql += " AND type_id <> "+id;
+  }
+
+  sql += "  LIMIT 1";
+  
+  dbModel.rawQuery(sql, function(err, result){
+    if (err) {
+      callback(err);
+    }else{
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, 'true');
+      }else{
+        callback(null, 'false');
+      }
+    }
+  });
+
+}
+
 
 module.exports = new SympathyController();

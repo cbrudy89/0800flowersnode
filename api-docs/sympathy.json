@@ -29,7 +29,7 @@
             "tags":[
                "sympathy"
             ],
-            "description":"How to get sympathy",
+            "description":"Get all sympathies",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -57,12 +57,18 @@
                       "$ref":"#/definitions/200getSympathys"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to get sympathy!",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/403getSympathys"
                   }
-               }               
+               },
+               "500":{
+                  "description":"Unable to get sympathys!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSympathys"
+                  }
+               }                              
             }
          }
       },
@@ -85,9 +91,9 @@
                   "type":"string"
                },
                {
-                  "name":"sympathy_type",
+                  "name":"sympathyArray",
                   "in":"formData",
-                  "description":"Sympathy type",
+                  "description":"Sympathy data [{'language_id': '1', 'name': 'Test'},{'language_id': "2", 'name': 'Test'}]",
                   "required":true,
                   "type":"string"
                },
@@ -106,16 +112,22 @@
                       "$ref":"#/definitions/200createSympathy"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to perform action!",
                   "schema":{
-                     "$ref":"#/definitions/400createSympathy"
+                     "$ref":"#/definitions/403createSympathy"
                   }
-               },
+               },               
                "409":{
-                  "description":"The specified color already exists.",
+                  "description":"The specified sympathy already exists.",
                   "schema":{
                      "$ref":"#/definitions/409createSympathy"
+                  }
+               },
+               "500":{
+                  "description":"Unable to create sympathy!",
+                  "schema":{
+                     "$ref":"#/definitions/500createSympathy"
                   }
                }               
             }
@@ -155,13 +167,13 @@
                   }
                },
                "400":{
-                  "description":"Page not found",
+                  "description":"Sympathy not found.",
                   "schema":{
                      "$ref":"#/definitions/400getSympathy"
                   }
                },
                "500":{
-                  "description":"Page not found",
+                  "description":"Unable to get sympathy!",
                   "schema":{
                      "$ref":"#/definitions/500getSympathy"
                   }
@@ -190,14 +202,14 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"color ID",
+                  "description":"Sympathy ID",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"sympathy_type",
+                  "name":"sympathyArray",
                   "in":"formData",
-                  "description":"Sympathy Type",
+                  "description":"Sympathy data [{'language_id': '1', 'name': 'Test'},{'language_id': "2", 'name': 'Test'}]",
                   "required":true,
                   "type":"string"
                },
@@ -211,32 +223,38 @@
             ],
             "responses":{
                "200":{
-                  "description":"the sympathy has been updated",
+                  "description":"The sympathy has been updated",
                   "schema":{
                       "$ref":"#/definitions/200updateSympathy"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to perform action!",
                   "schema":{
-                     "$ref":"#/definitions/400updateSympathy"
+                     "$ref":"#/definitions/403updateSympathy"
                   }
                },
                "409":{
-                  "description":"the specified color name already exists.",
+                  "description":"The specified sympathy already exists.",
                   "schema":{
                      "$ref":"#/definitions/409updateSympathy"
                   }
-               }               
+               },
+               "500":{
+                  "description":"Unable to update sympathy!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateSympathy"
+                  }
+               }                               
             }
          }
       },
       "/admin/deleteSympathy":{
          "delete":{
             "tags":[
-               "color"
+               "sympathy"
             ],
-            "description":"Delete a color",
+            "description":"Delete a sympathy",
             "operationId":"delete",
             "produces":[
                "application/json"
@@ -252,30 +270,36 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"color ID",
+                  "description":"Sympathy ID",
                   "required":true,
                   "type":"integer"
                }                
             ],
             "responses":{
                "200":{
-                  "description":"color found",
+                  "description":"Sympathy found",
                   "schema":{
-                      "$ref":"#/definitions/deleteresponse"
+                      "$ref":"#/definitions/200deleteSympathy"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to delete sympathy!",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/403deleteSympathy"
                   }
                },
-               "409":{
-                  "description":"The specified color already exists.",
+               "404":{
+                  "description":"The specified sympathy not found.",
                   "schema":{
-                     "$ref":"#/definitions/409error"
+                     "$ref":"#/definitions/404deleteSympathy"
                   }
-               }              
+               },               
+               "500":{
+                  "description":"Unable to delete sympathy!",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteSympathy"
+                  }
+               }
             }
          }
       }
@@ -293,7 +317,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"all colors found"
+               "example":"All sympathy found"
             },
             "result":{
                "type":"object",
@@ -301,7 +325,39 @@
             }
          }
       },
-      "createcolorresponse":{
+      "403getSympathys":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get sympathy!"
+            }
+         }
+      },
+      "500getSympathys":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to get sympathys!"
+            }
+         }
+      },            
+      "200createSympathy":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -313,101 +369,233 @@
             },            
             "message":{
                "type":"string",
-               "example":"new colors has been created"
-            },
-            "result":{
-               "type":"object",
-               "example":[]
+               "example":"New sympathy has been created"
             }
          }
       },
-      "getcolorresponse":{
+      "403createSympathy":{
          "properties":{
             "status":{
                "type":"boolean",
-               "example":"true"
+               "example":"false"
             },
             "code":{
                "type":"integer",
-               "example":"200"
+               "example":"403"
             },            
             "message":{
                "type":"string",
-               "example":"color found!"
-            },
-            "result":{
-               "type":"object",
-               "example":[]
+               "example":"You dont have permission to perform action!"
             }
          }
       },
-      "updateresponse":{
+      "409createSympathy":{
          "properties":{
             "status":{
                "type":"boolean",
-               "example":"true"
-            },
-            "code":{
-               "type":"integer",
-               "example":"200"
-            },            
-            "message":{
-               "type":"string",
-               "example":"the colors has been updated"
-            },
-            "result":{
-               "type":"object",
-               "example":"array"
-            }
-         }
-      },
-      "deleteresponse":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"true"
-            },
-            "code":{
-               "type":"integer",
-               "example":"200"
-            },            
-            "message":{
-               "type":"string",
-               "example":"the colors has been deleted"
-            }
-         }
-      },
-      "400error":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"False"
-            },
-            "code":{
-               "type":"integer",
-               "example":"400"
-            },                        
-            "message":{
-               "type":"string",
-               "example":"400 Bad Request"
-            }
-         }
-      },
-      "409error":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"False"
+               "example":"false"
             },
             "code":{
                "type":"integer",
                "example":"409"
-            },                        
+            },            
             "message":{
                "type":"string",
-               "example":"The specified color already exists."
+               "example":"The specified sympathy already exists."
             }
          }
-      }
+      },
+      "500createSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to create sympathy!"
+            }
+         }
+      },
+      "200getSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Sympathy found!"
+            }
+         }
+      },
+      "400getSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Sympathy not found."
+            }
+         }
+      },
+      "500getSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to create sympathy!"
+            }
+         }
+      },
+      "200updateSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Sympathy found!"
+            }
+         }
+      },
+      "403updateSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to perform action!"
+            }
+         }
+      },
+      "409updateSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified sympathy already exists."
+            }
+         }
+      },
+      "500updateSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to update sympathy!"
+            }
+         }
+      },
+      "200deleteSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Sympathy found"
+            }
+         }
+      },
+      "403deleteSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete sympathy!"
+            }
+         }
+      },
+      "404deleteSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified sympathy not found."
+            }
+         }
+      },
+      "500updateSympathy":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to delete sympathy!"
+            }
+         }
+      }                 
    }
 }
