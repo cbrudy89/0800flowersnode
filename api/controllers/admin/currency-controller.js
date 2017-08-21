@@ -65,6 +65,36 @@ function CurrencyController() {
             });
         }
     }
+
+    // Get currency
+    this.getcurrency = function(req, res) {
+      var id = req.body.id;
+      dbModel.rawQuery('SELECT * FROM currency WHERE id ='+id, function(err, result){
+        if (err) {
+          res.status(config.HTTP_SERVER_ERROR).send({
+            status: config.ERROR, 
+            code : config.HTTP_SERVER_ERROR, 
+            message : "Unable to process request!", 
+            errors : err
+          });
+        }else{
+          //console.log( result[0].id);return;
+          if(result.length > 0 && result[0].id > 0 ){
+              res.status(config.HTTP_SUCCESS).send({
+                status: config.SUCCESS, 
+                code : config.HTTP_SUCCESS, 
+                results : result
+              });
+          }else{
+            res.status(config.HTTP_BAD_REQUEST).send({
+              status: config.ERROR, 
+              code : config.HTTP_BAD_REQUEST, 
+              message : "Something went wrong please check again.", 
+            });          
+          }
+        }
+      });
+    }
     //edit currency
     this.editcurrency = function(req, res) {
         if(req.decoded.role != config.ROLE_ADMIN){

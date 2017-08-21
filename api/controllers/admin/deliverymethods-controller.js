@@ -71,6 +71,53 @@ function DeliveryMethodsController() {
             });
         }
     }
+
+    // Get delivery method
+    this.getmethod = function(req, res) {
+      var id = req.body.id;
+      dbModel.rawQuery('SELECT * FROM methods WHERE id ='+id, function(err, result){
+        if (err) {
+          res.status(config.HTTP_SERVER_ERROR).send({
+            status: config.ERROR, 
+            code : config.HTTP_SERVER_ERROR, 
+            message : "Unable to process request!", 
+            errors : err
+          });
+        }else{
+          //console.log( result[0].id);return;
+          if(result.length > 0 && result[0].id > 0 ){
+              Sync(function(){              
+                  var languagedata = getLanguage_entry.sync(null,result[0].id);
+                  res.status(config.HTTP_SUCCESS).send({
+                    status: config.SUCCESS, 
+                    code : config.HTTP_SUCCESS, 
+                    results : {
+                        "id" : result[0].id,
+                        "delivery_method": result[0].delivery_method,
+                        "infotext": result[0].infotext,
+                        "delivery_within": result[0].delivery_within,
+                        "delivery_charge": result[0].delivery_charge,
+                        "delivery_days": result[0].delivery_days,
+                        "delivery_hour": result[0].delivery_hour,
+                        "delivery_minute": result[0].delivery_minute,
+                        "delivery_policy_id": result[0].delivery_policy_id,
+                        "substitution_policy_id": result[0].substitution_policy_id,
+                        "status": result[0].status,
+                        "atlas_order": result[0].atlas_order,
+                        "description" : languagedata                    
+                    }
+                  });
+              });
+          }else{
+            res.status(config.HTTP_BAD_REQUEST).send({
+              status: config.ERROR, 
+              code : config.HTTP_BAD_REQUEST, 
+              message : "Something went wrong please check again.", 
+            });          
+          }
+        }
+      });
+    }
     //add/edit delivery method
     this.addeditmethod = function(req, res) {
         if(req.decoded.role != config.ROLE_ADMIN){

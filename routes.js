@@ -187,6 +187,10 @@ module.exports = {
         currencyController.getallcurrencies(req, res);
     });
     
+    app.post('/admin/getcurrency', authenticateController.isAuthenticated,validate(adminValidation.getcurrency), function(req, res) {
+        currencyController.getcurrency(req, res);
+    });
+        
     app.post('/admin/editcurrency', authenticateController.isAuthenticated,validate(adminValidation.editcurrency), function(req, res) {
         currencyController.editcurrency(req, res);
     });
@@ -544,6 +548,10 @@ module.exports = {
     app.post('/admin/getalldeliverymethods', authenticateController.isAuthenticated, function(req, res){
         deliveryMethodsController.getalldeliverymethods(req, res);
     });
+
+    app.post('/admin/getmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.getmethod), function(req, res){
+        deliveryMethodsController.getmethod(req, res);
+    }); 
 
     app.post('/admin/addeditmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
         deliveryMethodsController.addeditmethod(req, res);

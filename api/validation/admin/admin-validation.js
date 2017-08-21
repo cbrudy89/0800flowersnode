@@ -32,6 +32,11 @@ module.exports = {
 	    default_currency: Joi.string().required()
 	  }	
   },
+  getcurrency : {
+	  body: {
+	    id: Joi.string().required()
+	  }	
+  },
   editcurrency : {
 	  body: {
 	    token: Joi.string().required(),
