@@ -74,6 +74,55 @@
             }
          }
       },
+      "/admin/getcurrency":{
+         "post":{
+            "tags":[
+               "Admin Currencies"
+            ],
+            "description":"Get currency from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"currency id",
+                  "required":true,
+                  "type":"integar"
+               }
+                             
+            ],
+           "responses":{
+               "200":{
+                  "description":"Currency found.",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               },
+               "404":{
+                  "description":"Failed to get Currency.",
+                  "schema":{
+                     "$ref":"#/definitions/404"
+                  }
+               }                                
+            }
+         }
+      },
       "/admin/editcurrency":{
          "post":{
             "tags":[
@@ -207,7 +256,7 @@
             ],
              "responses":{
                "200":{
-                  "description":"Countries found.",
+                  "description":"Currency found.",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
@@ -219,7 +268,7 @@
                   }
                },
                "404":{
-                  "description":"Failed to get countries.",
+                  "description":"Failed to get Currency.",
                   "schema":{
                      "$ref":"#/definitions/404"
                   }

@@ -16,5 +16,10 @@ module.exports = {
       status: Joi.number().integer().required(),
       atlas_order: Joi.date().required()
     }
+  },
+  getmethod : {
+    body: {
+      id: Joi.required()
+    }
   }
 };            
