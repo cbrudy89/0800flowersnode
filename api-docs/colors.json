@@ -85,11 +85,25 @@
                   "type":"string"
                },
                {
-                  "name":"color_name",
+                  "name":"colorArray",
                   "in":"formData",
-                  "description":"color Name",
+                  "description":"Color data [{\"language_id\": 1, \"name\": \"Red\" }, { \"language_id\": 2, \"name\": \"Red\" }]",
                   "required":true,
                   "type":"string"
+               },
+               {
+                  "name":"color_code",
+                  "in":"formData",
+                  "description":"Color Code in Hexadecimal form for example #ffffff",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status ( 1 for Active and 0 for In-Active) ",
+                  "required":true,
+                  "type":"integer"
                }                
             ],
             "responses":{
@@ -177,24 +191,31 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"color ID",
+                  "description":"Color ID",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"color_name",
+                  "name":"colorArray",
                   "in":"formData",
-                  "description":"color Name",
+                  "description":"Color data [{\"language_id\": 1, \"name\": \"Green\" }, { \"language_id\": 2, \"name\": \"Green\" }]",
                   "required":true,
                   "type":"string"
                },
                {
+                  "name":"color_code",
+                  "in":"formData",
+                  "description":"Color Code in Hexadecimal form for example #ffffff",
+                  "required":true,
+                  "type":"string"
+               },                              
+               {
                   "name":"status",
                   "in":"formData",
-                  "description":"color status",
+                  "description":"Color status ( 1 for Active and 0 for In-Active) ",
                   "required":true,
                   "type":"integer"
-               }                     
+               }                    
             ],
             "responses":{
                "200":{
