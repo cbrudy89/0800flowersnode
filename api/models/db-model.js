@@ -2,7 +2,29 @@ var config = require('./../../config');
 var connection = require('./../../database');
 
 function DbModel(){
-	
+
+	// Check record exists or not
+	this.findOne = function(table = '', field = '', value = '', callback) {
+		connection.acquire(function(err, con) {
+			if (err) {
+				callback(err);
+			}
+			else {
+
+				var sqlQuery = 'SELECT * FROM '+table+' WHERE '+field+' = ?';
+				con.query(sqlQuery, [value], function (err, result) {
+		          	if (err) {
+		          		callback(err);
+		          	}else{
+		          		callback(null, result);
+		          	}
+		          	con.release();
+		      	});
+
+			}
+		});
+	}
+
 	// Get records on the basis of condition.
 	this.find = function(table = '', field = '', condition = '', orderBy = '', limit = '' , callback) {
 		connection.acquire(function(err, con) {
@@ -23,9 +45,9 @@ function DbModel(){
 						sql += field+ " FROM "+table;
 					}
 
-				
+
 					if(condition != ''){
-						
+
 						var len = condition.length;
 						var i = 1;
 
@@ -72,7 +94,7 @@ function DbModel(){
 				}
 
 			}
-		});		
+		});
 	}
 
 	this.rawQuery = function(sql = '', callback) {
@@ -80,7 +102,7 @@ function DbModel(){
 			if (err) {
 				callback(err);
 			}
-			else {					
+			else {
 
 				con.query(sql, function (err, result) {
 		          	if (err) {
@@ -89,11 +111,11 @@ function DbModel(){
 		          		callback(null, result);
 		          	}
 		          	con.release();
-		      	});			
+		      	});
 
 			}
-		});		
-	}	
+		});
+	}
 
 	// Insert/Update record in table
 	this.save = function(table, data, id, callback) {
@@ -101,7 +123,7 @@ function DbModel(){
 			if (err) {
 				callback(err);
 			}
-			else {		
+			else {
 
 				if(table == ''){
 					callback('Unable to process query, table name missing!');
@@ -109,7 +131,6 @@ function DbModel(){
 
 					// New record insert into table
 					if(id == ''){
-
 						con.query('INSERT INTO '+table+' SET ?', data, function (err, results) {
 				          	if (err) {
 				          		//console.log(err);
@@ -130,7 +151,7 @@ function DbModel(){
 				          		callback(null, results);
 				          	}
 				          	con.release();
-				      	});						
+				      	});
 					}
 
 				}
@@ -152,14 +173,14 @@ function DbModel(){
 				}else{
 
 					var sql = "DELETE FROM "+table;
-				
+
 					if(condition != ''){
-						
+
 						var len = condition.length;
 						var i = 1;
 
 						//if(condition.length > 1){
-						if(typeof condition === 'object' && condition instanceof Array){							
+						if(typeof condition === 'object' && condition instanceof Array){
 
 							sql += " WHERE ";
 							condition.forEach(function(item, index){
@@ -201,7 +222,7 @@ function DbModel(){
 			if (err) {
 				callback(err);
 			}
-			else {					
+			else {
 				callback(null, con);
 			}
 		});
@@ -209,7 +230,7 @@ function DbModel(){
 
 	this.beginTransaction = function(con, sql, callback){
 		con.beginTransaction(function(err){
-			if (err) { 
+			if (err) {
 				callback(err);
 			}
 			con.query(sql, function (err, result) {
@@ -220,13 +241,14 @@ function DbModel(){
 	          	}else{
 	          		callback(null, result);
 	          	}
-	      	});	
+	      	});
 		});
 	}
 
 	// Query to use when using transactions
 	this.transactionQuery = function(con, sql, callback) {
 		//console.log(sql);
+
 		con.query(sql, function (err, result) {
 	      	if (err) {
 				con.rollback(function() {
@@ -236,12 +258,12 @@ function DbModel(){
 	      		callback(null, result);
 	      	}
 	  	});
-	}	
+	}
 
 	this.commit = function(con, callback){
 
 		con.commit(function(err) {
-        if (err) { 
+        if (err) {
           con.rollback(function() {
             callback(err);
           });

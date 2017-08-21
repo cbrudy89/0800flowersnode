@@ -1,0 +1,651 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Category APIs",
+      "description":"All APIs related to the admin category controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Category",
+         "description":"API for admin category usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/category/list":{
+         "get":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"List all categories",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Categories found.",
+                  "schema":{
+                      "$ref":"#/definitions/200listcategories"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500listcategories"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get categories.",
+                  "schema":{
+                     "$ref":"#/definitions/400listcategories"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/category/create/":{
+         "post":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"Create category from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"parent_id",
+                  "in":"formData",
+                  "description":"Parent Category Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Category Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"banner",
+                  "in":"formData",
+                  "description":"Category Banner",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"Description in English",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description_fr",
+                  "in":"formData",
+                  "description":"Description in French",
+                  "required":false,
+                  "type":"string"
+                  },
+                  {
+                  "name":"description_es",
+                  "in":"formData",
+                  "description":"Description in German",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"description_de",
+                  "in":"formData",
+                  "description":"Description in Spanish",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"page_title",
+                  "in":"formData",
+                  "description":"Page Title",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta Keywords",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"active",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Category has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200category"
+                  }
+               },
+               "409":{
+                  "description":"The category name has already been taken.",
+                  "schema":{
+                     "$ref":"#/definitions/409category"
+                  }
+               },
+               "500":{
+                  "description":"Category has been not inserted.",
+                  "schema":{
+                     "$ref":"#/definitions/500category"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/category/view/{id}":{
+         "get":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The category ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewcategory"
+                  }
+               },
+               "404":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewcategory"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/400viewcategory"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/category/update":{
+         "put":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"Update category",
+            "operationId":"put",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Category ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"parent_id",
+                  "in":"formData",
+                  "description":"Parent Category Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Category Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"banner",
+                  "in":"formData",
+                  "description":"Category Banner",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"Description in English",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description_fr",
+                  "in":"formData",
+                  "description":"Description in French",
+                  "required":false,
+                  "type":"string"
+                  },
+                  {
+                  "name":"description_es",
+                  "in":"formData",
+                  "description":"Description in German",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"description_de",
+                  "in":"formData",
+                  "description":"Description in Spanish",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"page_title",
+                  "in":"formData",
+                  "description":"Page Title",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta Keywords",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"active",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Category updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updatecategory"
+                  }
+               },
+               "500":{
+                  "description":"Unable to update category.",
+                  "schema":{
+                     "$ref":"#/definitions/500updatecategory"
+                  }
+               },
+               "403":{
+                  "description":"Category has not been updated.",
+                  "schema":{
+                     "$ref":"#/definitions/403updatecategory"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/category/delete":{
+         "delete":{
+            "tags":[
+               "Admin Category"
+            ],
+            "description":"Delete Category",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired category to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Category deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200deletecategory"
+                  }
+               },
+               "500":{
+                  "description":"Unable to delete Category.",
+                  "schema":{
+                     "$ref":"#/definitions/500deletecategory"
+                  }
+               },
+               "404":{
+                  "description":"Category not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deletecategory"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Categories found."
+            }
+         }
+      },
+      "500listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400listcategories":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get categories."
+            }
+         }
+      },
+      "200category":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category has been inserted successfully."
+            }
+         }
+      },
+      "409category":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },
+            "message":{
+               "type":"string",
+               "example":"The category name has already been taken."
+            }
+         }
+      },
+      "500category":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category has been inserted successfully."
+            }
+         }
+      },
+      "200viewcategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category found."
+            }
+         }
+      },
+      "404viewcategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400viewcategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get countries."
+            }
+         }
+      },
+      "200updatecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category updated successfully."
+            }
+         }
+      },
+      "500updatecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to update category."
+            }
+         }
+      },
+      "403updatecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category has not been updated."
+            }
+         }
+      },
+      "200deletecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category deleted successfully."
+            }
+         }
+      },
+      "500deletecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to delete Category."
+            }
+         }
+      },
+      "404deletecategory":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Category not found."
+            }
+         }
+      }
+   }
+}
