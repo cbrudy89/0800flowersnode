@@ -1,16 +1,19 @@
 var config = require('./../../../config');
 var connection = require('./../../../database');
 var dbModel = require('./../../models/db-model');
-var table_name = "flower_types";
-function flowerModel(){	
-	this.getFlowerTypes = function(flower_type, callback) {
+var table_name = "mixed_bouquets";
 
-	    var sql = "SELECT ft.id, ft.created_at, ft.updated_at, CASE WHEN ft.status = 1 THEN 'Active' WHEN ft.status = 0 THEN 'In-Active' END AS 'status' FROM "+table_name+" ft INNER JOIN language_types lt ON(ft.id = lt.type_id) WHERE lt.type='flower'";
-	    if(flower_type != "" && flower_type != undefined){
-	        sql += " AND lt.name like '%"+flower_type+"%'";
+function mixedBouquetModel(){	
+	this.getmixedBouquets = function(bouquet_name, callback) {
+
+	    var sql = "SELECT mb.id, mb.created_at, mb.updated_at, CASE WHEN mb.status = 1 THEN 'Active' WHEN mb.status = 0 THEN 'In-Active' END AS 'status' FROM mixed_bouquets mb INNER JOIN language_types lt ON(mb.id = lt.type_id) WHERE lt.type='bouquets'";
+	    if(bouquet_name != "" && bouquet_name != undefined){
+	        sql += " AND lt.name like '%"+bouquet_name+"%'";
 	    }
 
-	    sql += " GROUP BY ft.id";
+	    sql += " GROUP BY mb.id";
+
+	    //console.log(sql);
 
 		dbModel.rawQuery(sql, function (err, results) {
 	      	if (err) {
@@ -21,34 +24,20 @@ function flowerModel(){
 	  	});
 	}
 
-	this.getFlowerType = function(id, callback) {
+	this.getMixedBouquet = function(id, callback) {
 
 		// Checking if user email already exist in database
-    	dbModel.rawQuery("SELECT * FROM "+table_name+" WHERE id = "+id, function(err, result){            	
+    	dbModel.rawQuery("SELECT * FROM mixed_bouquets WHERE id = "+id, function(err, result){            	
           if (err) {
             callback(err);
           }else{
           	callback(null,result);
           }
-        });
-			
-	}	
-
-	this.checkFlowerType = function(flower_type, id, callback) {
-
-		var sql = "SELECT id FROM "+table_name+" WHERE flower_type = '"+flower_type+"' AND id <> "+id;
-		//console.log(sql);
-    	dbModel.rawQuery(sql, function(err, result){
-          if (err) {
-            callback(err);
-          }else{
-          	callback(null,result);
-          }
-        });
-			    
+        });			
 	}
 
-	this.createFlowerType = function(data, callback) {
+
+	this.createMixedBouquet = function(data, callback) {
 
 		dbModel.save("language_types", data, "", function (err, results) {
 	      	if (err) {
@@ -59,19 +48,8 @@ function flowerModel(){
 	  	});
 	}
 
-/*	this.createFlowerType = function(data, callback) {
-		//console.log(data);
-		// Checking if user email already exist in database
-		dbModel.save(table_name, data, "", function (err, results) {
-	      	if (err) {
-	      		callback(err);
-	      	}else{
-	      		callback(null, results);
-	      	}			          	
-	  	});
-	}*/
 
-	this.updateFlowerType = function(data, type_id, language_id, callback) {
+	this.updateMixedBouquet = function(data, type_id, language_id, callback) {
 
 		dbModel.getConnection(function(err, con){
 			if (err) {
@@ -88,26 +66,12 @@ function flowerModel(){
 		      	});
 			}
 		});		
-	}	
-
-/*
-	this.updateFlowerType = function(data, id, callback) {
-		
-		// Checking if user email already exist in database
-		dbModel.save(table_name, data, id, function (err, results) {
-          	if (err) {
-          		callback(err);
-          	}else{
-          		callback(null, results);
-          	}			          	
-      	});
-
 	}
-*/
-	this.checkDeleteFlowerType = function(id, callback) {
+
+	this.checkDeleteBouquet = function(id, callback) {
 
 		// Checking if user email already exist in database
-    	dbModel.rawQuery("SELECT id FROM "+table_name+" WHERE id = "+id, function(err, result){
+    	dbModel.rawQuery("SELECT id FROM mixed_bouquets WHERE id = "+id, function(err, result){            	
           if (err) {
             callback(err);
           }else{
@@ -117,9 +81,9 @@ function flowerModel(){
 			
 	}
 
-	this.deleteFlowerType = function(id, callback) {
+	this.deleteMixedBouquet = function(id, callback) {
 
-		// Delete flower types
+		// Delete sympathy types
 		dbModel.getConnection(function(error, con){
           if (error) {
             callback(error);
@@ -134,7 +98,7 @@ function flowerModel(){
                 if(result.affectedRows > 0){
 
                   // Delete vendor specific entries form country vendor,group_vendor,method_vendor and vendor_secondary_contact tables.
-                  var sql = "DELETE FROM language_types WHERE type='flower' AND type_id="+id;
+                  var sql = "DELETE FROM language_types WHERE type='bouquets' AND type_id="+id;
                   //console.log(sql);
 
                   // Delete vendor specific entries form group_vendor table
@@ -167,29 +131,17 @@ function flowerModel(){
 
         });
 
-	}
-
-/*	this.deleteFlowerType = function(id, callback) {
-
-		// Delete sympathy types
-		dbModel.delete(table_name, "id="+id, function (err, results) {
-          	if (err) {
-          		callback(err);
-          	}else{
-          		callback(null, results);
-          	}			          	
-      	});
-	}*/	
+	}	
 
 	this.getLanguageData = function(type_id, callback){
 
-	    $sql = "SELECT language_id,name from `language_types` WHERE type='flower' AND type_id="+type_id;
+	    $sql = "SELECT language_id,name from `language_types` WHERE type='bouquets' AND type_id="+type_id;
 	    dbModel.rawQuery($sql, function(err, $result) {
 	        if (err) callback(err);
 	        else callback(null,$result);
 	    });
 
-	}	
+	}
 }
 
-module.exports = new flowerModel();
+module.exports = new mixedBouquetModel();

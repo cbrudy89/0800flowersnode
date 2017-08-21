@@ -5,28 +5,28 @@ var config = require('./../../../config');
 var connection = require('./../../../database');
 var dbModel = require('./../../models/db-model');
 //var userHelper = require('./../helpers/user-helper');
-var sympathyModel = require('./../../models/admin/sympathy-model');
+var mixedBouquetModel = require('./../../models/admin/mixedbouquet-model');
 
-function SympathyController() {
+function MixedBouquetController() {
 
-    // get all sympathy
-  this.getSympathys = function(req,res){
+    // get all Mixed Bouquets
+  this.getMixedBouquets = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to get sympathy!"
+        message: "You do not have permission to get mixed bouquet!"
       });       
     }else{
-      var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
+      var mixed_bouquet = req.body.mixed_bouquet ? req.body.mixed_bouquet : "" ;
 
-      sympathyModel.getSympathys(sympathy_type, function(err, results){
+      mixedBouquetModel.getmixedBouquets(mixed_bouquet, function(err, results){
          if(err) {
         
           res.status(config.HTTP_SERVER_ERROR).send({
             status: config.ERROR, 
             code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to get sympathys!",
+            message : "Unable to get mixed bouquets!",
             errors : err
           });
         
@@ -34,14 +34,14 @@ function SympathyController() {
 
           Sync(function(){
             for(var i=0; i < results.length; i++) {
-              var languagedata = sympathyModel.getLanguageData.sync(null,results[i].id);
-              results[i].sympathy_type = languagedata;
+              var languagedata = mixedBouquetModel.getLanguageData.sync(null,results[i].id);
+              results[i].mixed_bouquet = languagedata;
             }
             
             res.status(config.HTTP_SUCCESS).send({
               status: config.SUCCESS, 
               code : config.HTTP_SUCCESS, 
-              message: 'All sympathy found',
+              message: 'Mixed bouquets found',
               result : results
             });
 
@@ -53,8 +53,8 @@ function SympathyController() {
 
   }
   
-  // Create sympathy
-  this.createSympathy=function(req,res){
+  // Create mixed bouquet
+  this.createMixedBouquet=function(req,res){
 
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
@@ -64,22 +64,20 @@ function SympathyController() {
       });       
     }else{
       
-      // Insert into sympathy table
+      // Insert into mixed bouquet table
       var curr_date  = new Date();
 
-      //var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
-      var sympathyArray= req.body.sympathyArray;
-      //console.log(sympathyArray);
+      var bouquetArray= req.body.bouquetArray;
       var status = req.body.status;
 
       Sync(function(){
 
           var found = 0;
-          var jsonData = JSON.parse(sympathyArray);
-          //var jsonData = sympathyArray;
+          var jsonData = JSON.parse(bouquetArray);
+          //var jsonData = bouquetArray;
           for (var i = 0; i < jsonData.length; i++) {
             var lang = jsonData[i];
-            var isExist = isSympathyExist.sync(null, '', lang);
+            var isExist = isMixedBouquetExist.sync(null, '', lang);
             //console.log(isExist);
             if(isExist == 'true') found++;
           }
@@ -90,24 +88,25 @@ function SympathyController() {
               res.status(config.HTTP_ALREADY_EXISTS).send({
                 status: config.ERROR, 
                 code : config.HTTP_ALREADY_EXISTS, 
-                message: "The specified sympathy already exists."
+                message: "The specified mixed bouquet already exists."
               });
 
           }else{
 
             //console.log('asdf');
-            var sympathyData = {
+            var bouquetData = {
               'status': status,
               'created_at':curr_date,
-              'updated_at':curr_date
+              'updated_at':curr_date,
+              "bouquet_name": "test"
             };
 
-            dbModel.save('sympathy_types', sympathyData, "", function(err, result) {
+            dbModel.save('mixed_bouquets', bouquetData, "", function(err, result) {
               if (err) {                
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
-                    message : "Unable to create sympathy!",
+                    message : "Unable to create mixed bouquet!",
                   }); 
 
               }else{
@@ -115,23 +114,23 @@ function SympathyController() {
                 if(result.insertId > 0){
                   var type_id = result.insertId;
 
-                  if(sympathyArray.length > 0){
+                  if(bouquetArray.length > 0){
 
                      Sync(function(){
                     
-                      var jsonData = JSON.parse(sympathyArray);
-                      //var jsonData = sympathyArray;
+                      var jsonData = JSON.parse(bouquetArray);
+                      //var jsonData = bouquetArray;
                       for (var i = 0; i < jsonData.length; i++) {
-                        var sympathy = jsonData[i];
+                        var bouquet = jsonData[i];
                         var data = {
-                          "type": "sympathy",
+                          "type": "bouquets",
                           "type_id": type_id,
-                          "language_id": sympathy.language_id,
-                          "name": sympathy.name,                          
+                          "language_id": bouquet.language_id,
+                          "name": bouquet.name,                          
                           "description": "",
                         };
 
-                        sympathyModel.createSympathy.sync(null, data);
+                        mixedBouquetModel.createMixedBouquet.sync(null, data);
                       } 
 
                     });
@@ -141,14 +140,14 @@ function SympathyController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'New sympathy has been created'
+                    message: 'New mixed bouquet has been created'
                   });
                 
                 }else{
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
-                    message : "Unable to create sympathy!",
+                    message : "Unable to create mixed bouquet!",
                   }); 
 
                 }
@@ -161,8 +160,8 @@ function SympathyController() {
   }
 
 
-  // Update sympathy
-  this.updateSympathy=function(req,res){
+  // Update mixed bouquet
+  this.updateMixedBouquet=function(req,res){
 
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
@@ -172,49 +171,48 @@ function SympathyController() {
       });       
     }else{
       
-      // Insert into sympathy table
+      // Insert into mixed bouquet table
       var curr_date  = new Date();
       var id= req.body.id;
 
-      //var sympathy_type = req.body.sympathy_type ? req.body.sympathy_type : "" ;
-      var sympathyArray= req.body.sympathyArray;
+      var bouquetArray = req.body.bouquetArray;
       var status = req.body.status;
 
       Sync(function(){
 
           var found = 0;
-          var jsonData = JSON.parse(sympathyArray);
-          //var jsonData = sympathyArray;
+          var jsonData = JSON.parse(bouquetArray);
+          //var jsonData = bouquetArray;
           for (var i = 0; i < jsonData.length; i++) {
             var lang = jsonData[i];
-            var isExist = isSympathyExist.sync(null, id, lang);
+            var isExist = isMixedBouquetExist.sync(null, id, lang);
             //console.log(isExist);
             if(isExist == 'true') found++;
           }
 
-          // Check Sympathy already exist.
+          // Check mixed bouquet already exist.
           if(found > 0){
 
               res.status(config.HTTP_ALREADY_EXISTS).send({
                 status: config.ERROR, 
                 code : config.HTTP_ALREADY_EXISTS, 
-                message: "The specified sympathy already exists."
+                message: "The specified mixed bouquet already exists."
               });
 
           }else{
 
             //console.log('asdf');
-            var sympathyData = {
+            var bouquetData = {
               'status': status,
               'updated_at':curr_date
             };
 
-            dbModel.save('sympathy_types', sympathyData, id, function(err, result) {
+            dbModel.save('mixed_bouquets', bouquetData, id, function(err, result) {
               if (err) {                
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
-                    message : "Unable to update sympathy!",
+                    message : "Unable to update mixed bouquet!",
                   }); 
 
               }else{
@@ -223,21 +221,21 @@ function SympathyController() {
 
                 if(result.affectedRows > 0){
 
-                  if(sympathyArray.length > 0){
+                  if(bouquetArray.length > 0){
 
                      Sync(function(){
                     
-                      var jsonData = JSON.parse(sympathyArray);
-                      //var jsonData = sympathyArray;
+                      var jsonData = JSON.parse(bouquetArray);
+                      //var jsonData = bouquetArray;
                       for (var i = 0; i < jsonData.length; i++) {
-                        var sympathy = jsonData[i];
+                        var bouquet = jsonData[i];
                         var data = {
-                          "type": "sympathy",
-                          "name": sympathy.name,                          
+                          "type": "bouquets",
+                          "name": bouquet.name,                          
                           "description": "",
                         };
 
-                        sympathyModel.updateSympathy.sync(null, data, id, sympathy.language_id);
+                        mixedBouquetModel.updateMixedBouquet.sync(null, data, id, bouquet.language_id);
                       } 
 
                     });
@@ -247,14 +245,14 @@ function SympathyController() {
                   res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS, 
                     code : config.HTTP_SUCCESS, 
-                    message: 'The sympathy has been updated'
+                    message: 'The mixed bouquet has been updated'
                   });
                 
                 }else{
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status: config.ERROR, 
                     code : config.HTTP_SERVER_ERROR, 
-                    message : "Unable to update sympathy!",
+                    message : "Unable to update mixed bouquet!",
                   }); 
 
                 }
@@ -266,26 +264,26 @@ function SympathyController() {
     }    
   }
  
-  // delete sympathy 
-  this.deleteSympathy = function(req,res){
+  // delete mixed bouquet 
+  this.deleteMixedBouquet = function(req,res){
     if(req.decoded.role != config.ROLE_ADMIN){
       res.status(config.HTTP_FORBIDDEN).send({
         status: config.ERROR, 
         code : config.HTTP_FORBIDDEN, 
-        message: "You dont have permission to delete sympathy!"
+        message: "You dont have permission to delete mixed bouquet!"
       });       
     }else{
       
       var id = req.body.id;
       //console.log("id-"+id);
-      sympathyModel.checkDeleteSympathy(id, function(err, result){
+      mixedBouquetModel.checkDeleteBouquet(id, function(err, result){
 
         if(err){
           //console.log(err);
           res.status(config.HTTP_SERVER_ERROR).send({
             status: config.ERROR, 
             code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to delete sympathy!",
+            message : "Unable to delete mixed bouquet!",
             errors : err
           });
 
@@ -295,46 +293,44 @@ function SympathyController() {
               res.status(config.HTTP_NOT_FOUND).send({
                 status: config.ERROR, 
                 code : config.HTTP_NOT_FOUND, 
-                message: "The specified sympathy not found."
+                message: "The specified mixed bouquet not found."
               });
            }else{
-              sympathyModel.deleteSympathy(id, function(err, result){
+              mixedBouquetModel.deleteMixedBouquet(id, function(err, result){
                 //console.log(err);
                  if(err) {
                     res.status(config.HTTP_SERVER_ERROR).send({
                       status: config.ERROR, 
                       code : config.HTTP_SERVER_ERROR, 
-                      message : "Unable to delete sympathy!",
+                      message : "Unable to delete mixed bouquet!",
                       errors : err
                     });
                  }else{
                     res.status(config.HTTP_SUCCESS).send({
                       status: config.SUCCESS, 
                       code : config.HTTP_SUCCESS, 
-                      message: 'The sympathy has been deleted',
+                      message: 'The mixed bouquet has been deleted',
                     });
                  }
               });
            }
         }
       });
-
-    } // else close    
-
+    }
   }
 
-  // Get sympathy Information 
-  this.getSympathy = function(req, res) {
+  // Get mixed bouquet Information 
+  this.getMixedBouquet = function(req, res) {
     
       var id=req.body.id;
       //console.log(id);
    
-      sympathyModel.getSympathy(id, function(err, result) {
+      mixedBouquetModel.getMixedBouquet(id, function(err, result) {
         if (err) {
           res.status(config.HTTP_SERVER_ERROR).send({
             status: config.ERROR, 
             code : config.HTTP_SERVER_ERROR, 
-            message : "Unable to get sympathy!",
+            message : "Unable to get mixed bouquet!",
             errors : err
           });
         } else {
@@ -342,13 +338,13 @@ function SympathyController() {
 
               Sync(function(){
 
-                var languagedata = sympathyModel.getLanguageData.sync(null,result[0].id);
-                result[0].sympathy_type = languagedata;
+                var languagedata = mixedBouquetModel.getLanguageData.sync(null,result[0].id);
+                result[0].mixed_bouquet = languagedata;
 
                 res.status(config.HTTP_SUCCESS).send({
                   status: config.SUCCESS, 
                   code : config.HTTP_SUCCESS, 
-                  message: 'Sympathy found!',
+                  message: 'Mixed bouquet found!',
                   result: result
                 });
 
@@ -359,7 +355,7 @@ function SympathyController() {
             res.status(config.HTTP_NOT_FOUND).send({
               status: config.ERROR, 
               code : config.HTTP_NOT_FOUND, 
-              message : "Sympathy not found.",
+              message : "Mixed bouquet not found.",
               errors : err
             });
           }
@@ -370,10 +366,9 @@ function SympathyController() {
 
 }
 
-function isSympathyExist(id = '', data, callback){
+function isMixedBouquetExist(id = '', data, callback){
 
-  //var sql = "SELECT id FROM language_types WHERE type='sympathy' AND name = '"+data.name+"'";
-  var sql = "SELECT id FROM language_types WHERE type='sympathy' AND language_id ="+data.language_id+" AND name = '"+data.name+"' AND name != ''";
+  var sql = "SELECT id FROM language_types WHERE type='bouquets' AND language_id ="+data.language_id+" AND name = '"+data.name+"' AND name != ''";
   //console.log(sql);
   if(id != '' && id > 0){
     sql += " AND type_id <> "+id;
@@ -396,4 +391,4 @@ function isSympathyExist(id = '', data, callback){
 }
 
 
-module.exports = new SympathyController();
+module.exports = new MixedBouquetController();

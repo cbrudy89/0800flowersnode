@@ -2,15 +2,15 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"color APIs",
-      "description":"All APIs related to the color controller",
+      "title":"Flowers APIs",
+      "description":"All APIs related to the flower controller",
       "termsOfService":"#"
    },
    "basePath":"/",
    "tags":[
       {
-         "name":"color",
-         "description":"API for color"
+         "name":"flower",
+         "description":"API for flower"
       }
    ],
    "schemes":[
@@ -24,12 +24,12 @@
       "application/json"
    ],
    "paths":{
-      "/admin/getcolors":{
+      "/admin/getFlowerTypes":{
          "post":{
             "tags":[
-               "color"
+               "flower"
             ],
-            "description":"How to get color",
+            "description":"Get all flowers",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -43,36 +43,42 @@
                   "type":"string"
                },
                {
-                  "name":"color_name",
+                  "name":"flower_type",
                   "in":"formData",
-                  "description":"Color Name for search",
+                  "description":"Flower type for search",
                   "required":false,
                   "type":"string"
                }             
             ],
             "responses":{
                "200":{
-                  "description":"all colors found",
+                  "description":"All flowers found",
                   "schema":{
-                      "$ref":"#/definitions/colorresponse"
+                      "$ref":"#/definitions/200getFlowerTypes"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to get flowers!",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/403getFlowerTypes"
                   }
-               }               
+               },
+               "500":{
+                  "description":"Unable to get flowers!",
+                  "schema":{
+                     "$ref":"#/definitions/500getFlowerTypes"
+                  }
+               }                              
             }
          }
       },
-      "/admin/createcolor":{
+      "/admin/createFlowerType":{
          "post":{
             "tags":[
-               "color"
+               "flower"
             ],
-            "description":"Create colors",
-            "operationId":"create",
+            "description":"Create flowers",
+            "operationId":"createFlowerType",
             "produces":[
                "application/json"
             ],
@@ -85,146 +91,55 @@
                   "type":"string"
                },
                {
-                  "name":"color_name",
+                  "name":"flowerArray",
                   "in":"formData",
-                  "description":"color Name",
-                  "required":true,
-                  "type":"string"
-               }                
-            ],
-            "responses":{
-               "200":{
-                  "description":"color created",
-                  "schema":{
-                      "$ref":"#/definitions/createcolorresponse"
-                  }
-               },
-               "400":{
-                  "description":"Page not found",
-                  "schema":{
-                     "$ref":"#/definitions/400error"
-                  }
-               },
-               "409":{
-                  "description":"The specified color already exists.",
-                  "schema":{
-                     "$ref":"#/definitions/409error"
-                  }
-               }               
-            }
-         }
-      },
-      "/admin/getcolor":{
-         "post":{
-            "tags":[
-               "color"
-            ],
-            "description":"Get a color",
-            "operationId":"getl",
-            "produces":[
-               "application/json"
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"formData",
-                  "description":"Token get api response",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"id",
-                  "in":"formData",
-                  "description":"color ID",
-                  "required":true,
-                  "type":"integer"
-               }                
-            ],
-            "responses":{
-               "200":{
-                  "description":"color found",
-                  "schema":{
-                      "$ref":"#/definitions/getcolorresponse"
-                  }
-               },
-               "400":{
-                  "description":"Page not found",
-                  "schema":{
-                     "$ref":"#/definitions/400error"
-                  }
-               }              
-            }
-         }
-      },
-      "/admin/updatecolor":{
-         "post":{
-            "tags":[
-               "color"
-            ],
-            "description":"Update colors",
-            "operationId":"update",
-            "produces":[
-               "application/json"
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"formData",
-                  "description":"Token get api response",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"id",
-                  "in":"formData",
-                  "description":"color ID",
-                  "required":true,
-                  "type":"integer"
-               },
-               {
-                  "name":"color_name",
-                  "in":"formData",
-                  "description":"color Name",
+                  "description":"Flowers data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
                   "required":true,
                   "type":"string"
                },
                {
                   "name":"status",
                   "in":"formData",
-                  "description":"color status",
+                  "description":"Status ( 1 for Active and 0 for In-Active) ",
                   "required":true,
                   "type":"integer"
-               }                     
+               }                 
             ],
             "responses":{
                "200":{
-                  "description":"the colors has been updated",
+                  "description":"New flower has been created",
                   "schema":{
-                      "$ref":"#/definitions/updateresponse"
+                      "$ref":"#/definitions/200createFlowerType"
                   }
                },
-               "400":{
-                  "description":"Page not found",
+               "403":{
+                  "description":"You dont have permission to perform action!",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/403createFlowerType"
                   }
-               },
+               },               
                "409":{
-                  "description":"the specified color name already exists.",
+                  "description":"The specified flower already exists.",
                   "schema":{
-                     "$ref":"#/definitions/409error"
+                     "$ref":"#/definitions/409createFlowerType"
+                  }
+               },
+               "500":{
+                  "description":"Unable to create flower!",
+                  "schema":{
+                     "$ref":"#/definitions/500createFlowerType"
                   }
                }               
             }
          }
       },
-      "/admin/deletecolor":{
-         "delete":{
+      "/admin/getFlowerType":{
+         "post":{
             "tags":[
-               "color"
+               "flower"
             ],
-            "description":"Delete a color",
-            "operationId":"delete",
+            "description":"Get flower",
+            "operationId":"getFlowerType",
             "produces":[
                "application/json"
             ],
@@ -239,36 +154,158 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"color ID",
+                  "description":"Flower ID",
                   "required":true,
                   "type":"integer"
                }                
             ],
             "responses":{
                "200":{
-                  "description":"color found",
+                  "description":"Flower found!",
                   "schema":{
-                      "$ref":"#/definitions/deleteresponse"
+                      "$ref":"#/definitions/200getFlowerType"
                   }
                },
                "400":{
-                  "description":"Page not found",
+                  "description":"Flower not found.",
                   "schema":{
-                     "$ref":"#/definitions/400error"
+                     "$ref":"#/definitions/400getFlowerType"
+                  }
+               },
+               "500":{
+                  "description":"Unable to get flower!",
+                  "schema":{
+                     "$ref":"#/definitions/500getFlowerType"
+                  }
+               }                 
+            }
+         }
+      },
+      "/admin/updateFlowerType":{
+         "put":{
+            "tags":[
+               "flower"
+            ],
+            "description":"Update flower",
+            "operationId":"updateFlowerType",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Flower ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"flowerArray",
+                  "in":"formData",
+                  "description":"Flower data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Flower status ( 1 for Active and 0 for In-Active) ",
+                  "required":true,
+                  "type":"integer"
+               }                     
+            ],
+            "responses":{
+               "200":{
+                  "description":"The flower has been updated",
+                  "schema":{
+                      "$ref":"#/definitions/200updateFlowerType"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to perform action!",
+                  "schema":{
+                     "$ref":"#/definitions/403updateFlowerType"
                   }
                },
                "409":{
-                  "description":"The specified color already exists.",
+                  "description":"The specified flower already exists.",
                   "schema":{
-                     "$ref":"#/definitions/409error"
+                     "$ref":"#/definitions/409updateFlowerType"
                   }
-               }              
+               },
+               "500":{
+                  "description":"Unable to update flower!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateFlowerType"
+                  }
+               }                               
+            }
+         }
+      },
+      "/admin/deleteFlowerType":{
+         "delete":{
+            "tags":[
+               "flower"
+            ],
+            "description":"Delete a flower",
+            "operationId":"deleteFlowerType",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Flower ID",
+                  "required":true,
+                  "type":"integer"
+               }                
+            ],
+            "responses":{
+               "200":{
+                  "description":"The flower has been deleted",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteFlowerType"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete flower!",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteFlowerType"
+                  }
+               },
+               "404":{
+                  "description":"The specified flower not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteFlowerType"
+                  }
+               },               
+               "500":{
+                  "description":"Unable to delete flower!",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteFlowerType"
+                  }
+               }
             }
          }
       }
    },
    "definitions":{
-      "colorresponse":{
+      "200getFlowerTypes":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -280,7 +317,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"all colors found"
+               "example":"All flowers found"
             },
             "result":{
                "type":"object",
@@ -288,7 +325,39 @@
             }
          }
       },
-      "createcolorresponse":{
+      "403getFlowerTypes":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get flowers!"
+            }
+         }
+      },
+      "500getFlowerTypes":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to get flowers!"
+            }
+         }
+      },            
+      "200createFlowerType":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -300,101 +369,233 @@
             },            
             "message":{
                "type":"string",
-               "example":"new colors has been created"
-            },
-            "result":{
-               "type":"object",
-               "example":[]
+               "example":"New flower has been created"
             }
          }
       },
-      "getcolorresponse":{
+      "403createFlowerType":{
          "properties":{
             "status":{
                "type":"boolean",
-               "example":"true"
+               "example":"false"
             },
             "code":{
                "type":"integer",
-               "example":"200"
+               "example":"403"
             },            
             "message":{
                "type":"string",
-               "example":"color found!"
-            },
-            "result":{
-               "type":"object",
-               "example":[]
+               "example":"You dont have permission to perform action!"
             }
          }
       },
-      "updateresponse":{
+      "409createFlowerType":{
          "properties":{
             "status":{
                "type":"boolean",
-               "example":"true"
-            },
-            "code":{
-               "type":"integer",
-               "example":"200"
-            },            
-            "message":{
-               "type":"string",
-               "example":"the colors has been updated"
-            },
-            "result":{
-               "type":"object",
-               "example":"array"
-            }
-         }
-      },
-      "deleteresponse":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"true"
-            },
-            "code":{
-               "type":"integer",
-               "example":"200"
-            },            
-            "message":{
-               "type":"string",
-               "example":"the colors has been deleted"
-            }
-         }
-      },
-      "400error":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"False"
-            },
-            "code":{
-               "type":"integer",
-               "example":"400"
-            },                        
-            "message":{
-               "type":"string",
-               "example":"400 Bad Request"
-            }
-         }
-      },
-      "409error":{
-         "properties":{
-            "status":{
-               "type":"boolean",
-               "example":"False"
+               "example":"false"
             },
             "code":{
                "type":"integer",
                "example":"409"
-            },                        
+            },            
             "message":{
                "type":"string",
-               "example":"The specified color already exists."
+               "example":"The specified flower already exists."
             }
          }
-      }
+      },
+      "500createFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to create flower!"
+            }
+         }
+      },
+      "200getFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Flower found!"
+            }
+         }
+      },
+      "400getFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Flower not found."
+            }
+         }
+      },
+      "500getFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to create flower!"
+            }
+         }
+      },
+      "200updateFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Flower found!"
+            }
+         }
+      },
+      "403updateFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to perform action!"
+            }
+         }
+      },
+      "409updateFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified flower already exists."
+            }
+         }
+      },
+      "500updateFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to update flower!"
+            }
+         }
+      },
+      "200deleteFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The flower has been deleted"
+            }
+         }
+      },
+      "403deleteFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete flower!"
+            }
+         }
+      },
+      "404deleteFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified flower not found."
+            }
+         }
+      },
+      "500deleteFlowerType":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to delete flower!"
+            }
+         }
+      }                 
    }
 }

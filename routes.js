@@ -10,6 +10,7 @@ var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
 var sympathyController = require('./api/controllers/admin/sympathy-controller');
 var flowerController = require('./api/controllers/admin/flower-controller');
+var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
@@ -271,7 +272,31 @@ module.exports = {
         flowerController.deleteFlowerType(req, res);
     });
 
-    /************************* END of Flowers *****************/    
+    /************************* END of Flowers *****************/   
+
+    /************************* START Mixed Bouquets *****************/
+
+    app.post('/admin/getMixedBouquets', authenticateController.isAuthenticated, function(req, res) {
+        mixedBouquetController.getMixedBouquets(req, res);
+    });
+
+    app.post('/admin/createMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+        mixedBouquetController.createMixedBouquet(req, res);
+    });
+
+    app.post('/admin/getMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+        mixedBouquetController.getMixedBouquet(req, res);
+    });
+
+    app.put('/admin/updateMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+        mixedBouquetController.updateMixedBouquet(req, res);
+    });
+
+    app.delete('/admin/deleteMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+        mixedBouquetController.deleteMixedBouquet(req, res);
+    });
+
+    /************************* END of Mixed Bouquets *****************/     
 
 
      /************************* START Promo Code API's *****************/

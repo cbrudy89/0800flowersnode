@@ -2,15 +2,15 @@
    "swagger":"2.0",
    "info":{
       "version":"1.0.0",
-      "title":"Sympathy APIs",
-      "description":"All APIs related to the sympathy controller",
+      "title":"Mixed Bouquet APIs",
+      "description":"All APIs related to the mixed bouquet controller",
       "termsOfService":"#"
    },
    "basePath":"/",
    "tags":[
       {
-         "name":"sympathy",
-         "description":"API for sympathy"
+         "name":"mixed_bouquet",
+         "description":"API for mixed_bouquet"
       }
    ],
    "schemes":[
@@ -24,13 +24,13 @@
       "application/json"
    ],
    "paths":{
-      "/admin/getSympathys":{
+      "/admin/getMixedBouquets":{
          "post":{
             "tags":[
-               "sympathy"
+               "mixed_bouquet"
             ],
-            "description":"Get all sympathies",
-            "operationId":"for the URL",
+            "description":"Get all mixed bouquets",
+            "operationId":"getMixedBouquets",
             "produces":[
                "application/json"
             ],
@@ -43,42 +43,42 @@
                   "type":"string"
                },
                {
-                  "name":"sympathy_type",
+                  "name":"mixed_bouquet",
                   "in":"formData",
-                  "description":"Sympathy type for search",
+                  "description":"Mixed bouquet name for search",
                   "required":false,
                   "type":"string"
                }             
             ],
             "responses":{
                "200":{
-                  "description":"All sympathy found",
+                  "description":"Mixed bouquets found",
                   "schema":{
-                      "$ref":"#/definitions/200getSympathys"
+                      "$ref":"#/definitions/200getMixedBouquets"
                   }
                },
                "403":{
-                  "description":"You dont have permission to get sympathy!",
+                  "description":"You do not have permission to get mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/403getSympathys"
+                     "$ref":"#/definitions/403getMixedBouquets"
                   }
                },
                "500":{
-                  "description":"Unable to get sympathys!",
+                  "description":"Unable to get mixed bouquets!",
                   "schema":{
-                     "$ref":"#/definitions/500getSympathys"
+                     "$ref":"#/definitions/500getMixedBouquets"
                   }
                }                              
             }
          }
       },
-      "/admin/createSympathy":{
+      "/admin/createMixedBouquet":{
          "post":{
             "tags":[
-               "sympathy"
+               "mixed_bouquet"
             ],
-            "description":"Create sympathy",
-            "operationId":"createSympathy",
+            "description":"Create Mixed Bouquet",
+            "operationId":"createMixedBouquet",
             "produces":[
                "application/json"
             ],
@@ -91,9 +91,9 @@
                   "type":"string"
                },
                {
-                  "name":"sympathyArray",
+                  "name":"bouquetArray",
                   "in":"formData",
-                  "description":"Sympathy data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
+                  "description":"Mixed Bouquet data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
                   "required":true,
                   "type":"string"
                },
@@ -107,39 +107,39 @@
             ],
             "responses":{
                "200":{
-                  "description":"New sympathy has been created",
+                  "description":"New mixed bouquet has been created",
                   "schema":{
-                      "$ref":"#/definitions/200createSympathy"
+                      "$ref":"#/definitions/200createMixedBouquet"
                   }
                },
                "403":{
                   "description":"You dont have permission to perform action!",
                   "schema":{
-                     "$ref":"#/definitions/403createSympathy"
+                     "$ref":"#/definitions/403createMixedBouquet"
                   }
                },               
                "409":{
-                  "description":"The specified sympathy already exists.",
+                  "description":"The specified mixed bouquet already exists.",
                   "schema":{
-                     "$ref":"#/definitions/409createSympathy"
+                     "$ref":"#/definitions/409createMixedBouquet"
                   }
                },
                "500":{
-                  "description":"Unable to create sympathy!",
+                  "description":"Unable to create mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/500createSympathy"
+                     "$ref":"#/definitions/500createMixedBouquet"
                   }
                }               
             }
          }
       },
-      "/admin/getSympathy":{
+      "/admin/getMixedBouquet":{
          "post":{
             "tags":[
-               "sympathy"
+               "mixed_bouquet"
             ],
-            "description":"Get sympathy",
-            "operationId":"getSympathy",
+            "description":"Get Mixed Bouquet",
+            "operationId":"getMixedBouquet",
             "produces":[
                "application/json"
             ],
@@ -154,40 +154,40 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Sympathy ID",
+                  "description":"Mixed Bouquet ID",
                   "required":true,
                   "type":"integer"
                }                
             ],
             "responses":{
                "200":{
-                  "description":"Sympathy found!",
+                  "description":"Mixed bouquet found!",
                   "schema":{
-                      "$ref":"#/definitions/200getSympathy"
+                      "$ref":"#/definitions/200getMixedBouquet"
                   }
                },
                "400":{
-                  "description":"Sympathy not found.",
+                  "description":"Mixed bouquet not found.",
                   "schema":{
-                     "$ref":"#/definitions/400getSympathy"
+                     "$ref":"#/definitions/400getMixedBouquet"
                   }
                },
                "500":{
-                  "description":"Unable to get sympathy!",
+                  "description":"Unable to get mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/500getSympathy"
+                     "$ref":"#/definitions/500getMixedBouquet"
                   }
                }                 
             }
          }
       },
-      "/admin/updateSympathy":{
+      "/admin/updateMixedBouquet":{
          "put":{
             "tags":[
-               "sympathy"
+               "mixed_bouquet"
             ],
-            "description":"Update sympathy",
-            "operationId":"update",
+            "description":"Update mixed bouquet",
+            "operationId":"updateMixedBouquet",
             "produces":[
                "application/json"
             ],
@@ -202,60 +202,60 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Sympathy ID",
+                  "description":"Mixed Bouquet ID",
                   "required":true,
                   "type":"integer"
                },
                {
-                  "name":"sympathyArray",
+                  "name":"bouquetArray",
                   "in":"formData",
-                  "description":"Sympathy data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
+                  "description":"Mixed Bouquet data [{\"language_id\": 1, \"name\": \"Test\" }, { \"language_id\": 2, \"name\": \"Test\" }]",
                   "required":true,
                   "type":"string"
                },
                {
                   "name":"status",
                   "in":"formData",
-                  "description":"Sympathy status ( 1 for Active and 0 for In-Active) ",
+                  "description":"Mixed Bouquet status ( 1 for Active and 0 for In-Active) ",
                   "required":true,
                   "type":"integer"
                }                     
             ],
             "responses":{
                "200":{
-                  "description":"The sympathy has been updated",
+                  "description":"The mixed bouquet has been updated",
                   "schema":{
-                      "$ref":"#/definitions/200updateSympathy"
+                      "$ref":"#/definitions/200updateMixedBouquet"
                   }
                },
                "403":{
                   "description":"You dont have permission to perform action!",
                   "schema":{
-                     "$ref":"#/definitions/403updateSympathy"
+                     "$ref":"#/definitions/403updateMixedBouquet"
                   }
                },
                "409":{
-                  "description":"The specified sympathy already exists.",
+                  "description":"The specified mixed bouquet already exists.",
                   "schema":{
-                     "$ref":"#/definitions/409updateSympathy"
+                     "$ref":"#/definitions/409updateMixedBouquet"
                   }
                },
                "500":{
-                  "description":"Unable to update sympathy!",
+                  "description":"Unable to update mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/500updateSympathy"
+                     "$ref":"#/definitions/500updateMixedBouquet"
                   }
                }                               
             }
          }
       },
-      "/admin/deleteSympathy":{
+      "/admin/deleteMixedBouquet":{
          "delete":{
             "tags":[
-               "sympathy"
+               "mixed_bouquet"
             ],
-            "description":"Delete a sympathy",
-            "operationId":"delete",
+            "description":"Delete a mixed bouquet",
+            "operationId":"deleteMixedBouquet",
             "produces":[
                "application/json"
             ],
@@ -270,34 +270,34 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Sympathy ID",
+                  "description":"Mixed Bouquet ID",
                   "required":true,
                   "type":"integer"
                }                
             ],
             "responses":{
                "200":{
-                  "description":"The sympathy has been deleted",
+                  "description":"The mixed bouquet has been deleted",
                   "schema":{
-                      "$ref":"#/definitions/200deleteSympathy"
+                      "$ref":"#/definitions/200deleteMixedBouquet"
                   }
                },
                "403":{
-                  "description":"You dont have permission to delete sympathy!",
+                  "description":"You dont have permission to delete mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/403deleteSympathy"
+                     "$ref":"#/definitions/403deleteMixedBouquet"
                   }
                },
                "404":{
-                  "description":"The specified sympathy not found.",
+                  "description":"The specified mixed bouquet not found.",
                   "schema":{
-                     "$ref":"#/definitions/404deleteSympathy"
+                     "$ref":"#/definitions/404deleteMixedBouquet"
                   }
                },               
                "500":{
-                  "description":"Unable to delete sympathy!",
+                  "description":"Unable to delete mixed bouquet!",
                   "schema":{
-                     "$ref":"#/definitions/500deleteSympathy"
+                     "$ref":"#/definitions/500deleteMixedBouquet"
                   }
                }
             }
@@ -305,7 +305,7 @@
       }
    },
    "definitions":{
-      "200getSympathys":{
+      "200getMixedBouquets":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -317,7 +317,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"All sympathy found"
+               "example":"Mixed bouquets found"
             },
             "result":{
                "type":"object",
@@ -325,7 +325,7 @@
             }
          }
       },
-      "403getSympathys":{
+      "403getMixedBouquets":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -337,11 +337,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"You dont have permission to get sympathy!"
+               "example":"You do not have permission to get mixed bouquet!"
             }
          }
       },
-      "500getSympathys":{
+      "500getMixedBouquets":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -353,11 +353,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Unable to get sympathys!"
+               "example":"Unable to get mixed bouquets!"
             }
          }
       },            
-      "200createSympathy":{
+      "200createMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -369,11 +369,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"New sympathy has been created"
+               "example":"New mixed bouquet has been created"
             }
          }
       },
-      "403createSympathy":{
+      "403createMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -389,7 +389,7 @@
             }
          }
       },
-      "409createSympathy":{
+      "409createMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -401,11 +401,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"The specified sympathy already exists."
+               "example":"The specified mixed bouquet already exists."
             }
          }
       },
-      "500createSympathy":{
+      "500createMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -417,11 +417,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Unable to create sympathy!"
+               "example":"Unable to create mixed bouquet!"
             }
          }
       },
-      "200getSympathy":{
+      "200getMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -433,11 +433,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Sympathy found!"
+               "example":"Mixed bouquet found!"
             }
          }
       },
-      "400getSympathy":{
+      "400getMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -449,11 +449,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Sympathy not found."
+               "example":"Mixed bouquet not found."
             }
          }
       },
-      "500getSympathy":{
+      "500getMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -465,11 +465,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Unable to create sympathy!"
+               "example":"Unable to get mixed bouquet!"
             }
          }
       },
-      "200updateSympathy":{
+      "200updateMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -481,11 +481,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Sympathy found!"
+               "example":"The mixed bouquet has been updated"
             }
          }
       },
-      "403updateSympathy":{
+      "403updateMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -501,7 +501,7 @@
             }
          }
       },
-      "409updateSympathy":{
+      "409updateMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -513,11 +513,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"The specified sympathy already exists."
+               "example":"The specified mixed bouquet already exists."
             }
          }
       },
-      "500updateSympathy":{
+      "500updateMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -529,11 +529,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Unable to update sympathy!"
+               "example":"Unable to update mixed bouquet!"
             }
          }
       },
-      "200deleteSympathy":{
+      "200deleteMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -545,11 +545,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"Sympathy found"
+               "example":"The mixed bouquet has been deleted"
             }
          }
       },
-      "403deleteSympathy":{
+      "403deleteMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -561,11 +561,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"You dont have permission to delete sympathy!"
+               "example":"You dont have permission to delete mixed bouquet!"
             }
          }
       },
-      "404deleteSympathy":{
+      "404deleteMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -577,11 +577,11 @@
             },            
             "message":{
                "type":"string",
-               "example":"The specified sympathy not found."
+               "example":"The specified mixed bouquet not found."
             }
          }
       },
-      "500updateSympathy":{
+      "500deleteMixedBouquet":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -593,7 +593,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"Unable to delete sympathy!"
+               "example":"Unable to delete mixed bouquet!"
             }
          }
       }                 
