@@ -1,0 +1,758 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Occasion APIs",
+      "description":"All APIs related to the admin occasion controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Occasion",
+         "description":"API for admin occasion usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getOccasionList/":{
+         "post":{
+            "tags":[
+               "Admin Occasion"
+            ],
+            "description":"List all occasion from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Page limit Example: id-desc, id-asc",
+                  "required":false,
+                  "type":"string"
+               }  
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Occasion listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getOccasionList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getOccasionList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create occasion.",
+                  "schema":{
+                     "$ref":"#/definitions/403getOccasionList"
+                  }
+               },                                               
+               "400":{
+                  "description":"Occasion not found.",
+                  "schema":{
+                     "$ref":"#/definitions/400getOccasionList"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createOccasion":{
+         "post":{
+            "tags":[
+               "Admin Occasion"
+            ],
+            "description":"Create Occasion",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_flag",
+                  "in":"formData",
+                  "description":"Country ids Example: 1,2,3  or  all ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"occasion_day",
+                  "in":"formData",
+                  "description":"Occasion day Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"occasion_month",
+                  "in":"formData",
+                  "description":"Occasion month Example: 11",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"index_no_follow",
+                  "in":"formData",
+                  "description":"index_no_follow Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"name_description_arr",
+                  "in":"formData",
+                  "description":"Name & Description Example: [{\"language_id\":\"1\", \"occasion_name\":\"name english\",\"occasion_description\":\"description english\"},{ \"language_id\":\"2\", \"occasion_name\":\"name fr\", \"occasion_description\":\"description fr\"},{ \"language_id\":\"3\", \"occasion_name\":\"name de\", \"occasion_description\":\"description de\"}] ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_title",
+                  "in":"formData",
+                  "description":"Meta title Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta description Example : stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta keywords Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"collection_filter",
+                  "in":"formData",
+                  "description":"Collection filter Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"i_mark",
+                  "in":"formData",
+                  "description":"i mark Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },                                
+               {
+                  "name":"card_message",
+                  "in":"formData",
+                  "description":"Card message Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },                                
+               {
+                  "name":"occasion_status",
+                  "in":"formData",
+                  "description":"occasion status Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Occasion inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createOccasion"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createOccasion"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create occasion.",
+                  "schema":{
+                     "$ref":"#/definitions/403createOccasion"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/getSelectedOccasion/":{
+         "post":{
+            "tags":[
+               "Admin Occasion"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The Occasion ID.",
+                  "required":true,
+                  "type":"integer"                 
+               },               
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Occasion found.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSelectedOccasion"
+                  }
+               },
+               "404":{
+                  "description":"No occasion found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSelectedOccasion"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get occasion.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSelectedOccasion"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSelectedOccasion"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateOccasion":{
+         "post":{
+            "tags":[
+               "Admin Occasion"
+            ],
+            "description":"Update Occasion",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Occasion id Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"country_flag",
+                  "in":"formData",
+                  "description":"Country ids Example: 1,2,3  or  all ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"occasion_day",
+                  "in":"formData",
+                  "description":"Occasion day Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"occasion_month",
+                  "in":"formData",
+                  "description":"Occasion month Example: 11",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"index_no_follow",
+                  "in":"formData",
+                  "description":"index_no_follow Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"name_description_arr",
+                  "in":"formData",
+                  "description":"Name & Description Example: [{\"language_id\":\"1\", \"occasion_name\":\"name english\",\"occasion_description\":\"description english\"},{ \"language_id\":\"2\", \"occasion_name\":\"name fr\", \"occasion_description\":\"description fr\"},{ \"language_id\":\"3\", \"occasion_name\":\"name de\", \"occasion_description\":\"description de\"}] ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_title",
+                  "in":"formData",
+                  "description":"Meta title Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta description Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta keywords Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"collection_filter",
+                  "in":"formData",
+                  "description":"Collection filter Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"i_mark",
+                  "in":"formData",
+                  "description":"i mark Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },                                
+               {
+                  "name":"card_message",
+                  "in":"formData",
+                  "description":"Card message Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               },                                
+               {
+                  "name":"occasion_status",
+                  "in":"formData",
+                  "description":"occasion status Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Occasion updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateOccasion"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateOccasion"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create occasion.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateOccasion"
+                  }
+               },
+               "404":{
+                  "description":"No occasion found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateOccasion"
+                  }
+               }                                               
+            }
+         }
+      },
+      "/admin/deleteOccasion":{
+         "delete":{
+            "tags":[
+               "Admin Occasion"
+            ],
+            "description":"Delete Occasion",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired occasion to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Occasion deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteOccasion"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete occasion.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteOccasion"
+                  }
+               },
+               "404":{
+                  "description":"No occasion found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteOccasion"
+                  }
+               }                                
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200getOccasionList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 Occasion listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getOccasionList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getOccasionList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get occasion."
+            }
+         }
+      },      
+      "400getOccasionList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Occasion not found."
+            }
+         }
+      },            
+      "200createOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Occasion inserted successfully."
+            }
+         }
+      },
+      "500createOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create occasion."
+            }
+         }
+      },
+      "200getSelectedOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Occasion found."
+            }
+         }
+      },
+      "404getSelectedOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No occasion found."
+            }
+         }
+      },
+      "500getSelectedOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403getSelectedOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get occasion."
+            }
+         }
+      },      
+      "200updateOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Occasion updated successfully."
+            }
+         }
+      },
+      "500updateOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create occasion."
+            }
+         }
+      },
+      "404updateOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No occasion found."
+            }
+         }
+      },      
+      "200deleteOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Occasion deleted successfully"
+            }
+         }
+      },
+      "403deleteOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete occasion."
+            }
+         }
+      },
+      "404deleteOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No occasion found."
+            }
+         }
+      }            
+   }
+}

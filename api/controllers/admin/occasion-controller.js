@@ -8,8 +8,87 @@ var commonHelper = require('./../../helpers/common-helper');
 
 var dbModel = require('./../../models/db-model');
 
-
 function OccasionController() {
+    
+    
+    // get all occasion
+    this.getOccasionList = function(req,res){
+
+      if(req.decoded.role != config.ROLE_ADMIN){
+        res.status(config.HTTP_FORBIDDEN).send({
+          status: config.ERROR, 
+          code : config.HTTP_FORBIDDEN, 
+          message: "You dont have permission to get occasion!"
+        });       
+      }else{
+
+            var return_data = {};
+            var reqData = {};
+
+            var page = req.body.page;
+            var limit = req.body.limit;
+            var order_by = req.body.order_by;
+
+            if(limit == undefined || limit == ''){
+              limit = 30;
+            }
+
+            if (page == undefined || page == '') {
+               page = 1;
+            }
+
+            var start = 0;    
+
+          Sync(function(){
+
+            if(page >1){
+              start = (page - 1) * limit;
+            } 
+
+            reqData = {
+                "start": start,
+                "limit": limit,
+                "order_by":order_by,
+            };
+
+            var result        = getAllOccasions.sync(null, reqData, false); 
+            var total_records = getAllOccasions.sync(null, reqData, true); 
+            
+            if(result.length > 0){
+                for ( var j=0 ; j < result.length; j++) { 
+                    var occasion_country  = getAllCountryOcassion.sync(null, result[j].id);
+                    var language_types    = getAllLanguageTypes.sync(null, result[j].id);                    
+                      result[j].name_description   = language_types;  
+                      result[j].occasion_country   = occasion_country;
+                }
+
+                var final_data  = {
+                    "page": page,
+                    "limit":limit,
+                    "total_records":total_records[0].total_occasions,
+                    "occasion_list": result,
+                };
+
+                res.status(config.HTTP_SUCCESS).send({
+                    status: config.SUCCESS, 
+                    code : config.HTTP_SUCCESS, 
+                    message: result.length+" occasions found",
+                    result : final_data
+                });
+
+            }else{
+               
+                res.status(config.HTTP_NOT_FOUND).send({
+                 status:config.ERROR,
+                 code: config.HTTP_NOT_FOUND, 
+                 message:"No occasions found."
+               });         
+                
+            }
+          });
+      } 
+
+    }
     
     // Create new occasion 
     this.createOccasion=function(req,res){
@@ -22,209 +101,180 @@ function OccasionController() {
 
         });       
       }else{
-          
+        
         Sync(function(){
                                       
-                var curr_date  = new Date();
-                var id=0;
-                var country_flag_arr = req.body.country_flag.split(',');
-                var country_flag="";
-                
-                if( country_flag_arr.length > 0 ){
-                    for(var i=0; i < country_flag_arr.length;i++){
-                        if(country_flag_arr[i] == "all"){
-                            country_flag = "all";
-                            break;
+            var curr_date  = new Date();
+            var id=0;
+            var country_flag_arr = req.body.country_flag.split(',');
+            var country_flag="";
+            
+            if( country_flag_arr.length > 0 ){
+                for(var i=0; i < country_flag_arr.length;i++){
+                    if(country_flag_arr[i] == "all"){
+                        country_flag = "all";
+                        break;
 
-                        }else{
-                            country_flag = "";
-                        }
-
+                    }else{
+                        country_flag = "";
                     }
-                }
 
+                }
+            }
+
+            if(country_flag !='' && country_flag =='all'){
+                var selected_countries_obj = getCountryListAsArray.sync(null);
+                var selected_countries = selected_countries_obj.map(function (item) { return item.id; });
+            }else{
+                var selected_countries = req.body.country_flag.split(',');                
+            }
+           
+
+            if(req.body.index_no_follow !='' && req.body.index_no_follow != undefined && req.body.index_no_follow == 1){
+              var index_no_follow = 1;
+            }else{
+              var  index_no_follow =0;
+            }
+
+            if(req.body.meta_title !='' && req.body.meta_title != undefined ){
+                var  meta_title = req.body.meta_title;
+            }else{
+                var  meta_title= "";
+            }  
+
+            if(req.body.meta_description !='' && req.body.meta_description != undefined ){
+                var  meta_description = req.body.meta_description;
+            }else{
+                var  meta_description= "";
+            }
+
+            if(req.body.meta_keywords !='' && req.body.meta_keywords != undefined ){
+                var  meta_keywords = req.body.meta_keywords;
+            }else{
+                var  meta_keywords= "";
+            }  
+
+            if(req.body.collection_filter !='' && req.body.collection_filter != undefined ){
+                var  collection_filter = req.body.collection_filter;
+            }else{
+                var  collection_filter = 0;
+            }            
+
+            if(req.body.i_mark !='' && req.body.i_mark != undefined ){
+                var  i_mark = req.body.i_mark;
+            }else{
+                var  i_mark = 0;
+            } 
+
+            if(req.body.occasion_status !='' && req.body.occasion_status != undefined ){
+                var  occasion_status = req.body.occasion_status;
+            }else{
+                var  occasion_status = 0;
+            }   
+
+            if(req.body.card_message !='' && req.body.card_message != undefined ){
+                var  card_message = req.body.card_message;
+            }else{
+                var  card_message = 0;
+            }     
+
+            var occasion_day = req.body.occasion_day;
+            var occasion_month = req.body.occasion_month;
+            var created_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
+            var updated_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
+
+            
+            dbModel.getConnection(function(error, con){
+                if (error) {
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status:config.ERROR,
+                    code: config.HTTP_SERVER_ERROR,
+                    message:'Unable to process request.',
+                    //error : error
+                  });
+                }else{
+
+                 var sql = "INSERT INTO occasions SET country_flag='"+country_flag+"', occasion_day="+occasion_day+", occasion_month="+occasion_month+", updated_at='"+updated_at+"', index_no_follow="+index_no_follow+",meta_title='"+meta_title+"',meta_description='"+meta_description+"',meta_keywords='"+meta_keywords+"',collection_filter="+collection_filter+",i_mark="+i_mark+",occasion_status="+occasion_status+",card_message="+card_message+" ;";  
+                  // Update vendor into table.
+                  dbModel.beginTransaction(con, sql, function(error, result){
+                    if(error){
+                      res.status(config.HTTP_SERVER_ERROR).send({
+                        status:config.ERROR,
+                        code: config.HTTP_SERVER_ERROR,
+                        message:'Unable to process request!',
+                        //error: error
+                      });                    
+                    }else{  
                         
-                if(country_flag !='' && country_flag =='all'){
-                    var selected_countries_obj = getCountryListAsArray.sync(null);
-                    var selected_countries = selected_countries_obj.map(function (item) { return item.id; });
-
-                }else{
-                    var selected_countries = req.body.country_flag.split(',');
-                }
-                //console.log(selected_countries);
-
-
-                if(req.body.index_no_follow !='' && req.body.index_no_follow != undefined && req.body.index_no_follow == 1){
-                  var index_no_follow = 1;
-                }else{
-                  var  index_no_follow =0;
-                }
-
-
-                if(req.body.description !='' && req.body.index_no_follow != undefined ){
-                  var description = req.body.description;
-                }else{
-                  var  description= "";
-                }
-
-                if(req.body.description_fr !='' && req.body.description_fr != undefined ){
-                    var description_fr = req.body.description_fr;
-                }else{
-                    var  description_fr= "";
-                }
-
-
-                if(req.body.description_de !='' && req.body.description_de != undefined ){
-                    var description_de = req.body.description_de;
-                }else{
-                    var  description_de= "";
-                }       
-
-                if(req.body.description_es !='' && req.body.description_es != undefined ){
-                    var  description_es = req.body.description_es;
-                }else{
-                    var  description_es= "";
-                }       
-
-                if(req.body.meta_title !='' && req.body.meta_title != undefined ){
-                    var  meta_title = req.body.meta_title;
-                }else{
-                    var  meta_title= "";
-                }  
-
-                if(req.body.meta_description !='' && req.body.meta_description != undefined ){
-                    var  meta_description = req.body.meta_description;
-                }else{
-                    var  meta_description= "";
-                }
-
-                if(req.body.meta_keywords !='' && req.body.meta_keywords != undefined ){
-                    var  meta_keywords = req.body.meta_keywords;
-                }else{
-                    var  meta_keywords= "";
-                }  
-
-                if(req.body.occasion_type !='' && req.body.occasion_type != undefined ){
-                    var  occasion_type = req.body.occasion_type;
-                }else{
-                    var  occasion_type = "occasion";
-                }           
-
-                if(req.body.collection_filter !='' && req.body.collection_filter != undefined ){
-                    var  collection_filter = req.body.collection_filter;
-                }else{
-                    var  collection_filter = 0;
-                }            
-
-                if(req.body.i_mark !='' && req.body.i_mark != undefined ){
-                    var  i_mark = req.body.i_mark;
-                }else{
-                    var  i_mark = 0;
-                } 
-
-                if(req.body.occasion_status !='' && req.body.occasion_status != undefined ){
-                    var  occasion_status = req.body.occasion_status;
-                }else{
-                    var  occasion_status = 0;
-                }   
-
-                if(req.body.card_message !='' && req.body.card_message != undefined ){
-                    var  card_message = req.body.card_message;
-                }else{
-                    var  card_message = 0;
-                }     
-
-                if(req.body.banner_id !='' && req.body.banner_id != undefined ){
-                    var  banner_id = req.body.banner_id;
-                }else{
-                    var  banner_id = 0;
-                }         
-
-                var instertOccasionData = {
-                      'country_flag':country_flag,
-                      'occasion_name':req.body.occasion_name,
-                      'occasion_day':req.body.occasion_day,
-                      'occasion_month':req.body.occasion_month,
-                      'index_no_follow':index_no_follow,
-                      'description':description,
-                      'description_fr':description_fr,  
-                      'description_de':description_de,  
-                      'description_es':description_es,  
-                      'meta_title':meta_title, 
-                      'meta_description':meta_description, 
-                      'meta_keywords':meta_keywords, 
-                      'occasion_type':occasion_type, 
-                      'collection_filter':collection_filter,
-                      'i_mark':i_mark,
-                      'occasion_status':occasion_status,
-                      'card_message':card_message,
-                      'banner_id':banner_id,
-                      'translation_id':req.body.translation_id,              
-                      'created_at':commonHelper.formatDateToMysqlDateTime(curr_date,3),
-                      'updated_at':commonHelper.formatDateToMysqlDateTime(curr_date,3),
-                };
-
-                  dbModel.save('occasions', instertOccasionData ,'', function(err, result){
-                  if (err) {
-
-                        res.status(config.HTTP_SERVER_ERROR).send({
-                          status: config.ERROR, 
-                          code : config.HTTP_SERVER_ERROR, 
-                          message : "Unable to process request!", 
-                          errors : err
-                        });
-                  } 
-                  else
-                  {    
-                      if(result.insertId > 0){
-
-                            var occasion_id = result.insertId;   
-
-                             if(selected_countries.length > 0 ){
-                                 for (i = 0; i < selected_countries.length; i++) {
-
-                                     var insertOccasionCountryData= {
-                                         country_id :selected_countries[i],
-                                         occasion_id :occasion_id
-                                     };
-
-                                      dbModel.save('occasion_country', insertOccasionCountryData ,'', function(err, result){
-
-                                          if (err) {
-                                               res.status(config.HTTP_SERVER_ERROR).send({
-                                                 status: config.ERROR, 
-                                                 code : config.HTTP_SERVER_ERROR, 
-                                                 message : "Unable to process request!", 
-                                                 errors : err
-                                               });
-                                          }
-
-                                      });
-                                  } 
-                             }
-
-                             res.status(config.HTTP_SUCCESS).send({
-                               status:config.SUCCESS,
-                               code: config.HTTP_SUCCESS,
-                               message:'Occasion inserted successfully.'
-                             });
+                       if(result.insertId > 0){
                            
-                      }else{
+                            var occasion_id = result.insertId;
+                            var sql ="";
+                            if( selected_countries.length > 0){
+                                for (i = 0; i < selected_countries.length; i++) {                                                        
+                                  sql += "INSERT INTO occasion_country SET country_id="+selected_countries[i]+", occasion_id="+occasion_id+";";
+                                }            
+                            }
 
+                            var description_arr = JSON.parse(req.body.name_description_arr); 
+                            if(description_arr.length > 0){
+                                
+                               for (var j = 0; j < description_arr.length; j++) {
+                                  sql += "INSERT INTO language_types SET language_id="+description_arr[j].language_id+", type_id="+occasion_id+",type='occasion',name='"+description_arr[j].occasion_name+"',description='"+description_arr[j].occasion_description+"';";
+                               }
+                            }    
+
+                            dbModel.transactionQuery(con, sql, function (error, result) {
+                              if (error) {
+                                res.status(config.HTTP_SERVER_ERROR).send({
+                                  status:config.ERROR,
+                                  code: config.HTTP_SERVER_ERROR,
+                                  message:'Unable to process request.',
+                                  //error: error
+                                });
+                              }else{
+
+                                dbModel.commit(con, function(error, response){
+                                  if (error) {
+                                    res.status(config.HTTP_SERVER_ERROR).send({
+                                      status:config.ERROR,
+                                      code: config.HTTP_SERVER_ERROR,
+                                      message:'Unable to process request.',
+                                      error: error
+                                    });
+                                  }else{
+                                     res.status(config.HTTP_SUCCESS).send({
+                                        status:config.SUCCESS,
+                                        code: config.HTTP_SUCCESS,
+                                        message:'Occasion inserted successfully.'
+                                    });
+                                  }                                  
+
+                                });
+
+                              }    
+                            });
+                       }
+                       else{
                           res.status(config.HTTP_SERVER_ERROR).send({
-                            status: config.ERROR, 
-                            code : config.HTTP_SERVER_ERROR, 
-                            message : "Unable to process request!", 
-                            errors : err
-                          });
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to process request.',
+                            //error: error
+                          });             
+                       }
+                    }
 
-                      }
-                  }
-              });          
+                  });
 
+                }
+
+            });
+                           
         });
       }    
     }
+    
     // Update occasion
     this.updateOccasion=function(req,res){
    
@@ -232,7 +282,8 @@ function OccasionController() {
             res.status(config.HTTP_FORBIDDEN).send({
               status: config.ERROR, 
               code : config.HTTP_FORBIDDEN, 
-              message: "You dont have permission to update occasion!"
+              message: "You dont have permission to update occasion.",
+              
             });       
         }else{
 
@@ -263,173 +314,172 @@ function OccasionController() {
                 }else{
                     var selected_countries = req.body.country_flag.split(',');
                 }
-
-                var instertOccasionData = {
-                      'country_flag':country_flag,
-                      'occasion_name':req.body.occasion_name,
-                      'occasion_day':req.body.occasion_day,
-                      'occasion_month':req.body.occasion_month,
-                      'translation_id':req.body.translation_id,                                                                 
-                      'updated_at':commonHelper.formatDateToMysqlDateTime(curr_date,3),
-                };
-
+                
+                var occasion_day  = req.body.occasion_day;
+                var occasion_month = req.body.occasion_month;
+                var updated_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
+                
 
                 if(req.body.index_no_follow !='' && req.body.index_no_follow != undefined ){
-                  instertOccasionData.index_no_follow = 1;                  
+                  var index_no_follow = 1;                  
                 }else{
-                    instertOccasionData.index_no_follow = 0;            
+                  var index_no_follow = 0;
                 }
-
-                if(req.body.description !='' && req.body.description != undefined ){
-                  instertOccasionData.description =req.body.description;
-                }
-
-                if(req.body.description_fr !='' && req.body.description_fr != undefined ){                    
-                    instertOccasionData.description_fr =req.body.description_fr;
-                }
-
-
-                if(req.body.description_de !='' && req.body.description_de != undefined ){
-                    instertOccasionData.description_de =req.body.description_de;
-                }      
-
-                if(req.body.description_es !='' && req.body.description_es != undefined ){
-                    instertOccasionData.description_es =req.body.description_es;
-                }      
-
+               
                 if(req.body.meta_title !='' && req.body.meta_title != undefined ){
-                     instertOccasionData.meta_title = req.body.meta_title;                    
+                    var meta_title = req.body.meta_title;    
                 }
                 
                 if(req.body.meta_description !='' && req.body.meta_description != undefined ){
-                     instertOccasionData.meta_description = req.body.meta_description;
+                     var meta_description = req.body.meta_description;
                 }
 
                 if(req.body.meta_keywords !='' && req.body.meta_keywords != undefined ){
-                    instertOccasionData.meta_keywords = req.body.meta_keywords;
+                    var meta_keywords = req.body.meta_keywords;
                 }
-
-                if(req.body.occasion_type !='' && req.body.occasion_type != undefined ){
-                    instertOccasionData.occasion_type = req.body.occasion_type;
-                }
-                
+                            
                 if(req.body.collection_filter !='' && req.body.collection_filter != undefined ){
-                    instertOccasionData.collection_filter = req.body.collection_filter;
+                    var collection_filter = req.body.collection_filter;
                 }else{
-                    instertOccasionData.collection_filter = 0;            
+                    var collection_filter = 0;            
                 }         
 
                 if(req.body.i_mark !='' && req.body.i_mark != undefined ){
-                    instertOccasionData.i_mark =  req.body.i_mark;
+                    var i_mark =  req.body.i_mark;
                 }else{
-                    instertOccasionData.i_mark = 0;            
+                    var i_mark = 0;            
                 }    
 
                 if(req.body.occasion_status !='' && req.body.occasion_status != undefined ){
-                    instertOccasionData.occasion_status = req.body.occasion_status;
+                    var occasion_status = req.body.occasion_status;
                 }else{
-                    instertOccasionData.occasion_status = 0;            
+                    var occasion_status = 0;            
                 }  
 
                 if(req.body.card_message !='' && req.body.card_message != undefined ){
-                    instertOccasionData.card_message = req.body.card_message;
+                    var card_message = req.body.card_message;
                 }else{
-                    instertOccasionData.card_message = 0;            
+                    var card_message = 0;            
                 }    
-
-                if(req.body.banner_id !='' && req.body.banner_id != undefined ){
-                    instertOccasionData.banner_id = req.body.banner_id;
-                }
-                
-                
+                              
                 var checkSql ="SELECT * FROM occasions WHERE id = "+id;
-
                 dbModel.rawQuery(checkSql, function(err, checkResult){
 
-                       if (err) {
-                          res.status(config.HTTP_SERVER_ERROR).send({
-                            status: config.ERROR, 
-                            code : config.HTTP_SERVER_ERROR, 
-                            message : "Unable to process request!", 
-                            errors : err
-                          });
-                       }else{
+                    if (err) {
+                       res.status(config.HTTP_SERVER_ERROR).send({
+                         status: config.ERROR, 
+                         code : config.HTTP_SERVER_ERROR, 
+                         message : "Unable to process request!", 
+                         //errors : err
+                       });
+                    }else{
 
-                           if(checkResult.length >0 ){
-                                 dbModel.save('occasions', instertOccasionData ,id, function(err, result){
+                        if(checkResult.length >0 ){
 
-                                      if (err) {
-                                          res.status(config.HTTP_SERVER_ERROR).send({
-                                            status:config.ERROR,
-                                            code: config.HTTP_SERVER_ERROR,
-                                            message:'Unable to update occasion'
-                                          });
+                         dbModel.getConnection(function(error, con){
+                             if (error) {
+                               res.status(config.HTTP_SERVER_ERROR).send({
+                                 status:config.ERROR,
+                                 code: config.HTTP_SERVER_ERROR,
+                                 message:'Unable to process request!',
+                                 //error : error
+                               });
+                             }else{
 
-                                      } else {                  
+                              var occasion_id = id;   
+                              var sql = "UPDATE occasions SET country_flag='"+country_flag+"', occasion_day="+occasion_day+", occasion_month="+occasion_month+", updated_at='"+updated_at+"', index_no_follow="+index_no_follow+",meta_title='"+meta_title+"',meta_description='"+meta_description+"',meta_keywords='"+meta_keywords+"',collection_filter="+collection_filter+", collection_filter="+collection_filter+",i_mark="+i_mark+",occasion_status="+occasion_status+",card_message="+card_message+"  WHERE id="+occasion_id+";";  
+                               // Update vendor into table.
+                               dbModel.beginTransaction(con, sql, function(error, result){
+                                 if(error){
+                                   res.status(config.HTTP_SERVER_ERROR).send({
+                                     status:config.ERROR,
+                                     code: config.HTTP_SERVER_ERROR,
+                                     message:'Unable to process request!',
+                                    // error: error
+                                   });                    
+                                 }else{  
 
-                                          var occasion_id = id;
+                                   var sql  ="DELETE FROM occasion_country WHERE  occasion_id = "+occasion_id+";";
+                                       sql +="DELETE FROM language_types WHERE language_types.type='occasion' AND type_id = "+occasion_id+";";   
+                                    dbModel.transactionQuery(con, sql, function (error, result){
+                                       if (error) {    
+                                         res.status(config.HTTP_SERVER_ERROR).send({
+                                           status:config.ERROR,
+                                           code: config.HTTP_SERVER_ERROR,
+                                           message:'Unable to process request!',
+                                           //error: error
+                                         });
+                                       }else{
 
-                                          // delete existing all and instert new all
-                                          var deleteSql="DELETE from occasion_country WHERE occasion_id = "+occasion_id;
-                                          dbModel.rawQuery(deleteSql, function(err, deleteResult){
-                                              
-                                                if(deleteResult.affectedRows > 0){
-                                                    for (i = 0; i < selected_countries.length; i++) {
+                                         var sql ="";
+                                         if( selected_countries.length > 0){
+                                             for (i = 0; i < selected_countries.length; i++) {                                                        
+                                               sql += "INSERT INTO occasion_country SET country_id="+selected_countries[i]+", occasion_id="+occasion_id+";";
+                                             }            
+                                         }
 
-                                                        var occasionCountryData= {
-                                                            country_id :selected_countries[i],
-                                                            occasion_id :occasion_id
-                                                        };
+                                        var description_arr = JSON.parse(req.body.name_description_arr); 
+                                        if(description_arr.length > 0){
 
-                                                        dbModel.save('occasion_country', occasionCountryData ,'', function(err, result){
+                                           for (var j = 0; j < description_arr.length; j++) {
+                                              sql += "INSERT INTO language_types SET language_id="+description_arr[j].language_id+", type_id="+occasion_id+",type='occasion',name='"+description_arr[j].occasion_name+"',description='"+description_arr[j].occasion_description+"';";
+                                           }
+                                        }    
 
-                                                            if (err) {
-                                                               res.status(config.HTTP_SERVER_ERROR).send({
-                                                                 status:config.ERROR,
-                                                                 code: config.HTTP_SERVER_ERROR,
-                                                                 message:'Unable to update occasion'
-                                                               });
-                                                            }
+                                         dbModel.transactionQuery(con, sql, function (error, result) {
+                                           if (error) {
+                                             res.status(config.HTTP_SERVER_ERROR).send({
+                                               status:config.ERROR,
+                                               code: config.HTTP_SERVER_ERROR,
+                                               message:'Unable to process request!',
+                                               //error: error
+                                             });
+                                           }else{
 
-                                                        });
-                                                 }
-                                                 
-                                                res.status(config.HTTP_SUCCESS).send({
-                                                    status:config.SUCCESS,
-                                                    code: config.HTTP_SUCCESS,
-                                                    message:'Occasion updated successfully.'
+                                             dbModel.commit(con, function(error, response){
+                                               if (error) {
+                                                 res.status(config.HTTP_SERVER_ERROR).send({
+                                                   status:config.ERROR,
+                                                   code: config.HTTP_SERVER_ERROR,
+                                                   message:'Unable to process request!',
+                                                   //error: error
                                                  });
-                                                 
-                                                 
-                                             }else{
-                                                 
-                                                  res.status(config.HTTP_BAD_REQUEST).send({
-                                                    status:config.ERROR,
-                                                    code: config.HTTP_BAD_REQUEST, 
-                                                    message:'Unable to update occasion'
-                                                }); 
+                                               }else{
+                                                  res.status(config.HTTP_SUCCESS).send({
+                                                     status:config.SUCCESS,
+                                                     code: config.HTTP_SUCCESS,
+                                                     message:'Occasion updated successfully.'
+                                                 });
+                                               }                                  
 
-                                             } 
-                                              
-                                          }); 
-                                            
-                                  }
+                                             });
 
-                              });                     
+                                           }    
+                                         });
 
-                           }else{
-                               
-                                res.status(config.HTTP_BAD_REQUEST).send({
-                                    status:config.ERROR,
-                                    code: config.HTTP_BAD_REQUEST, 
-                                    message:"No occasion found."
-                                }); 
-                           }
-                       }
+                                       }
 
+                                    });
+
+                                 }
+
+                               });
+
+                             }
+
+                           });
+
+                        }else{
+                           res.status(config.HTTP_NOT_FOUND).send({
+                             status: config.ERROR, 
+                             code : config.HTTP_NOT_FOUND, 
+                             message: "No occasion found."
+                           });
+                        }
+
+                    }
 
                  });
-                 
                  
              });
         }  
@@ -457,9 +507,11 @@ function OccasionController() {
                     res.status(config.HTTP_SERVER_ERROR).send({
                       status:config.ERROR,
                       code: config.HTTP_SERVER_ERROR,
-                      message:'Unable to process result!'
+                      message:'Unable to process result!',
+                      //error : error
                     });
-              }else{
+              }
+              else{
 
                 if(occasionsResult.length > 0 && occasionsResult[0].id > 0){
 
@@ -474,44 +526,46 @@ function OccasionController() {
                       });
                     }else{
 
-                      // Delete vendor form table if found 
+                      // Delete occasions form table if found 
                       dbModel.beginTransaction(con, ' DELETE FROM occasions WHERE id ='+id, function(error, result){
                         if(error){
                           res.status(config.HTTP_SERVER_ERROR).send({
                             status:config.ERROR,
                             code: config.HTTP_SERVER_ERROR,
-                            message:'Unable to delete occasion.',
-                            error: error
+                            message:'Unable to process result!',
+                            //error: error
                           });                    
                         }else{
 
                           if(result.affectedRows > 0){
                             
-                            var sql = "DELETE FROM occasion_country WHERE occasion_id ="+id+";";                            
-
-                            dbModel.transactionQuery(con, sql, function (error, result) {
+                             var sql1 =  "DELETE FROM occasion_country WHERE occasion_id ="+id+";";
+                                 sql1 += "DELETE FROM language_types WHERE language_types.type='occasion' AND type_id ="+id+";";   
+                                 
+                            dbModel.transactionQuery(con, sql1, function (error, result) {
                               if (error) {
-                                res.status(config.HTTP_SERVER_ERROR).send({
-                                  status:config.ERROR,
-                                  code: config.HTTP_SERVER_ERROR,
-                                  message:'Unable to delete occasion.',
-                                  error: error
-                                });
+                                    res.status(config.HTTP_SERVER_ERROR).send({
+                                      status:config.ERROR,
+                                      code: config.HTTP_SERVER_ERROR,
+                                      message:'Unable to process result!',
+                                      //error: error
+                                    });
                               }else{
-
+                                  
                                 dbModel.commit(con, function(err, response){
                                   if (error) {
                                     res.status(config.HTTP_SERVER_ERROR).send({
                                       status:config.ERROR,
                                       code: config.HTTP_SERVER_ERROR,
-                                      message:'Unable to delete occasion.',
-                                      error: error
+                                      message:'Unable to process result!',
+                                      //error: error
                                     });
                                   }else{
                                     res.status(config.HTTP_SUCCESS).send({
                                       status:config.SUCCESS,
                                       code: config.HTTP_SUCCESS,
-                                      message:'Occasion  deleted successfully.'
+                                      message:'Occasion deleted successfully.'
+                                      //error: error
                                     });                                    
                                   }                                  
 
@@ -521,11 +575,12 @@ function OccasionController() {
                             });
 
                           }else{
-                            res.status(config.HTTP_NOT_FOUND).send({
-                              status:config.ERROR,
-                              code: config.HTTP_NOT_FOUND,
-                              message:'Occasion not found.'
-                            });
+                                res.status(config.HTTP_SERVER_ERROR).send({
+                                status:config.ERROR,
+                                code: config.HTTP_SERVER_ERROR,
+                                message:'Unable to process result!',
+                                //error: error
+                              });           
                           }
 
                         }
@@ -537,10 +592,11 @@ function OccasionController() {
                   });
 
                 }else{
-                  res.status(config.HTTP_BAD_REQUEST).send({
-                      status:config.ERROR,
-                      code: config.HTTP_BAD_REQUEST, 
-                      message:"Occasion not found"
+                    res.status(config.HTTP_NOT_FOUND).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_NOT_FOUND, 
+                    message: "No occasion found.",
+                    //error: error
                   });
                 }          
               }
@@ -550,6 +606,69 @@ function OccasionController() {
       } // else close    
 
     }
+    
+    // Get selected single occasion 
+    this.getSelectedOccasion = function(req, res) {
+    
+        if(req.decoded.role != config.ROLE_ADMIN){
+            
+            res.status(config.HTTP_FORBIDDEN).send({
+              status: config.ERROR, 
+              code : config.HTTP_FORBIDDEN, 
+              message: "You dont have permission to get occasion!",
+             // errors : err
+            });       
+            
+        }else{
+            
+            var id=req.body.id;
+                           
+            var occasionSql ="SELECT id,country_flag,occasion_day,occasion_month,occasion_status,collection_filter,i_mark,card_message,index_no_follow,meta_title,meta_keywords,meta_description,created_at,updated_at FROM occasions ";                
+                occasionSql += " WHERE occasions.id = "+id;
+                
+               dbModel.rawQuery(occasionSql, function(err, occasionResult){
+
+                if (err) {
+                    res.status(config.HTTP_SERVER_ERROR).send({
+                      status: config.ERROR, 
+                      code : config.HTTP_SERVER_ERROR, 
+                      message : "Unable to process request!", 
+                      //errors : err
+                    });
+
+                 }else{                       
+                        if(occasionResult.length > 0 && occasionResult[0].id > 0){                            
+                            
+                            
+                             Sync(function(){                                 
+                                var occasion_country  = getAllCountryOcassion.sync(null, id);
+                                var language_types    = getAllLanguageTypes.sync(null, id);                    
+                                   occasionResult[0].name_description   = language_types;  
+                                   occasionResult[0].occasion_country   = occasion_country;   
+
+                                   res.status(config.HTTP_SUCCESS).send({
+                                        status: config.SUCCESS, 
+                                        code : config.HTTP_SUCCESS, 
+                                        message: " Occasion found",
+                                        result : occasionResult
+                                  });
+                            
+                             });
+
+                       }else{
+                               
+                             res.status(config.HTTP_NOT_FOUND).send({
+                                status:config.ERROR,
+                                code: config.HTTP_NOT_FOUND, 
+                                message:"No occasion found"
+                             });                                  
+                       }
+                    }
+                });
+        }
+    
+  };
+  
 }
 
 function getCountryListAsArray(callback){
@@ -559,6 +678,73 @@ function getCountryListAsArray(callback){
       sql += " WHERE `country_list`.`status`=1"; 
  
 
+    dbModel.rawQuery(sql, function(err, result) {
+      if (err) return callback(err);
+      else {
+        callback(null, result);                    
+      }
+    });            
+}
+
+function getAllOccasions(filters, find_total = false, callback) {
+
+    if(find_total == false){
+        var sql = "SELECT id,country_flag,occasion_day,occasion_month,occasion_status,collection_filter,i_mark,card_message,index_no_follow,meta_title,meta_keywords,meta_description,created_at,updated_at ";
+    }else{
+        var sql = "SELECT COUNT(*) AS total_occasions ";
+    }
+
+    sql += " FROM occasions ";
+    
+    if(find_total == false){
+      
+      if(filters.order_by != undefined && filters.order_by != ''){
+             
+             if(filters.order_by=='id-desc'){
+                 sql += " ORDER BY occasions.id DESC";
+             
+             }else{
+                 sql += " ORDER BY `occasions`.`id` ASC";
+             }
+             
+      }
+
+      sql += " LIMIT "+filters.start+","+filters.limit;
+    }
+
+    //console.log($sql);
+    dbModel.rawQuery(sql, function(err, result) {
+      if (err) return callback(err);
+      else {
+        callback(null, result)
+      }
+
+    });
+
+}
+
+function getAllCountryOcassion(occasion_id, callback){
+
+  var sql = "SELECT occasion_country.*,country_list.country_name";
+      sql += " FROM `occasion_country`";  
+      sql += " LEFT JOIN `country_list` ON country_list.id =occasion_country.country_id"; 
+      sql += " WHERE `occasion_country`.`occasion_id`="+occasion_id; 
+ 
+    dbModel.rawQuery(sql, function(err, result) {
+      if (err) return callback(err);
+      else {
+        callback(null, result);                    
+      }
+    });            
+}
+
+function getAllLanguageTypes(occasion_id, callback){
+
+  var sql = "SELECT language_types.*,languages.name as language_name";
+      sql += " FROM `language_types`";  
+      sql += " LEFT JOIN `languages` ON languages.id =language_types.language_id";
+      sql += " WHERE language_types.type='occasion' and `language_types`.`type_id`="+occasion_id; 
+ 
     dbModel.rawQuery(sql, function(err, result) {
       if (err) return callback(err);
       else {

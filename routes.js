@@ -10,6 +10,7 @@ var colorController = require('./api/controllers/admin/color-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 var occasionController = require('./api/controllers/admin/occasion-controller');
 
+
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
@@ -33,6 +34,7 @@ var wishlistValidation = require('./api/validation/wishlist-validation');
 var adminValidation = require('./api/validation/admin/admin-validation');
 var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 var occasionValidation = require('./api/validation/admin/occasion-validation');
+
 
 module.exports = {
   configure: function(app, router) {
@@ -276,7 +278,12 @@ module.exports = {
     
     
     /************************  START Occasion  ****************************/
-   
+
+    // listing
+    app.post('/admin/getOccasionList', authenticateController.isAuthenticated, function(req, res) {
+        occasionController.getOccasionList(req, res);
+    });
+    
     // create new
     app.post('/admin/createOccasion', authenticateController.isAuthenticated, validate(occasionValidation.createOccasion),function(req, res) {
         occasionController.createOccasion(req, res);
@@ -291,10 +298,17 @@ module.exports = {
     app.delete('/admin/deleteOccasion', authenticateController.isAuthenticated, validate(occasionValidation.deleteOccasion),function(req, res) {
         occasionController.deleteOccasion(req, res);
     });
+        
+    // get selected one
+    app.post('/admin/getSelectedOccasion', authenticateController.isAuthenticated,validate(occasionValidation.getSelectedOccasion) ,function(req, res) {
+        occasionController.getSelectedOccasion(req, res);
+    }); 
     
     /************************  END Occasion  ****************************/
 
-    
+   
+      
+      
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies', function(req, res) {
