@@ -11,6 +11,8 @@ var colorController = require('./api/controllers/admin/color-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
+var adminCustomerController = require('./api/controllers/admin/admin-customer-controller');
+
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
 var customerController = require('./api/controllers/customer-controller');
@@ -34,6 +36,7 @@ var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
 var discountValidation = require('./api/validation/admin/discount-validation');
 var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
+var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
 
 
 module.exports = {
@@ -180,7 +183,7 @@ module.exports = {
     app.post('/admin/getallcurrencies', authenticateController.isAuthenticated, function(req, res) {
         currencyController.getallcurrencies(req, res);
     });
-    
+
     app.post('/admin/editcurrency', authenticateController.isAuthenticated,validate(adminValidation.editcurrency), function(req, res) {
         currencyController.editcurrency(req, res);
     });
@@ -192,10 +195,10 @@ module.exports = {
     app.post('/admin/addcurrency', authenticateController.isAuthenticated,validate(adminValidation.addcurrency), function(req, res) {
         currencyController.addcurrency(req, res);
     });
-    
-    
-    /************************* END of currency *****************/   
-    
+
+
+    /************************* END of currency *****************/
+
     /************************* START colors *****************/
 
     app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
@@ -420,19 +423,19 @@ module.exports = {
 
     app.put('/updateCartProductQuantity', function(req, res){
         cartController.updateCartProductQuantity(req, res);
-    });    
+    });
 
     app.put('/updateCart', function(req, res){
         cartController.updateCart(req, res);
-    });    
+    });
 
     app.delete('/removeCart', function(req, res){
         cartController.removeCart(req, res);
-    });  
+    });
 
     app.get('/getCart', function(req, res){
         cartController.getCart(req, res);
-    });          
+    });
 
     /*********************** Cart Functionality Ends Here ************************/
 
@@ -440,7 +443,7 @@ module.exports = {
 
     app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
         adminVendorController.list(req, res);
-    });    
+    });
 
     app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         adminVendorController.view(req, res);
@@ -452,14 +455,14 @@ module.exports = {
 
     app.put('/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
         adminVendorController.update(req, res);
-    });    
+    });
 
     app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
         adminVendorController.delete(req, res);
     });
 
-    /*********************** Vendor Functionality Ends Here ************************/    
-    
+    /*********************** Vendor Functionality Ends Here ************************/
+
     /************************ Delivery Methods Functionality ********************************/
 
     app.post('/admin/getalldeliverymethods', authenticateController.isAuthenticated, function(req, res){
@@ -468,7 +471,7 @@ module.exports = {
 
     app.post('/admin/addeditmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
         deliveryMethodsController.addeditmethod(req, res);
-    });    
+    });
 
     app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
         deliveryMethodsController.deletemethod(req, res);
@@ -481,6 +484,30 @@ module.exports = {
         deliveryMethodsController.delete(req, res);
     });*/
 
-    /*********************** Delivery Methods Functionality Ends Here ************************/    
+    /*********************** Delivery Methods Functionality Ends Here ************************/
+
+    /************** Admin Customer **********/
+
+    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+        adminCustomerController.list(req, res);
+    });
+
+    app.post('/admin/customer/create', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+        adminCustomerController.create(req, res);
+    });
+
+    app.get('/admin/customer/view/:id', authenticateController.isAuthenticated, validate(adminCustomerValidation.view), function(req, res) {
+        adminCustomerController.view(req, res);
+    });
+
+    app.put('/admin/customer/update', authenticateController.isAuthenticated, validate(adminCustomerValidation.update), function(req, res) {
+        adminCustomerController.update(req, res);
+    });
+
+    app.delete('/admin/customer/delete', authenticateController.isAuthenticated, validate(adminCustomerValidation.delete), function(req, res) {
+        adminCustomerController.delete(req, res);
+    });
+
+    /************** Admin Customer End **********/
    }
 }
