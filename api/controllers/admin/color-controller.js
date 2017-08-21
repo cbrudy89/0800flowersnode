@@ -42,6 +42,7 @@ function ColorController() {
         message: "You dont have permission to create user!"
       });       
     }else{
+      
       // Insert into color table
       var curr_date  = new Date();
       var id=0;

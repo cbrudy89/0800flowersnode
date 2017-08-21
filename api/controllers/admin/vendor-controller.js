@@ -436,13 +436,15 @@ function VendorController() {
     }else{
       
       var parent_id = req.body.parent_id;
-      var vendor_id = req.body.id;
+      var vendor_id = id = req.body.id;
       
       if(parent_id != '' && parent_id != 0){
         vendor_id = parent_id;
       }
 
       var name = req.body.name;
+      var email = req.body.email;
+      var phone_no = req.body.phone_no;
       var country_id = req.body.country_id;
       var surcharge = req.body.surcharge;
       var status = req.body.status;
@@ -450,24 +452,158 @@ function VendorController() {
       // Secondary Contact information
       var new_contact_name = req.body.new_contact_name;
       var new_contact_email = req.body.new_contact_email;
-      var new_contact_phone = req.body.new_contact_phone;
+      var new_contact_phone = req.body.new_contact_phone ? req.body.new_contact_phone: "NULL" ;
       var vendor_cutoff_time = req.body.vendor_cutoff_time;
 
+      //var jsonData = JSON.parse(vendor_cutoff_time);
+      var jsonData = vendor_cutoff_time;
 
-      var jsonData = JSON.parse(vendor_cutoff_time);                                    
-      for (var i = 0; i < jsonData.length; i++) {                                      
-        var lang = jsonData[i];                                      
-        var response='';                                      
-        group_vendor = checkGroup_entry.sync(null,country_id, vendor_id, lang.timezone_id);
-        if(group_vendor !=''){
-          var cond = " country_id="+country_id+" AND vendor_id="+vendor_id+""
-          dbModel.delete("group_vendor", "country_id")
+      // Getting Connection Object
+      dbModel.getConnection(function(error, con){
+        if (error) {
+          res.status(config.HTTP_SERVER_ERROR).send({
+            status:config.ERROR,
+            code: config.HTTP_SERVER_ERROR,
+            message:'Unable to update vendor information.',
+            error : error
+          });
         }else{
-          insertGroup_entry.sync(null,country_id, vendor_id, lang,response);
-        }
-        
-      }
 
+          var sql = "UPDATE vendor SET parent_id="+parent_id+", name='"+name+"', phone_number="+phone_no+", status="+status+", surcharge="+surcharge+" WHERE id="+id+";";
+          sql += "UPDATE country_vendor SET country_id="+country_id+" WHERE vendor_id="+vendor_id+";";
+
+          //console.log(sql);
+
+          // Update vendor into table.
+          dbModel.beginTransaction(con, sql, function(error, result){
+            if(error){
+              res.status(config.HTTP_SERVER_ERROR).send({
+                status:config.ERROR,
+                code: config.HTTP_SERVER_ERROR,
+                message:'Unable to update vendor information.',
+                error: error
+              });                    
+            }else{  
+
+               dbModel.transactionQuery(con, "SELECT id FROM vendor_secondary_contact WHERE vendor_id="+vendor_id, function (error, result){
+                  if (error) {    
+                    res.status(config.HTTP_SERVER_ERROR).send({
+                      status:config.ERROR,
+                      code: config.HTTP_SERVER_ERROR,
+                      message:'Unable to update vendor information.',
+                      error: error
+                    });
+                  }else{
+
+                    if(result.length >0 && result[0].id > 0){
+                      var sql = "UPDATE vendor_secondary_contact SET name='"+new_contact_name+"', email='"+new_contact_email+"', phone="+new_contact_phone+" WHERE id ="+result[0].id;
+                    }else{
+                      var sql = "INSERT INTO vendor_secondary_contact SET name='"+new_contact_phone+"', email='"+new_contact_email+"', phone="+new_contact_phone;
+                    }
+
+                    //console.log(sql);
+
+                    dbModel.transactionQuery(con, sql, function (error, result) {
+                      if (error) {
+
+                        //console.log(error);
+
+                        res.status(config.HTTP_SERVER_ERROR).send({
+                          status:config.ERROR,
+                          code: config.HTTP_SERVER_ERROR,
+                          message:'Unable to update vendor information.',
+                          error: error
+                        });
+                      }else{
+
+                        //console.log('sadf32');
+
+                        dbModel.commit(con, function(error, response){
+                          if (error) {
+                            res.status(config.HTTP_SERVER_ERROR).send({
+                              status:config.ERROR,
+                              code: config.HTTP_SERVER_ERROR,
+                              message:'Unable to update vendor information.',
+                              error: error
+                            });
+                          }else{
+
+                            //console.log('sadf');
+
+                            Sync(function(){
+
+                              //console.log('asdf');
+
+                              for (var i = 0; i < jsonData.length; i++) {                                      
+                                var lang = jsonData[i];
+
+                                //console.log(lang);
+
+                                if(lang.timezone_id == '' && lang.timezone_id == undefined)
+                                  continue;
+                                                            
+                                var group_vendor_id = checkGroup_entry.sync(null, country_id, vendor_id, lang.timezone_id);
+
+                                if(group_vendor_id !='' && group_vendor_id > 0){
+                                  dbModel.delete("group_vendor", "id="+group_vendor_id, function(err, result) {
+                                    if (err) {
+                                      
+                                      //console.log("Error: ");
+                                      res.status(config.HTTP_SERVER_ERROR).send({
+                                        status:config.ERROR,
+                                        code: config.HTTP_SERVER_ERROR,
+                                        message:'Unable to update vendor information.',
+                                        error: error
+                                      });
+                                                                
+                                      //console.log("Error: "+err);
+                                      //callback(err);
+                                    } else {
+                                      if(result.affectedRows > 0 ){                
+                                        //console.log('Delete and Insert');
+                                        //console.log(result);
+                                        
+                                        var result = insertGroup_entry.sync(null,country_id, vendor_id, lang);
+                                      }
+                                    }
+                                  });
+
+                                }else{
+                                  //console.log('Insert only');
+                                  var result = insertGroup_entry.sync(null,country_id, vendor_id, lang);
+                                }
+                                
+                              }
+
+                              //console.log(result);
+
+                              res.status(config.HTTP_SUCCESS).send({
+                                status:config.SUCCESS,
+                                code: config.HTTP_SUCCESS,
+                                message:'Vendor information updated successfully.'
+                              });
+
+                            });
+
+                          }                                  
+
+                        });
+
+                      }    
+                    });
+
+                  }
+
+               });
+
+            }
+
+          });
+
+        }
+
+      });
+    
     }
 
   }
@@ -481,10 +617,12 @@ function insertGroup_entry(country_id, vendor_id, lang, callback){
     "timezone_id": lang.timezone_id,
     "group_id": "",
     "vendor_id": vendor_id,
-    "stoppage_hour": lang.stoppage_hour,
-    "stoppage_minute": lang.stoppage_minute,
+    "stoppage_hour": lang.vendor_cutoff_time_hour,
+    "stoppage_minute": lang.vendor_cutoff_time_min,
     "status": 1
   };
+
+  //console.log(data);
 
   dbModel.save("group_vendor", data, "", function(err, result) {
     if (err) {
@@ -521,6 +659,8 @@ function updateGroup_entry(country_id, vendor_id, lang, callback){
 function checkGroup_entry(country_id, vendor_id, timezone_id, callback){
 
   var sql = "SELECT id FROM `group_vendor` WHERE country_id = "+country_id+" AND timezone_id = "+timezone_id+" AND vendor_id = "+vendor_id+" LIMIT 1";
+
+  //console.log(sql);
   
   dbModel.rawQuery(sql, function(err, result) {
     if (err) {

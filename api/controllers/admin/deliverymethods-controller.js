@@ -72,7 +72,7 @@ function DeliveryMethodsController() {
         }
     }
 
-      // Get delivery method
+    // Get delivery method
     this.getmethod = function(req, res) {
       var id = req.body.id;
       dbModel.rawQuery('SELECT * FROM methods WHERE id ='+id, function(err, result){
