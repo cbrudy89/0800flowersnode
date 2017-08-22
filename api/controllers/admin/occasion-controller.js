@@ -763,6 +763,8 @@ function getAllOccasions(filters, find_total = false, callback) {
         sql += " AND language_types.name LIKE '%"+filters.search_occasion_name+"%' ";               
     }
       
+    sql += " GROUP BY occasions.id";
+    
     if(find_total == false){
       
       if(filters.order_by != undefined && filters.order_by != ''){
@@ -792,7 +794,7 @@ function getAllOccasions(filters, find_total = false, callback) {
 
 function getAllCountryOcassion(occasion_id, callback){
 
-  var sql = "SELECT occasion_country.occasion_id,occasion_country.country_id,country_list.country_name";
+  var sql = "SELECT occasion_country.country_id,country_list.country_name";
       sql += " FROM `occasion_country`";  
       sql += " LEFT JOIN `country_list` ON country_list.id =occasion_country.country_id"; 
       sql += " WHERE `occasion_country`.`occasion_id`="+occasion_id; 
