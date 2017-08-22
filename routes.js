@@ -47,7 +47,6 @@ var sympathyValidation = require('./api/validation/admin/sympathy-validation');
 var flowerValidation = require('./api/validation/admin/flower-validation');
 var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
 
-
 module.exports = {
   configure: function(app, router) {
 
