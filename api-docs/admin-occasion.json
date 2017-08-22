@@ -545,7 +545,7 @@
             },            
             "message":{
                "type":"string",
-               "example":"Occasion not found."
+               "example":"No occasion found."
             }
          }
       },            
