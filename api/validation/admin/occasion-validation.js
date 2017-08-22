@@ -6,7 +6,7 @@ module.exports = {
   createOccasion : {
 	  body: {
 	  	token: Joi.string().required(),
-                country_flag: Joi.string().required(), // country ids array "1,2,a11"
+                country_name: Joi.string().required(), // country ids array "1,2,a11"
                 name_description_arr: Joi.required(),
                 // [{"language_id":"1", "name":"name english","description":"description english"},{ "language_id":"2", "name":"name fr", "description":"description fr"},{ "language_id":"3", "name":"name de", "description":"description de"}]
                
@@ -38,7 +38,7 @@ module.exports = {
 	  	token: Joi.string().required(),
                 id:Joi.number().integer().required(),
 	  	
-                country_flag: Joi.string().required(), // country ids array "1,2,a11"
+                country_name: Joi.string().required(), // country ids array "1,2,a11"
                 name_description_arr: Joi.required(),
                 // [{"language_id":"1", "name":"name english","description":"description english"},{ "language_id":"2", "name":"name fr", "description":"description fr"},{ "language_id":"3", "name":"name de", "description":"description de"}]
                
@@ -82,6 +82,7 @@ module.exports = {
               page: Joi.number().integer(),
               limit: Joi.number().integer(),
               order_by: Joi.string(),
+              search_occasion_name:Joi.string()
         }
   },
   

@@ -59,10 +59,17 @@
                {
                   "name":"order_by",
                   "in":"formData",
-                  "description":"Page limit Example: id-desc, id-asc",
+                  "description":"Order by Example: id-desc, id-asc",
                   "required":false,
                   "type":"string"
-               }  
+               },  
+               {
+                  "name":"search_occasion_name",
+                  "in":"formData",
+                  "description":"search_occasion_name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               }
 
             ],
             "responses":{
@@ -85,7 +92,7 @@
                   }
                },                                               
                "400":{
-                  "description":"Occasion not found.",
+                  "description":"No occasion found.",
                   "schema":{
                      "$ref":"#/definitions/400getOccasionList"
                   }
@@ -113,7 +120,7 @@
                   "type":"string"
                },
                {
-                  "name":"country_flag",
+                  "name":"country_name",
                   "in":"formData",
                   "description":"Country ids Example: 1,2,3  or  all ",
                   "required":true,
@@ -215,7 +222,13 @@
                   "schema":{
                      "$ref":"#/definitions/403createOccasion"
                   }
-               }                                
+               },
+               "409":{
+                  "description":"The specified occasion name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409createOccasion"
+                  }
+               }                                               
             }
          }
       },
@@ -299,7 +312,7 @@
                   "type":"integer"
                },               
                {
-                  "name":"country_flag",
+                  "name":"country_name",
                   "in":"formData",
                   "description":"Country ids Example: 1,2,3  or  all ",
                   "required":true,
@@ -407,7 +420,13 @@
                   "schema":{
                      "$ref":"#/definitions/404updateOccasion"
                   }
-               }                                               
+               },
+               "409":{
+                  "description":"The specified occasion name already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409updateOccasion"
+                  }
+               }                                                              
             }
          }
       },
@@ -578,6 +597,22 @@
             }
          }
       },
+      "409createOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified occasion name already exists."
+            }
+         }
+      },      
       "200getSelectedOccasion":{
          "properties":{
             "status":{
@@ -705,7 +740,23 @@
                "example":"No occasion found."
             }
          }
-      },      
+      },
+      "409updateOccasion":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified occasion name already exists."
+            }
+         }
+      },             
       "200deleteOccasion":{
          "properties":{
             "status":{
