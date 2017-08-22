@@ -42,6 +42,10 @@ var discountValidation = require('./api/validation/admin/discount-validation');
 var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
 var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 var categoryValidation = require('./api/validation/admin/category-validation');
+var colorValidation = require('./api/validation/admin/color-validation');
+var sympathyValidation = require('./api/validation/admin/sympathy-validation');
+var flowerValidation = require('./api/validation/admin/flower-validation');
+var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
 
 
 module.exports = {
@@ -210,23 +214,23 @@ module.exports = {
 
     /************************* START colors *****************/
 
-    app.post('/admin/getcolors', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getcolors', authenticateController.isAuthenticated, validate(colorValidation.getcolors), function(req, res) {
         colorController.getcolors(req, res);
     });
 
-    app.post('/admin/createcolor', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/createcolor', authenticateController.isAuthenticated, validate(colorValidation.createcolor), function(req, res) {
         colorController.createcolor(req, res);
     });
 
-    app.post('/admin/getcolor', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getcolor', authenticateController.isAuthenticated, validate(colorValidation.getcolor), function(req, res) {
         colorController.getcolor(req, res);
     });
 
-    app.post('/admin/updatecolor', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/updatecolor', authenticateController.isAuthenticated, validate(colorValidation.updatecolor), function(req, res) {
         colorController.updatecolor(req, res);
     });
 
-    app.delete('/admin/deletecolor', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/deletecolor', authenticateController.isAuthenticated, validate(colorValidation.deletecolor), function(req, res) {
         colorController.deletecolor(req, res);
     });
 
@@ -234,23 +238,23 @@ module.exports = {
 
     /************************* START Sympathy Types *****************/
 
-    app.post('/admin/getSympathys', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getSympathys', authenticateController.isAuthenticated, validate(sympathyValidation.get), function(req, res) {
         sympathyController.getSympathys(req, res);
     });
 
-    app.post('/admin/createSympathy', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/createSympathy', authenticateController.isAuthenticated, validate(sympathyValidation.create), function(req, res) {
         sympathyController.createSympathy(req, res);
     });
 
-    app.post('/admin/getSympathy', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getSympathy', authenticateController.isAuthenticated, validate(sympathyValidation.view), function(req, res) {
         sympathyController.getSympathy(req, res);
     });
 
-    app.put('/admin/updateSympathy', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/updateSympathy', authenticateController.isAuthenticated, validate(sympathyValidation.update), function(req, res) {
         sympathyController.updateSympathy(req, res);
     });
 
-    app.delete('/admin/deleteSympathy', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/deleteSympathy', authenticateController.isAuthenticated, validate(sympathyValidation.delete), function(req, res) {
         sympathyController.deleteSympathy(req, res);
     });
 
@@ -258,23 +262,23 @@ module.exports = {
 
     /************************* START Flowers Types *****************/
 
-    app.post('/admin/getFlowerTypes', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getFlowerTypes', authenticateController.isAuthenticated, validate(flowerValidation.get), function(req, res) {
         flowerController.getFlowerTypes(req, res);
     });
 
-    app.post('/admin/createFlowerType', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/createFlowerType', authenticateController.isAuthenticated, validate(flowerValidation.create), function(req, res) {
         flowerController.createFlowerType(req, res);
     });
 
-    app.post('/admin/getFlowerType', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getFlowerType', authenticateController.isAuthenticated, validate(flowerValidation.view), function(req, res) {
         flowerController.getFlowerType(req, res);
     });
 
-    app.put('/admin/updateFlowerType', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/updateFlowerType', authenticateController.isAuthenticated, validate(flowerValidation.update), function(req, res) {
         flowerController.updateFlowerType(req, res);
     });
 
-    app.delete('/admin/deleteFlowerType', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/deleteFlowerType', authenticateController.isAuthenticated, validate(flowerValidation.delete), function(req, res) {
         flowerController.deleteFlowerType(req, res);
     });
 
@@ -282,23 +286,23 @@ module.exports = {
 
     /************************* START Mixed Bouquets *****************/
 
-    app.post('/admin/getMixedBouquets', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getMixedBouquets', authenticateController.isAuthenticated, validate(mixedbouquetValidation.get), function(req, res) {
         mixedBouquetController.getMixedBouquets(req, res);
     });
 
-    app.post('/admin/createMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/createMixedBouquet', authenticateController.isAuthenticated, validate(mixedbouquetValidation.create), function(req, res) {
         mixedBouquetController.createMixedBouquet(req, res);
     });
 
-    app.post('/admin/getMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+    app.post('/admin/getMixedBouquet', authenticateController.isAuthenticated, validate(mixedbouquetValidation.view), function(req, res) {
         mixedBouquetController.getMixedBouquet(req, res);
     });
 
-    app.put('/admin/updateMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+    app.put('/admin/updateMixedBouquet', authenticateController.isAuthenticated, validate(mixedbouquetValidation.update), function(req, res) {
         mixedBouquetController.updateMixedBouquet(req, res);
     });
 
-    app.delete('/admin/deleteMixedBouquet', authenticateController.isAuthenticated, function(req, res) {
+    app.delete('/admin/deleteMixedBouquet', authenticateController.isAuthenticated, validate(mixedbouquetValidation.delete), function(req, res) {
         mixedBouquetController.deleteMixedBouquet(req, res);
     });
 
