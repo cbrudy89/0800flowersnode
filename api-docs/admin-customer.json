@@ -1,0 +1,679 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Customer APIs",
+      "description":"All APIs related to the admin customer controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Customer",
+         "description":"API for admin customer usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/customer/list":{
+         "get":{
+            "tags":[
+               "Admin Customer"
+            ],
+            "description":"List/Search all customers",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"customer_name",
+                  "in":"query",
+                  "description":"Customer name for search",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"customer_email",
+                  "in":"query",
+                  "description":"Customer email for search",
+                  "required":false,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Customers found.",
+                  "schema":{
+                      "$ref":"#/definitions/200listcustomers"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500listcustomers"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get customers.",
+                  "schema":{
+                     "$ref":"#/definitions/400listcustomers"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/customer/create/":{
+         "post":{
+            "tags":[
+               "Admin Customer"
+            ],
+            "description":"Create customer from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"first_name",
+                  "in":"formData",
+                  "description":"First Name",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"last_name",
+                  "in":"formData",
+                  "description":"Last Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email Address",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"address",
+                  "in":"formData",
+                  "description":"Address",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"province_id",
+                  "in":"formData",
+                  "description":"Province Id / State Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"postal_code",
+                  "in":"formData",
+                  "description":"Postal Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"city",
+                  "in":"formData",
+                  "description":"City",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"profile_image",
+                  "in":"formData",
+                  "description":"Profile Image",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"day_phone",
+                  "in":"formData",
+                  "description":"Day Phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"evening_phone",
+                  "in":"formData",
+                  "description":"Evening Phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Customer has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200customer"
+                  }
+               },
+               "409":{
+                  "description":"The customer name has already been taken.",
+                  "schema":{
+                     "$ref":"#/definitions/409customer"
+                  }
+               },
+               "500":{
+                  "description":"Customer has been not inserted.",
+                  "schema":{
+                     "$ref":"#/definitions/500customer"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/customer/view/{id}":{
+         "get":{
+            "tags":[
+               "Admin Customer"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The customer ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewcustomer"
+                  }
+               },
+               "404":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewcustomer"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/400viewcustomer"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/customer/update":{
+         "put":{
+            "tags":[
+               "Admin Customer"
+            ],
+            "description":"Update customer",
+            "operationId":"put",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Customer ID",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"first_name",
+                  "in":"formData",
+                  "description":"First Name",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"last_name",
+                  "in":"formData",
+                  "description":"Last Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email Address",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"address",
+                  "in":"formData",
+                  "description":"Address",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"province_id",
+                  "in":"formData",
+                  "description":"Province Id / State Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"postal_code",
+                  "in":"formData",
+                  "description":"Postal Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"city",
+                  "in":"formData",
+                  "description":"City",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"profile_image",
+                  "in":"formData",
+                  "description":"Profile Image",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"day_phone",
+                  "in":"formData",
+                  "description":"Day Phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"evening_phone",
+                  "in":"formData",
+                  "description":"Evening Phone",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Customer updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updatecustomer"
+                  }
+               },
+               "500":{
+                  "description":"Unable to update customer.",
+                  "schema":{
+                     "$ref":"#/definitions/500updatecustomer"
+                  }
+               },
+               "403":{
+                  "description":"Customer has not been updated.",
+                  "schema":{
+                     "$ref":"#/definitions/403updatecustomer"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/customer/delete":{
+         "delete":{
+            "tags":[
+               "Admin Customer"
+            ],
+            "description":"Delete Customer",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired customer to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Customer deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200deletecustomer"
+                  }
+               },
+               "500":{
+                  "description":"Unable to delete Customer.",
+                  "schema":{
+                     "$ref":"#/definitions/500deletecustomer"
+                  }
+               },
+               "404":{
+                  "description":"Customer not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deletecustomer"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200listcustomers":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Categories found."
+            }
+         }
+      },
+      "500listcustomers":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400listcustomers":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get customers."
+            }
+         }
+      },
+      "200customer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer has been inserted successfully."
+            }
+         }
+      },
+      "409customer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },
+            "message":{
+               "type":"string",
+               "example":"The customer name has already been taken."
+            }
+         }
+      },
+      "500customer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer has been inserted successfully."
+            }
+         }
+      },
+      "200viewcustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer found."
+            }
+         }
+      },
+      "404viewcustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400viewcustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get countries."
+            }
+         }
+      },
+      "200updatecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer updated successfully."
+            }
+         }
+      },
+      "500updatecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to update customer."
+            }
+         }
+      },
+      "403updatecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer has not been updated."
+            }
+         }
+      },
+      "200deletecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer deleted successfully."
+            }
+         }
+      },
+      "500deletecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to delete Customer."
+            }
+         }
+      },
+      "404deletecustomer":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Customer not found."
+            }
+         }
+      }
+   }
+}
