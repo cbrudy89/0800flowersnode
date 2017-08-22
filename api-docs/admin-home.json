@@ -1,0 +1,308 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin home section APIs",
+      "description":"All APIs related to the admin home section controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin home section",
+         "description":"API for admin  home section usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getalldeliverymethods":{
+         "post":{
+            "tags":[
+               "Admin Delivery method"
+            ],
+            "description":"Get all delivery methods list from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }           
+            ],
+            "responses":{
+               "200":{
+                  "description":"data found",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },               
+               "500":{
+                  "description":"Some unknown error",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/getmethod":{
+         "post":{
+            "tags":[
+               "Admin Delivery method"
+            ],
+            "description":"Get Delivery method from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Delivery method id",
+                  "required":true,
+                  "type":"integar"
+               }
+                             
+            ],
+           "responses":{
+               "200":{
+                  "description":"Delivery method found.",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               },
+               "404":{
+                  "description":"Failed to get Delivery method.",
+                  "schema":{
+                     "$ref":"#/definitions/404"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/addeditmethod":{
+         "post":{
+            "tags":[
+               "Admin Delivery method"
+            ],
+            "description":"Add/ Edit currency from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"send id with edit request",
+                  "required":false,
+                  "type":"integar"
+               },
+               {
+                  "name":"descriptionArr",
+                  "in":"formData",
+                  "description":"desciption text array language [{'language_id':'7', 'description':'Added now updated'},{ 'language_id':'3', 'description':'language description'}]",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_method",
+                  "in":"formData",
+                  "description":"delivery method name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"infotext",
+                  "in":"formData",
+                  "description":"info text",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_within",
+                  "in":"formData",
+                  "description":"delivery within",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"delivery_charge",
+                  "in":"formData",
+                  "description":"delivery charge",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"delivery_days",
+                  "in":"formData",
+                  "description":"delivery days array ['1','2','3','4','5','6','7']",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_hour",
+                  "in":"formData",
+                  "description":"delivery_hour",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_minute",
+                  "in":"formData",
+                  "description":"delivery minute",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_policy_id",
+                  "in":"formData",
+                  "description":"delivery policy id",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"status",
+                  "required":true,
+                  "type":"integar"
+               },
+               {
+                  "name":"atlas_order",
+                  "in":"formData",
+                  "description":"atlas order id",
+                  "required":true,
+                  "type":"integar"
+               }                             
+            ],
+            "responses":{
+               "200":{
+                  "description":"Delivery method has been inserted successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"Delivery method has not been inserted.",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }                                
+            }
+         }
+      },
+      "/admin/deletemethod":{
+         "delete":{
+            "tags":[
+               "Admin Delivery method"
+            ],
+            "description":"Delete Delivery method",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired delivery method to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Delivery method deleted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200"
+                  }
+               },
+               "500":{
+                  "description":"Unable to delete Delivery method.",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }                               
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Query executed."
+            }
+         }
+      },
+      "500":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"server error"
+            }
+         }
+      }           
+   }
+}
