@@ -403,7 +403,75 @@ function CommonController() {
 
   }
 
+  /****************************** Calendar Setting    ***************************/
+  // Get all vendors list based on country id data
+  this.venderListByCountryId = function(req, res) {
 
+      var country_id = req.body.country_id;
+      var sql= 'select vendor.id,vendor.name FROM vendor LEFT JOIN country_vendor ON  vendor.id=country_vendor.vendor_id where country_vendor.country_id='+country_id;
+      dbModel.rawQuery(sql, function(err, result) {
+        if (err) {
+            res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR, 
+                message : "Unable to process request!", 
+                errors : err
+          });
+        } else {
+          if(result.length > 0){
+            res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS,
+              code: config.HTTP_SUCCESS,
+              message:"Record found",
+              result:result
+            });
+          }else{
+             res.status(config.HTTP_NOT_FOUND).send({
+                status:config.ERROR,
+                code: config.HTTP_NOT_FOUND, 
+                message:"No record found"
+              }); 
+          }
+        }        
+        
+      });
+    
+  }
+  
+   // Get all product list based on vendor id data
+  this.productListByVendorId = function(req, res) {
+
+      var vendor_id = req.body.vendor_id;
+      var sql= 'select products.id,products.product_code,language_product.product_name from products  left join language_product on  products.id=language_product.product_id WHERE products.product_status=1 AND  language_product.language_id=1 AND admin_confirm=1 AND  products.vendor_id ='+vendor_id;
+      dbModel.rawQuery(sql, function(err, result) {
+        if (err) {
+            res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR, 
+                message : "Unable to process request!", 
+                errors : err
+          });
+        } else {
+          if(result.length > 0){
+            res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS,
+              code: config.HTTP_SUCCESS,
+              message:"Record found",
+              result:result
+            });
+          }else{
+             res.status(config.HTTP_NOT_FOUND).send({
+                status:config.ERROR,
+                code: config.HTTP_NOT_FOUND, 
+                message:"No record found"
+              }); 
+          }
+        }        
+        
+      });
+    
+  }
+  /******************************  END   *****************************************/
 }
 
 module.exports = new CommonController();

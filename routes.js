@@ -4,20 +4,21 @@ var adminVendorController = require('./api/controllers/admin/vendor-controller')
 var countryController = require('./api/controllers/admin/country-controller');
 
 // For Backend Controllers
-var provinceController = require('./api/controllers/admin/province-controller');
-var languageController = require('./api/controllers/admin/language-controller');
-var timezoneController = require('./api/controllers/admin/timezone-controller');
-var colorController = require('./api/controllers/admin/color-controller');
-var sympathyController = require('./api/controllers/admin/sympathy-controller');
-var flowerController = require('./api/controllers/admin/flower-controller');
-var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-controller');
-var currencyController = require('./api/controllers/admin/currency-controller');
-var discountController = require('./api/controllers/admin/discount-controller');
-var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
-
-var promobannerController = require('./api/controllers/admin/promobanner-controller');
-var categoryController = require('./api/controllers/admin/category-controller');
 var adminCustomerController = require('./api/controllers/admin/admin-customer-controller');
+var categoryController = require('./api/controllers/admin/category-controller');
+var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
+var colorController = require('./api/controllers/admin/color-controller');
+var currencyController = require('./api/controllers/admin/currency-controller');
+var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
+var discountController = require('./api/controllers/admin/discount-controller');
+var flowerController = require('./api/controllers/admin/flower-controller');
+var languageController = require('./api/controllers/admin/language-controller');
+var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-controller');
+var occasionController = require('./api/controllers/admin/occasion-controller');
+var promobannerController = require('./api/controllers/admin/promobanner-controller');
+var provinceController = require('./api/controllers/admin/province-controller');
+var sympathyController = require('./api/controllers/admin/sympathy-controller');
+var timezoneController = require('./api/controllers/admin/timezone-controller');
 
 
 // For Frontend Controllers
@@ -34,23 +35,24 @@ var cartController = require('./api/controllers/cart-controller');
 var validate = require('./api/helpers/validation-helper');
 
 // Validation Configuration for controller
-var customerValidation = require('./api/validation/customer-validation');
-var homeValidation = require('./api/validation/home-validation');
-var orderTrackingValidation = require('./api/validation/order-tracking-validation');
-var productValidation = require('./api/validation/product-validation');
-var wishlistValidation = require('./api/validation/wishlist-validation');
+var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
 var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
-var discountValidation = require('./api/validation/admin/discount-validation');
-var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
-
-var promobannerValidation = require('./api/validation/admin/promobanner-validation');
-var categoryValidation = require('./api/validation/admin/category-validation');
+var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 var colorValidation = require('./api/validation/admin/color-validation');
-var sympathyValidation = require('./api/validation/admin/sympathy-validation');
+var categoryValidation = require('./api/validation/admin/category-validation');
+var customerValidation = require('./api/validation/customer-validation');
+var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
+var discountValidation = require('./api/validation/admin/discount-validation');
 var flowerValidation = require('./api/validation/admin/flower-validation');
+var homeValidation = require('./api/validation/home-validation');
 var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
-var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
+var occasionValidation = require('./api/validation/admin/occasion-validation');
+var orderTrackingValidation = require('./api/validation/order-tracking-validation');
+var productValidation = require('./api/validation/product-validation');
+var promobannerValidation = require('./api/validation/admin/promobanner-validation');
+var sympathyValidation = require('./api/validation/admin/sympathy-validation');
+var wishlistValidation = require('./api/validation/wishlist-validation');
 
 
 module.exports = {
@@ -353,6 +355,114 @@ module.exports = {
     });
     /************************* END of colors *****************/
 
+    /************************  START Restrict Calendar Date  ****************************/
+   
+    // listing
+    app.post('/admin/getRestrictCalendarDates', authenticateController.isAuthenticated, function(req, res) {
+        calendarsettingController.getRestrictCalendarDates(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createRestrictCalendarDate),function(req, res) {
+        calendarsettingController.createRestrictCalendarDate(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteRestrictCalendarDate),function(req, res) {
+        calendarsettingController.deleteRestrictCalendarDate(req, res);
+    });
+    
+    // get selected one
+    app.post('/admin/getSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedRestrictCalendarDate) ,function(req, res) {
+        calendarsettingController.getSelectedRestrictCalendarDate(req, res);
+    }); 
+    
+    // update one
+    app.post('/admin/updateSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedRestrictCalendarDate), function(req, res) {
+        calendarsettingController.updateSelectedRestrictCalendarDate(req, res);
+    });
+    
+    
+    /************************  END Restrict Calendar Date  ****************************/
+
+     /************************  START Surcharge Calendar Date  ****************************/
+   
+    // listing
+    app.post('/admin/getSurchargeCalendarDates', authenticateController.isAuthenticated, function(req, res) {
+        calendarsettingController.getSurchargeCalendarDates(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createSurchargeCalendarDate),function(req, res) {
+        calendarsettingController.createSurchargeCalendarDate(req, res);
+    });
+    
+     // update one
+    app.post('/admin/updateSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedSurchargeCalendarDate), function(req, res) {
+        calendarsettingController.updateSelectedSurchargeCalendarDate(req, res);
+    });
+    
+    
+    // get selected one
+    app.post('/admin/getSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedSurchargeCalendarDate) ,function(req, res) {
+        calendarsettingController.getSelectedSurchargeCalendarDate(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteSurchargeCalendarDate),function(req, res) {
+        calendarsettingController.deleteSurchargeCalendarDate(req, res);
+    });
+    
+    
+    /************************  END Surcharge Calendar Date  ****************************/
+    
+    
+   /************************* START Get vendors and prodcts lists for calendar setting  Routes ************************/
+   
+    // get vendors list by country id  (restrict calendar date and surcharge calendar date section)
+    app.post('/admin/venderListByCountryId', authenticateController.isAuthenticated,validate(calendarsettingValidation.venderListByCountryId) ,function(req, res) {
+        commonController.venderListByCountryId(req, res);
+    });   
+     // get products list by vendor id
+    app.post('/admin/productListByVendorId', authenticateController.isAuthenticated,validate(calendarsettingValidation.productListByVendorId), function(req, res) {
+        commonController.productListByVendorId(req, res);
+    }); 
+
+    /************************* END Get vendors and prodcts lists for calendar setting  Routes ************************/
+    
+    
+    /************************  START Occasion  ****************************/
+
+    // listing
+    app.post('/admin/getOccasionList', authenticateController.isAuthenticated, function(req, res) {
+        occasionController.getOccasionList(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createOccasion', authenticateController.isAuthenticated, validate(occasionValidation.createOccasion),function(req, res) {
+        occasionController.createOccasion(req, res);
+    });
+        
+    // update 
+    app.post('/admin/updateOccasion', authenticateController.isAuthenticated,validate(occasionValidation.updateOccasion), function(req, res) {
+        occasionController.updateOccasion(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteOccasion', authenticateController.isAuthenticated, validate(occasionValidation.deleteOccasion),function(req, res) {
+        occasionController.deleteOccasion(req, res);
+    });
+        
+    // get selected one
+    app.post('/admin/getSelectedOccasion', authenticateController.isAuthenticated,validate(occasionValidation.getSelectedOccasion) ,function(req, res) {
+        occasionController.getSelectedOccasion(req, res);
+    }); 
+    
+    /************************  END Occasion  ****************************/
+
+   
+      
+      
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies', function(req, res) {
