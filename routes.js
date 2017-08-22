@@ -14,8 +14,11 @@ var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-contr
 var currencyController = require('./api/controllers/admin/currency-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
+
 var promobannerController = require('./api/controllers/admin/promobanner-controller');
 var categoryController = require('./api/controllers/admin/category-controller');
+var adminCustomerController = require('./api/controllers/admin/admin-customer-controller');
+
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -40,12 +43,15 @@ var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
 var discountValidation = require('./api/validation/admin/discount-validation');
 var deliveryMethodsValidation = require('./api/validation/admin/deliverymethods-validation');
+
 var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 var categoryValidation = require('./api/validation/admin/category-validation');
 var colorValidation = require('./api/validation/admin/color-validation');
 var sympathyValidation = require('./api/validation/admin/sympathy-validation');
 var flowerValidation = require('./api/validation/admin/flower-validation');
 var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
+var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
+
 
 module.exports = {
   configure: function(app, router) {
@@ -195,7 +201,7 @@ module.exports = {
     app.post('/admin/getcurrency', authenticateController.isAuthenticated,validate(adminValidation.getcurrency), function(req, res) {
         currencyController.getcurrency(req, res);
     });
-        
+
     app.post('/admin/editcurrency', authenticateController.isAuthenticated,validate(adminValidation.editcurrency), function(req, res) {
         currencyController.editcurrency(req, res);
     });
@@ -582,8 +588,6 @@ module.exports = {
     });    
     /*********************** Promo Banner Functionality Ends Here ************************/    
 
-    /*********************** Delivery Methods Functionality Ends Here ************************/
-
     /************** Category **********/
 
     app.get('/admin/category/list', authenticateController.isAuthenticated, function(req, res) {
@@ -607,5 +611,30 @@ module.exports = {
     });
 
     /************** Category End **********/
+
+
+    /************** Admin Customer **********/
+
+    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+        adminCustomerController.list(req, res);
+    });
+
+    app.post('/admin/customer/create', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+        adminCustomerController.create(req, res);
+    });
+
+    app.get('/admin/customer/view/:id', authenticateController.isAuthenticated, validate(adminCustomerValidation.view), function(req, res) {
+        adminCustomerController.view(req, res);
+    });
+
+    app.put('/admin/customer/update', authenticateController.isAuthenticated, validate(adminCustomerValidation.update), function(req, res) {
+        adminCustomerController.update(req, res);
+    });
+
+    app.delete('/admin/customer/delete', authenticateController.isAuthenticated, validate(adminCustomerValidation.delete), function(req, res) {
+        adminCustomerController.delete(req, res);
+    });
+
+    /************** Admin Customer End **********/
    }
 }
