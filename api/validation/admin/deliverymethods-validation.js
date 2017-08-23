@@ -21,5 +21,10 @@ module.exports = {
     body: {
       id: Joi.required()
     }
+  },
+  deletemethod : {
+    body: {
+      id: Joi.required()
+    }
   }
 };            

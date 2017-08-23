@@ -16,6 +16,8 @@ var languageController = require('./api/controllers/admin/language-controller');
 var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-controller');
 var occasionController = require('./api/controllers/admin/occasion-controller');
 var promobannerController = require('./api/controllers/admin/promobanner-controller');
+var categoryController = require('./api/controllers/admin/category-controller');
+var adminhomeController = require('./api/controllers/admin/home-controller');
 var provinceController = require('./api/controllers/admin/province-controller');
 var sympathyController = require('./api/controllers/admin/sympathy-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
@@ -54,6 +56,9 @@ var orderTrackingValidation = require('./api/validation/order-tracking-validatio
 var productValidation = require('./api/validation/product-validation');
 var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 var sympathyValidation = require('./api/validation/admin/sympathy-validation');
+var flowerValidation = require('./api/validation/admin/flower-validation');
+var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
+var adminhomeValidation = require('./api/validation/admin/adminhome-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
 // Validation Configuration for Vendor
@@ -682,10 +687,28 @@ module.exports = {
         deliveryMethodsController.addeditmethod(req, res);
     });
 
-    app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
+    app.delete('/admin/deletemethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.deletemethod), function(req, res){
         deliveryMethodsController.deletemethod(req, res);
     });    
     /*********************** Delivery Methods Functionality Ends Here ************************/  
+    /************************ Admin Home Functionality ********************************/
+
+    app.post('/admin/getalltopcountires', authenticateController.isAuthenticated, function(req, res){
+        adminhomeController.getalltopcountires(req, res);
+    });
+
+    app.post('/admin/gettopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.gettopcountry), function(req, res){
+        adminhomeController.gettopcountry(req, res);
+    }); 
+
+    app.post('/admin/addedittopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.addedittopcountry), function(req, res){
+        adminhomeController.addedittopcountry(req, res);
+    });
+
+    app.delete('/admin/deletetopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.deletetopcountry), function(req, res){
+        adminhomeController.deletetopcountry(req, res);
+    });    
+    /*********************** Admin Home Functionality Ends Here ************************/ 
 
     /************************ Promo Banner Functionality ********************************/
 
