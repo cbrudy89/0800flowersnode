@@ -5,7 +5,7 @@ module.exports = {
   list : {
     query: {
       customer_name: Joi.string(),
-      customer_email: Joi.string().email().required()
+      customer_email: Joi.string().email()
     }
   },
   view : {

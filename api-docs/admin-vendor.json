@@ -24,7 +24,7 @@
       "application/json"
    ],
    "paths":{
-      "/vendor/list":{
+      "/admin/vendor/list":{
          "post":{
             "tags":[
                "Vendor"
@@ -86,7 +86,7 @@
             }
          }
       },
-      "/vendor/add":{
+      "/admin/vendor/add":{
          "post":{
             "tags":[
                "Vendor"
@@ -189,7 +189,132 @@
             }
          }
       },
-      "/vendor/delete":{
+      "/admin/vendor/update":{
+         "post":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Update existing vendor",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
+               {
+                  "name":"parent_id",
+                  "in":"formData",
+                  "description":"Parent Id",
+                  "required":true,
+                  "type":"int"
+               },               
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Vendor Id",
+                  "required":true,
+                  "type":"int"
+               },                   
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of vendor",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email address of vendor",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"phone_no",
+                  "in":"formData",
+                  "description":"Phone number of vendor",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"Surcharge",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"User status active or inactive",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"new_contact_name",
+                  "in":"formData",
+                  "description":"Secondary contact name",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"new_contact_email",
+                  "in":"formData",
+                  "description":"Secondary email address",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"new_contact_phone",
+                  "in":"formData",
+                  "description":"Secondary phone number",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_cutoff_time",
+                  "in":"formData",
+                  "description":"Vendor cutoff time [{\"timezone_id\":\"5\", \"vendor_cutoff_time_hour\":\"19\", \"vendor_cutoff_time_min\":\"30\"}, {\"timezone_id\":\"8\", \"vendor_cutoff_time_hour\":\"22\", \"vendor_cutoff_time_min\":\"15\"},{\"timezone_id\":\"13\", \"vendor_cutoff_time_hour\":\"20\", \"vendor_cutoff_time_min\":\"45\"}]",
+                  "required":false,
+                  "type":"string"
+               }                                                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor information updated successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/200update"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403update"
+                  }
+               },   
+               "500":{
+                  "description":"Unable to update vendor information.",
+                  "schema":{
+                     "$ref":"#/definitions/500update"
+                  }
+               }              
+            }
+         }
+      },      
+      "/admin/vendor/delete":{
          "delete":{
             "tags":[
                "Vendor"
@@ -244,7 +369,7 @@
             }
          }
       },
-      "/vendor/view":{
+      "/admin/vendor/view":{
          "post":{
             "tags":[
                "Vendor"
@@ -428,7 +553,7 @@
             }
          }
       },
-      "200add":{
+      "200view":{
          "properties":{
             "status":{
                "type":"boolean",
@@ -440,12 +565,44 @@
             },            
             "message":{
                "type":"string",
-               "example":"Vendor created successfully!"
+               "example":"Vendor found."
             },
             "result": []
             
          }
       },
+      "403view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to view vendor!"
+            }
+         }
+      },
+      "400view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor not found"
+            }
+         }
+      },             
       "200delete":{
          "properties":{
             "status":{
@@ -509,6 +666,56 @@
                "example":"Unable to process result!"
             }
          }
-      }  
+      },
+      "200update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor information updated successfully."
+            },
+            "result": []
+            
+         }
+      },   
+      "403update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update vendor!"
+            }
+         }
+      },
+      "500update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to update vendor information."
+            }
+         }
+      }                
    }
 }

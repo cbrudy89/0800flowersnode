@@ -1,13 +1,13 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
-var adminController = require('./api/controllers/admin/admin-controller');
-var adminVendorController = require('./api/controllers/admin/vendor-controller');
-var countryController = require('./api/controllers/admin/country-controller');
 
 // For Backend Controllers
+var adminController = require('./api/controllers/admin/admin-controller');
 var adminCustomerController = require('./api/controllers/admin/admin-customer-controller');
+var adminVendorController = require('./api/controllers/admin/vendor-controller');
 var categoryController = require('./api/controllers/admin/category-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var countryController = require('./api/controllers/admin/country-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
@@ -20,6 +20,8 @@ var provinceController = require('./api/controllers/admin/province-controller');
 var sympathyController = require('./api/controllers/admin/sympathy-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 
+// For Vendor Controllers
+var vendorController = require('./api/controllers/vendor/vendor-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -34,7 +36,7 @@ var cartController = require('./api/controllers/cart-controller');
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
 
-// Validation Configuration for controller
+// Validation Configuration for Admin 
 var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
 var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
@@ -54,6 +56,8 @@ var promobannerValidation = require('./api/validation/admin/promobanner-validati
 var sympathyValidation = require('./api/validation/admin/sympathy-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 
+// Validation Configuration for Vendor
+var vendorValidation = require('./api/validation/vendor/vendor-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -642,23 +646,23 @@ module.exports = {
 
     /************************ Vendor Functionality ********************************/
 
-    app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
+    app.post('/admin/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
         adminVendorController.list(req, res);
     });
 
-    app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+    app.post('/admin/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         adminVendorController.view(req, res);
     });
 
-    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
+    app.post('/admin/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
         adminVendorController.add(req, res);
     });
 
-    app.put('/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
+    app.put('/admin/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
         adminVendorController.update(req, res);
     });
 
-    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
+    app.delete('/admin/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
         adminVendorController.delete(req, res);
     });
 
@@ -725,7 +729,7 @@ module.exports = {
 
     /************** Admin Customer **********/
 
-    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.list), function(req, res) {
         adminCustomerController.list(req, res);
     });
 
@@ -746,5 +750,37 @@ module.exports = {
     });
 
     /************** Admin Customer End **********/
+
+
+    /************************** Vendor Section *****************************/
+    
+    /**************** Vendor Login Section Start Here ****************/
+
+    app.post('/vendor/login', validate(vendorValidation.login), function(req, res) {
+        vendorController.login(req, res);
+    });
+
+    app.get('/vendor/view', authenticateController.isAuthenticated, function(req, res) {
+        vendorController.view(req, res);
+    });
+
+    app.put('/vendor/update', authenticateController.isAuthenticated, function(req, res) {
+        vendorController.update(req, res);
+    });
+
+    app.put('/vendor/changePassword', authenticateController.isAuthenticated, validate(vendorValidation.changePassword), function(req, res) {
+        vendorController.changePassword(req, res);
+    });      
+
+    /**************** Vendor Login End Here ****************/ 
+
+
+
+
+
+    /*************************** Vendor Section End *****************************/
+
    }
+
+
 }

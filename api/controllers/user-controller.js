@@ -50,7 +50,7 @@ function AdminController() {
       connection.acquire(function(err, con) {
         bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {
           if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(config.HTTP_SERVER_ERROR).send({
               status: config.ERROR, 
               code : config.HTTP_SERVER_ERROR, 

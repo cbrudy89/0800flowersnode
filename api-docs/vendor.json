@@ -1,0 +1,563 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Vendor APIs",
+      "description":"All APIs related to the Vendor",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Vendor",
+         "description":"API for Vendor"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/vendor/login":{
+         "post":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"API for Vendor Login",
+            "operationId":"login",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"email",
+                  "in":"formData",
+                  "description":"Email for vendor",
+                  "required":true,
+                  "type": "string"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"Password for vendor",
+                  "required":true,
+                  "type": "string"
+               }               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Logged in successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200login"
+                  }
+               },
+               "400":{
+                  "description":"Username & Password does not exist",
+                  "schema":{
+                     "$ref":"#/definitions/400login"
+                  }
+               },
+               "403":{
+                  "description":"Please contact with administrator.",
+                  "schema":{
+                     "$ref":"#/definitions/403login"
+                  }
+               },
+               "404":{
+                  "description":"Username & Password does not exist.",
+                  "schema":{
+                     "$ref":"#/definitions/404login"
+                  }
+               },                  
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500login"
+                  }
+               }                         
+
+            }
+         }
+      },
+      "/vendor/view":{
+         "get":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"View vendor details",
+            "operationId":"view",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               }                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor information found",
+                  "schema":{
+                     "$ref":"#/definitions/200view"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get Customer Information",
+                  "schema":{
+                     "$ref":"#/definitions/400view"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to view vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403view"
+                  }
+               },              
+               "404":{
+                  "description":"Failed to get Customer Information",
+                  "schema":{
+                     "$ref":"#/definitions/404view"
+                  }
+               }   
+            }
+         }
+      },
+      "/vendor/update":{
+         "put":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Update existing vendor",
+            "operationId":"update",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },               
+               {
+                  "name":"name",
+                  "in":"formData",
+                  "description":"Name of vendor",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"phone_number",
+                  "in":"formData",
+                  "description":"Phone number of vendor",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"password",
+                  "in":"formData",
+                  "description":"Password for vendor",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"profile_image",
+                  "in":"formData",
+                  "description":"Vendor profile image (base64 image)",
+                  "required":false,
+                  "type":"string"
+               }                                                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor has been updated successfully.",
+                  "schema":{
+                     "$ref":"#/definitions/200update"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update vendor!",
+                  "schema":{
+                     "$ref":"#/definitions/403update"
+                  }
+               },   
+               "404":{
+                  "description":"The vendor not found.",
+                  "schema":{
+                     "$ref":"#/definitions/404update"
+                  }
+               },   
+               "500":{
+                  "description":"Vendor has been not updated.",
+                  "schema":{
+                     "$ref":"#/definitions/500update"
+                  }
+               }              
+            }
+         }
+      },      
+      "/vendor/changePassword":{
+         "put":{
+            "tags":[
+               "Vendor"
+            ],
+            "description":"Change vendor password",
+            "operationId":"changePassword",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token",
+                  "required":true,
+                  "type": "string"
+               },                    
+               {
+                  "name":"old_password",
+                  "in":"formData",
+                  "description":"Old password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"new_password",
+                  "in":"formData",
+                  "description":"New password",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"new_password_confirmation",
+                  "in":"formData",
+                  "description":"New confirmed password",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Password updated successfully!",
+                  "schema":{
+                      "$ref":"#/definitions/200changePassword"
+                  }
+               },
+               "400":{
+                  "description":"Password and confirmed password not matched.",
+                  "schema":{
+                     "$ref":"#/definitions/400changePassword"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update vendor password!",
+                  "schema":{
+                     "$ref":"#/definitions/403changePassword"
+                  }
+               },
+               "500":{
+                  "description":"Unable to update Password.",
+                  "schema":{
+                     "$ref":"#/definitions/500changePassword"
+                  }
+               }                                
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Logged in successfully."
+            },
+            "result":{
+               "type":"string",
+               "example":""
+            }
+         }
+      },
+      "400login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Username & Password does not exist"
+            }
+         }
+      },
+      "403login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Please contact with administrator."
+            }
+         }
+      },
+      "404login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Username & Password does not exist."
+            }
+         }
+      },      
+      "500login":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "200view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor information found"
+            },
+            "result": []
+            
+         }
+      },
+      "400view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get Customer Information"
+            }
+         }
+      },
+      "403view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to view vendor!"
+            }
+         }
+      },  
+      "404view":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Failed to get Customer Information"
+            }
+         }
+      },        
+      "200update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor has been updated successfully."
+            },
+            "result": []
+            
+         }
+      },
+      "403update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update vendor!"
+            }
+         }
+      },
+      "404update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The vendor not found."
+            }
+         }
+      },  
+      "500update":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Vendor has been not updated."
+            }
+         }
+      },  
+      "200changePassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Password updated successfully!"
+            },
+            "result": []
+            
+         }
+      },   
+      "400changePassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Password and confirmed password not matched."
+            }
+         }
+      },      
+      "403changePassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update vendor password!"
+            }
+         }
+      },
+      "500changePassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to update Password."
+            }
+         }
+      }                
+   }
+}
