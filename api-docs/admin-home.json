@@ -24,12 +24,12 @@
       "application/json"
    ],
    "paths":{
-      "/admin/getalldeliverymethods":{
+      "/admin/getalltopcountires":{
          "post":{
             "tags":[
-               "Admin Delivery method"
+               "Admin Home Page"
             ],
-            "description":"Get all delivery methods list from admin section",
+            "description":"Get all top countries list from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -59,12 +59,12 @@
             }
          }
       },
-      "/admin/getmethod":{
+      "/admin/gettopcountry":{
          "post":{
             "tags":[
-               "Admin Delivery method"
+               "Admin Home Page"
             ],
-            "description":"Get Delivery method from admin section",
+            "description":"Get top country from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -88,7 +88,7 @@
             ],
            "responses":{
                "200":{
-                  "description":"Delivery method found.",
+                  "description":"top country found.",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
@@ -100,7 +100,7 @@
                   }
                },
                "404":{
-                  "description":"Failed to get Delivery method.",
+                  "description":"Failed to get top country.",
                   "schema":{
                      "$ref":"#/definitions/404"
                   }
@@ -108,12 +108,12 @@
             }
          }
       },
-      "/admin/addeditmethod":{
+      "/admin/addedittopcountry":{
          "post":{
             "tags":[
-               "Admin Delivery method"
+               "Admin Home Page"
             ],
-            "description":"Add/ Edit currency from admin section",
+            "description":"Add/ Edit top country from admin section",
             "operationId":"for the URL",
             "produces":[
                "application/json"
@@ -134,65 +134,23 @@
                   "type":"integar"
                },
                {
-                  "name":"descriptionArr",
+                  "name":"product_image",
                   "in":"formData",
-                  "description":"desciption text array language [{'language_id':'7', 'description':'Added now updated'},{ 'language_id':'3', 'description':'language description'}]",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_method",
-                  "in":"formData",
-                  "description":"delivery method name",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"infotext",
-                  "in":"formData",
-                  "description":"info text",
+                  "description":"product image base64 format",
                   "required":false,
                   "type":"string"
                },
                {
-                  "name":"delivery_within",
+                  "name":"country_id",
                   "in":"formData",
-                  "description":"delivery within",
-                  "required":true,
-                  "type":"integar"
-               },
-               {
-                  "name":"delivery_charge",
-                  "in":"formData",
-                  "description":"delivery charge",
-                  "required":true,
-                  "type":"integar"
-               },
-               {
-                  "name":"delivery_days",
-                  "in":"formData",
-                  "description":"delivery days array ['1','2','3','4','5','6','7']",
+                  "description":"country id",
                   "required":true,
                   "type":"string"
                },
                {
-                  "name":"delivery_hour",
+                  "name":"order_by",
                   "in":"formData",
-                  "description":"delivery_hour",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_minute",
-                  "in":"formData",
-                  "description":"delivery minute",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"delivery_policy_id",
-                  "in":"formData",
-                  "description":"delivery policy id",
+                  "description":"order by",
                   "required":true,
                   "type":"integar"
                },
@@ -202,24 +160,17 @@
                   "description":"status",
                   "required":true,
                   "type":"integar"
-               },
-               {
-                  "name":"atlas_order",
-                  "in":"formData",
-                  "description":"atlas order id",
-                  "required":true,
-                  "type":"integar"
-               }                             
+               }                            
             ],
             "responses":{
                "200":{
-                  "description":"Delivery method has been inserted successfully!",
+                  "description":"top country has been inserted successfully!",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
                },
                "500":{
-                  "description":"Delivery method has not been inserted.",
+                  "description":"top country has not been inserted.",
                   "schema":{
                      "$ref":"#/definitions/500"
                   }
@@ -227,12 +178,12 @@
             }
          }
       },
-      "/admin/deletemethod":{
+      "/admin/deletetopcountry":{
          "delete":{
             "tags":[
-               "Admin Delivery method"
+               "Admin Home Page"
             ],
-            "description":"Delete Delivery method",
+            "description":"Delete top country",
             "operationId":"delete",
             "produces":[
                "application/json"
@@ -248,20 +199,20 @@
                {
                   "name":"id",
                   "in":"formData",
-                  "description":"Id of the desired delivery method to delete.",
+                  "description":"Id of the desired top country to delete.",
                   "required":true,
                   "type":"integer"
                }
             ],
              "responses":{
                "200":{
-                  "description":"Delivery method deleted successfully.",
+                  "description":"top country deleted successfully.",
                   "schema":{
                       "$ref":"#/definitions/200"
                   }
                },
                "500":{
-                  "description":"Unable to delete Delivery method.",
+                  "description":"Unable to delete top country.",
                   "schema":{
                      "$ref":"#/definitions/500"
                   }
