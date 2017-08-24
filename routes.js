@@ -19,6 +19,8 @@ var promobannerController = require('./api/controllers/admin/promobanner-control
 var provinceController = require('./api/controllers/admin/province-controller');
 var sympathyController = require('./api/controllers/admin/sympathy-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
+var adminProductController = require('./api/controllers/admin/admin-product-controller');
+
 
 
 // For Frontend Controllers
@@ -53,6 +55,7 @@ var productValidation = require('./api/validation/product-validation');
 var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 var sympathyValidation = require('./api/validation/admin/sympathy-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
+var adminProductValidation = require('./api/validation/admin/admin-product-validation');
 
 
 module.exports = {
@@ -199,7 +202,7 @@ module.exports = {
     app.post('/admin/getallcurrencies', authenticateController.isAuthenticated, function(req, res) {
         currencyController.getallcurrencies(req, res);
     });
-    
+
     app.post('/admin/getcurrency', authenticateController.isAuthenticated,validate(adminValidation.getcurrency), function(req, res) {
         currencyController.getcurrency(req, res);
     });
@@ -289,7 +292,7 @@ module.exports = {
         flowerController.deleteFlowerType(req, res);
     });
 
-    /************************* END of Flowers *****************/   
+    /************************* END of Flowers *****************/
 
     /************************* START Mixed Bouquets *****************/
 
@@ -313,7 +316,7 @@ module.exports = {
         mixedBouquetController.deleteMixedBouquet(req, res);
     });
 
-    /************************* END of Mixed Bouquets *****************/     
+    /************************* END of Mixed Bouquets *****************/
 
 
      /************************* START Promo Code API's *****************/
@@ -356,113 +359,113 @@ module.exports = {
     /************************* END of colors *****************/
 
     /************************  START Restrict Calendar Date  ****************************/
-   
+
     // listing
     app.post('/admin/getRestrictCalendarDates', authenticateController.isAuthenticated, function(req, res) {
         calendarsettingController.getRestrictCalendarDates(req, res);
     });
-    
+
     // create new
     app.post('/admin/createRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createRestrictCalendarDate),function(req, res) {
         calendarsettingController.createRestrictCalendarDate(req, res);
     });
-    
+
     // delete
     app.delete('/admin/deleteRestrictCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteRestrictCalendarDate),function(req, res) {
         calendarsettingController.deleteRestrictCalendarDate(req, res);
     });
-    
+
     // get selected one
     app.post('/admin/getSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedRestrictCalendarDate) ,function(req, res) {
         calendarsettingController.getSelectedRestrictCalendarDate(req, res);
-    }); 
-    
+    });
+
     // update one
     app.post('/admin/updateSelectedRestrictCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedRestrictCalendarDate), function(req, res) {
         calendarsettingController.updateSelectedRestrictCalendarDate(req, res);
     });
-    
-    
+
+
     /************************  END Restrict Calendar Date  ****************************/
 
      /************************  START Surcharge Calendar Date  ****************************/
-   
+
     // listing
     app.post('/admin/getSurchargeCalendarDates', authenticateController.isAuthenticated, function(req, res) {
         calendarsettingController.getSurchargeCalendarDates(req, res);
     });
-    
+
     // create new
     app.post('/admin/createSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createSurchargeCalendarDate),function(req, res) {
         calendarsettingController.createSurchargeCalendarDate(req, res);
     });
-    
+
      // update one
     app.post('/admin/updateSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedSurchargeCalendarDate), function(req, res) {
         calendarsettingController.updateSelectedSurchargeCalendarDate(req, res);
     });
-    
-    
+
+
     // get selected one
     app.post('/admin/getSelectedSurchargeCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedSurchargeCalendarDate) ,function(req, res) {
         calendarsettingController.getSelectedSurchargeCalendarDate(req, res);
     });
-    
+
     // delete
     app.delete('/admin/deleteSurchargeCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteSurchargeCalendarDate),function(req, res) {
         calendarsettingController.deleteSurchargeCalendarDate(req, res);
     });
-    
-    
+
+
     /************************  END Surcharge Calendar Date  ****************************/
-    
-    
+
+
    /************************* START Get vendors and prodcts lists for calendar setting  Routes ************************/
-   
+
     // get vendors list by country id  (restrict calendar date and surcharge calendar date section)
     app.post('/admin/venderListByCountryId', authenticateController.isAuthenticated,validate(calendarsettingValidation.venderListByCountryId) ,function(req, res) {
         commonController.venderListByCountryId(req, res);
-    });   
+    });
      // get products list by vendor id
     app.post('/admin/productListByVendorId', authenticateController.isAuthenticated,validate(calendarsettingValidation.productListByVendorId), function(req, res) {
         commonController.productListByVendorId(req, res);
-    }); 
+    });
 
     /************************* END Get vendors and prodcts lists for calendar setting  Routes ************************/
-    
-    
+
+
     /************************  START Occasion  ****************************/
 
     // listing
     app.post('/admin/getOccasionList', authenticateController.isAuthenticated, function(req, res) {
         occasionController.getOccasionList(req, res);
     });
-    
+
     // create new
     app.post('/admin/createOccasion', authenticateController.isAuthenticated, validate(occasionValidation.createOccasion),function(req, res) {
         occasionController.createOccasion(req, res);
     });
-        
-    // update 
+
+    // update
     app.post('/admin/updateOccasion', authenticateController.isAuthenticated,validate(occasionValidation.updateOccasion), function(req, res) {
         occasionController.updateOccasion(req, res);
     });
-    
+
     // delete
     app.delete('/admin/deleteOccasion', authenticateController.isAuthenticated, validate(occasionValidation.deleteOccasion),function(req, res) {
         occasionController.deleteOccasion(req, res);
     });
-        
+
     // get selected one
     app.post('/admin/getSelectedOccasion', authenticateController.isAuthenticated,validate(occasionValidation.getSelectedOccasion) ,function(req, res) {
         occasionController.getSelectedOccasion(req, res);
-    }); 
-    
+    });
+
     /************************  END Occasion  ****************************/
 
-   
-      
-      
+
+
+
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies', function(req, res) {
@@ -672,7 +675,7 @@ module.exports = {
 
     app.post('/admin/getmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.getmethod), function(req, res){
         deliveryMethodsController.getmethod(req, res);
-    }); 
+    });
 
     app.post('/admin/addeditmethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.editmethod), function(req, res){
         deliveryMethodsController.addeditmethod(req, res);
@@ -680,8 +683,8 @@ module.exports = {
 
     app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
         deliveryMethodsController.deletemethod(req, res);
-    });    
-    /*********************** Delivery Methods Functionality Ends Here ************************/  
+    });
+    /*********************** Delivery Methods Functionality Ends Here ************************/
 
     /************************ Promo Banner Functionality ********************************/
 
@@ -691,12 +694,12 @@ module.exports = {
 
     app.post('/admin/addeditpromobanner', authenticateController.isAuthenticated, validate(promobannerValidation.addeditpromobanner), function(req, res){
         promobannerController.addeditpromobanner(req, res);
-    });    
+    });
 
     app.delete('/admin/deletepromobanner', authenticateController.isAuthenticated, function(req, res){
         promobannerController.deletepromobanner(req, res);
-    });    
-    /*********************** Promo Banner Functionality Ends Here ************************/    
+    });
+    /*********************** Promo Banner Functionality Ends Here ************************/
 
     /************** Category **********/
 
@@ -725,7 +728,7 @@ module.exports = {
 
     /************** Admin Customer **********/
 
-    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.create), function(req, res) {
+    app.get('/admin/customer/list', authenticateController.isAuthenticated, validate(adminCustomerValidation.list), function(req, res) {
         adminCustomerController.list(req, res);
     });
 
@@ -746,5 +749,24 @@ module.exports = {
     });
 
     /************** Admin Customer End **********/
+
+    /************** Admin Product **********/
+
+    app.get('/admin/product/list', authenticateController.isAuthenticated, function(req, res) {
+        adminProductController.list(req, res);
+    });
+
+    app.get('/admin/product/search', authenticateController.isAuthenticated, validate(adminProductValidation.search), function(req, res) {
+        adminProductController.search(req, res);
+    });
+
+    app.get('/admin/product/view/:id', authenticateController.isAuthenticated, validate(adminProductValidation.view), function(req, res) {
+        adminProductController.view(req, res);
+    });
+
+    app.put('/admin/product/update', authenticateController.isAuthenticated, validate(adminProductValidation.update), function(req, res) {
+        adminProductController.update(req, res);
+    });
+    /************** Admin Product End **********/
    }
 }
