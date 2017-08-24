@@ -1,3 +1,4 @@
+var jwt=require('jsonwebtoken');
 var request = require('request');
 var config = require('./../../config');
 var dbModel = require('./../models/db-model');
@@ -1022,6 +1023,20 @@ function currentformatted_date(template, adddays = 0){
     }
     if (template == 'd-m-Y') return dd + '-' + mm + '-' + yyyy;
     if (template == 'Y-m-d') return yyyy + '-' + mm + '-' + dd;
+}
+
+function getUserId(token, callback){
+
+  if(token){
+    jwt.verify(token,process.env.SECRET_KEY,function(err,decoded){
+        if(err){
+            callback(err);
+        }else{
+            callback(null, decoded);
+        }
+    });
+  }
+
 }
 
 module.exports = new CommonHelper();

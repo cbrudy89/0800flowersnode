@@ -1,6 +1,7 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var async = require('async');
+var Sync = require('sync');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
@@ -220,6 +221,31 @@ function HomeController() {
         language_id = process.env.SITE_LANGUAGE;
       }
 
+      var token = req.headers['token'] || 0 ;
+      var cart_key = req.headers['cart_key'] || '';
+      var user_id = 0;
+
+      Sync(function(){
+
+        if(token){
+          var decoded = commonModel.getUserId.sync(null, token);
+          user_id = decoded.id;
+        }
+
+      });
+
+      /*if(req.decoded.id != '' && req.decoded.id != undefined){
+        var user_id = req.decoded.id;
+      }else{
+        var user_id = 0;
+      }
+
+      if(cart_key != '' && cart_key != undefined){
+        var cart_key = cart_key;
+      }else{
+        var cart_key = '';
+      }          */
+
       var return_data = {};
 
       //This functions will be executed at the same time
@@ -246,7 +272,7 @@ function HomeController() {
           },
           function languages(callback){
 
-              dbModel.find('languages','id,name,lang_icon,short_code2 AS "code"', 'status=1', '', '', function(err, result) {
+              dbModel.find('languages','id,name, CONCAT("'+config.RESOURCE_URL+'", REPLACE(lang_icon, "+","%2B")) as lang_icon,short_code2 AS "code"', 'status=1', '', '', function(err, result) {
                  if (err) return callback(err);
                  return_data.languages = result;
                  callback();
@@ -254,7 +280,7 @@ function HomeController() {
           },
           function topcountries(callback){
 
-              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id, (SELECT currency_code FROM currency WHERE id = cl.preferred_currency_id) as preferred_currency_code FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+              sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id, (SELECT currency_code FROM currency WHERE id = cl.preferred_currency_id) as preferred_currency_code,cl.language_id, (SELECT short_code2 FROM languages WHERE id = cl.language_id AND status = 1) as language_code FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
               dbModel.rawQuery(sql, function(err, result) {
                  if (err) return callback(err);
@@ -287,7 +313,7 @@ function HomeController() {
             var country = [];
             
 
-              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){
@@ -303,6 +329,8 @@ function HomeController() {
                     redirect_url = countries[i].redirect_url;
                     preferred_currency_id = countries[i].preferred_currency_id;
                     preferred_currency_code = countries[i].preferred_currency_code;
+                    language_id = countries[i].language_id;
+                    language_code = countries[i].language_code;                    
                     company_logo = countries[i].company_logo;
 
 
@@ -318,6 +346,8 @@ function HomeController() {
                       "redirect_url": redirect_url,
                       "preferred_currency_id": preferred_currency_id,
                       "preferred_currency_code": preferred_currency_code,
+                      "language_id": language_id,
+                      "language_code": language_code,
                       "company_logo": company_logo
                     });
                   }
@@ -410,7 +440,75 @@ function HomeController() {
                }
             });           
 
-          },            
+          },       
+          function cartCount(callback){
+
+              var cartCount = 0;
+              //return_data.cartCount = cartCount;
+
+              if(user_id > 0 || (cart_key != '' && cart_key != undefined)){
+                
+                var sql = "SELECT COUNT(cp.quantity) AS total FROM cart c INNER JOIN cart_products cp ON (c.id = cp.cart_id)";
+
+                if(user_id > 0){
+                  sql += " WHERE c.user_id ="+user_id;
+                }else{
+                  sql += " WHERE c.cart_key = '"+cart_key+"'";
+                }
+
+                dbModel.rawQuery(sql, function(err, result) {
+                  if (err){
+                    return callback(err);
+                  } else{
+                    if(result.length > 0){
+                      return_data.cartCount = result[0].total;
+                    }else{
+                      return_data.cartCount = cartCount;
+                    }
+                    callback();
+                  }
+                });
+                
+              }else{
+                return_data.cartCount = cartCount;
+                callback();
+              }
+
+          },
+          function wishlistCount(callback){
+
+              var wishlistCount = 0;
+
+              if(user_id > 0){
+                
+                var sql = "SELECT COUNT(w.qty) AS total FROM wishlist w ";
+                    sql += " WHERE w.user_id ="+user_id;
+
+                dbModel.rawQuery(sql, function(err, result) {
+                  if (err){
+                    return callback(err);
+                  } else{
+                    if(result.length > 0){
+                      return_data.wishlistCount = result[0].total;
+                    }else{
+                      return_data.wishlistCount = wishlistCount;
+                    }
+                    callback();
+                  }
+                });
+                
+              }else{
+                return_data.wishlistCount = wishlistCount;
+                callback();
+              }
+
+          },
+          function notificationCount(callback){
+              var notificationCount = 0;
+              return_data.notificationCount = notificationCount;
+              callback();
+
+          }               
           /*function site_content(callback){
 
               sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.status = 1";

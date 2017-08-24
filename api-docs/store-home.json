@@ -94,12 +94,27 @@
             ],
             "parameters":[
                {
-                     "name":"langauge_code",
-                     "in":"path",
-                     "description":"Site language id",
-                     "required":true,
-                     "type":"integer"
-               }                             
+                  "name":"langauge_code",
+                  "in":"path",
+                  "description":"Site language id",
+                  "required":true,
+                  "type":"integer"
+               },  
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Logged in customer token.",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"cart_key",
+                  "in":"header",
+                  "description":"Cart key.",
+                  "required":false,
+                  "type":"string"
+               }               
+
             ],
             "responses":{
                "200":{
