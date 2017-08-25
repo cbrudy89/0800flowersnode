@@ -9,7 +9,7 @@ var timezoneController = require('./api/controllers/admin/timezone-controller');
 var colorController = require('./api/controllers/admin/color-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 var occasionController = require('./api/controllers/admin/occasion-controller');
-
+var cmsController = require('./api/controllers/admin/cms-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -34,6 +34,7 @@ var wishlistValidation = require('./api/validation/wishlist-validation');
 var adminValidation = require('./api/validation/admin/admin-validation');
 var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 var occasionValidation = require('./api/validation/admin/occasion-validation');
+var cmsValidation = require('./api/validation/admin/cms-validation');
 
 
 module.exports = {
@@ -306,7 +307,35 @@ module.exports = {
     
     /************************  END Occasion  ****************************/
 
-   
+
+    /************************  START CMS  ****************************/
+
+    // listing
+    app.post('/admin/getCmsList', authenticateController.isAuthenticated, function(req, res) {
+        cmsController.getCmsList(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createCms', authenticateController.isAuthenticated, validate(cmsValidation.createCms),function(req, res) {
+        cmsController.createCms(req, res);
+    });
+        
+    // update 
+    app.post('/admin/updateCms', authenticateController.isAuthenticated,validate(cmsValidation.updateCms), function(req, res) {
+        cmsController.updateCms(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteCms', authenticateController.isAuthenticated, validate(cmsValidation.deleteCms),function(req, res) {
+        cmsController.deleteCms(req, res);
+    });
+        
+    // get selected one
+    app.post('/admin/getSelectedCms', authenticateController.isAuthenticated,validate(cmsValidation.getSelectedCms) ,function(req, res) {
+        cmsController.getSelectedCms(req, res);
+    }); 
+    
+    /************************  END Occasion  ****************************/      
       
       
     /************************* Home Page Routes ************************/
