@@ -300,7 +300,7 @@ function HomeController() {
               });
 
           },   
-          function homeoffer(callback){
+          /*function homeoffer(callback){
 
               dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
                  if (err) return callback(err);
@@ -308,7 +308,7 @@ function HomeController() {
                  callback();
               });
 
-          },
+          },*/
           function countriesprovinces(callback) {
             var country = [];
             
@@ -502,13 +502,14 @@ function HomeController() {
                 callback();
               }
 
-          },
+          }
+          /*,
           function notificationCount(callback){
               var notificationCount = 0;
               return_data.notificationCount = notificationCount;
               callback();
 
-          }               
+          } */              
           /*function site_content(callback){
 
               sql = "SELECT c.id,c.page_name,c.slug,c.page_title,c.placement,c.canonical_url,c.meta_keywords,c.meta_description,c.image,cl.h1_text,cl.description FROM cms c LEFT JOIN cms_language cl ON(c.id = cl.cms_id) WHERE cl.language_id = "+language_id+" AND c.status = 1";
