@@ -6,6 +6,7 @@ var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
 var commonModel = require('./../helpers/common-helper');
+var fs = require('fs');
 //var userHelper = require('./../helpers/user-helper');
 //var userModel = require('./../../../user-model');
 
@@ -251,6 +252,13 @@ function CommonController() {
     });    
 
     var return_data = {};
+    //return_data.default_logo = config.RESOURCE_URL+"logo.png";
+    var path = config.RESOURCE_URL+"logo.png";
+    if (fs.existsSync(path)) {
+      return_data.default_logo = config.RESOURCE_URL+"logo.png";
+    }else{
+      return_data.default_logo = "";
+    }    
 
     //This functions will be executed at the same time
     async.parallel([
@@ -271,6 +279,72 @@ function CommonController() {
                callback();
             });
         },
+        function continentcountries(callback) {
+              
+            var continent = [];
+            dbModel.rawQuery("SELECT id, continent_name FROM continents WHERE status = 1", function(err, continents) {
+              if (err) return callback(err);
+              else 
+                if(continents.length > 0){
+
+                    sql = "SELECT continent_id, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1";
+                    //console.log(sql);
+                      
+                    dbModel.rawQuery(sql, function(err, countries) {
+                      if (err) return callback(err);
+                      else 
+                        if(countries.length > 0){
+                          for ( var i=0 ; i < continents.length; i++) {
+                            var country = [];
+
+                            id = continents[i].id;
+                            continent_name = continents[i].continent_name;
+
+                              for ( var j=0 ; j < countries.length; j++) {
+
+                                if(id == countries[j].continent_id){
+                                  
+                                  //console.log(countries[j]);
+                                  country.push({
+                                    "country_id": countries[j].id,
+                                    "country_name": countries[j].country_name,
+                                    "alias": countries[j].alias,
+                                    "short_code": countries[j].short_code,
+                                    "iso_code": countries[j].iso_code,
+                                    "country_flag": countries[j].country_flag,
+                                    "show_state": countries[j].show_state,
+                                    "redirect_url": countries[j].redirect_url,
+                                    "preferred_currency_id": countries[j].preferred_currency_id,
+                                    "preferred_currency_code": countries[j].preferred_currency_code,
+                                    "language_id": countries[j].language_id,
+                                    "language_code": countries[j].language_code,
+                                    "company_logo": countries[j].company_logo
+                                  });
+
+                                }
+                              }                              
+
+                              continent.push({
+                                "continent_id": id, 
+                                "country_name": continent_name,
+                                "countries": country
+                              });
+                          }
+
+                          return_data.continents_and_countries = continent;
+                          callback();
+                       }                        
+
+                    });
+                 
+
+               }else{
+                  callback(null, []);
+               }
+
+            });
+
+        },        
         function countriesprovinces(callback) {
           var country = [];
 

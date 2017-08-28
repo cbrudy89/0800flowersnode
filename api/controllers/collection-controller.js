@@ -548,14 +548,15 @@ function getProductIds(data, callback){
 
 function getColorFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  var sql = "SELECT `colors`.`id`, `language_translation`.`translated_text` as 'name', `colors`.`color_code`";
+  var sql = "SELECT `colors`.`id`, `language_types`.`name` as 'name', `colors`.`color_code`";
     sql += " FROM `products`"; 
     sql += " INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id`"; 
     sql += " INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id`"; 
     sql += " INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id`"; 
     sql += " INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id`"; 
-    sql += " INNER JOIN `translation` ON `translation`.`id` = `colors`.`translation_id`";
-    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+/*  sql += " INNER JOIN `translation` ON `translation`.`id` = `colors`.`translation_id`";
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";*/
+    sql += " INNER JOIN `language_types` ON `language_types`.`type_id` = `colors`.`id`";
     sql += " WHERE `products`.`product_status` = 1"; 
     sql += " AND `products`.`frontend_show` = 1"; 
     sql += " and `vendor`.`status` = 1"; 
@@ -570,10 +571,13 @@ function getColorFilterByCountryProvince(delivery_country_id, province_id, produ
       sql += " AND `color_product`.`product_id` in ("+product_ids+")";
     }
 
-    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " AND `language_types`.`type` = 'color'";
+    sql += " AND `language_types`.`language_id` = "+language_id;
+    sql += " GROUP BY `colors`.`id`,`language_types`.`name`";
+    sql += " ORDER BY `language_types`.`name` ASC";
+/*  sql += " AND `language_translation`.`language_id` = "+language_id;
     sql += " GROUP BY `colors`.`id`,`language_translation`.`translated_text`";
-    sql += " ORDER BY `language_translation`.`translated_text` ASC";
-
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";*/
   //console.log(sql);
 
     dbModel.rawQuery(sql, function(err, colors) {
@@ -586,14 +590,15 @@ function getColorFilterByCountryProvince(delivery_country_id, province_id, produ
 
 function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
 
-  var sql = "SELECT `flower_types`.`id`, `language_translation`.`translated_text` as 'name'";
+  var sql = "SELECT `flower_types`.`id`, `language_types`.`name` as 'name'";
     sql += " FROM `products`"; 
     sql += " INNER JOIN `flower_type_product` on `products`.`id` = `flower_type_product`.`product_id`"; 
     sql += " INNER JOIN `flower_types` on `flower_types`.`id` = `flower_type_product`.`flower_type_id`"; 
     sql += " INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id`"; 
     sql += " INNER JOIN `vendor` on `vendor`.`id` = `products`.`vendor_id`"; 
-    sql += " INNER JOIN `translation` ON `translation`.`id` = `flower_types`.`translation_id`";
-    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+    sql += " INNER JOIN `language_types` ON `language_types`.`type_id` = `flower_types`.`id`";
+    //sql += " INNER JOIN `translation` ON `translation`.`id` = `flower_types`.`translation_id`";
+    //sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
     sql += " WHERE `vendor`.`status` = 1"; 
     sql += " and `products`.`product_status` = 1"; 
     sql += " and `products`.`frontend_show` = 1"; 
@@ -608,9 +613,13 @@ function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, 
       sql += " AND `flower_type_product`.`product_id` in ("+product_ids+")";
     }
 
-    sql += " AND `language_translation`.`language_id` = "+language_id;
-    sql += " GROUP BY `flower_types`.`id`,`language_translation`.`translated_text`";
-    sql += " ORDER BY `language_translation`.`translated_text` ASC";
+    sql += " AND `language_types`.`type` = 'flower'";
+    sql += " AND `language_types`.`language_id` = "+language_id;
+    sql += " GROUP BY `flower_types`.`id`,`language_types`.`name`";
+    sql += " ORDER BY `language_types`.`name` ASC";
+    //sql += " AND `language_translation`.`language_id` = "+language_id;
+    //sql += " GROUP BY `flower_types`.`id`,`language_translation`.`translated_text`";
+    //sql += " ORDER BY `language_translation`.`translated_text` ASC";
   
   //console.log(sql);       
 
@@ -665,14 +674,15 @@ function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, p
   
 function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
-  var sql = "SELECT `sympathy_types`.`id`, `language_translation`.`translated_text` as 'name'";
+  var sql = "SELECT `sympathy_types`.`id`, `language_types`.`name` as 'name'";
     sql += " FROM `products`";
     sql += " inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id`";
     sql += " inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id`";
     sql += " inner join `location_product` on `products`.`id` = `location_product`.`product_id`"
     sql += " inner join `vendor` on `vendor`.`id` = `products`.`vendor_id`";
-    sql += " INNER JOIN `translation` ON `translation`.`id` = `sympathy_types`.`translation_id`"
-    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`" 
+    /*sql += " INNER JOIN `translation` ON `translation`.`id` = `sympathy_types`.`translation_id`"
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`" */
+    sql += " INNER JOIN `language_types` ON `language_types`.`type_id` = `sympathy_types`.`id`" 
     sql += " where `vendor`.`status` = 1";
     sql += " and `products`.`product_status` = 1"
     sql += " and `products`.`frontend_show` = 1"
@@ -687,9 +697,13 @@ function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id
       sql += " AND `sympathy_type_product`.`product_id` in ("+product_ids+")";
     }
 
-    sql += " AND `language_translation`.`language_id` = "+language_id;
+    /*sql += " AND `language_translation`.`language_id` = "+language_id;
     sql += " GROUP BY `sympathy_types`.`id`,`language_translation`.`translated_text`";
-    sql += " ORDER BY `language_translation`.`translated_text` ASC";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";*/
+    sql += " AND `language_types`.`type` = 'sympathy'";
+    sql += " AND `language_types`.`language_id` = "+language_id;
+    sql += " GROUP BY `sympathy_types`.`id`,`language_types`.`name`";
+    sql += " ORDER BY `language_types`.`name` ASC";
 
   //console.log(sql);             
 
@@ -1087,7 +1101,7 @@ function roundToNineNine($actPrice, $current_currency){
         }
     }
     return $newPrice;
-} 
+}
 
 function getVariantDetails($product_id,callback){
     $sql = "Select `product_prices`.`price_name`,`product_prices`.`price_value`,`product_prices`.`compare_price`,  CONCAT('"+config.RESOURCE_URL+"', REPLACE(`product_prices`.`image`, '+','%2B')) AS variant_picture,sku from `product_prices` ";
@@ -1099,5 +1113,6 @@ function getVariantDetails($product_id,callback){
         else callback(null,$product_variant);
     });
 }
+
 
 module.exports = new CollectionController();

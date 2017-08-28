@@ -1000,13 +1000,45 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
 
         jwt.verify(token, process.env.SECRET_KEY,function(err,decoded){
             if(err){
-                callback(err);
+                callback(false);
             }else{
                 callback(null, decoded);
             }
         });
 
-    }                    
+    }
+
+    this.cartCount = function(user_id, cart_key, callback){
+
+        var cartCount = 0;
+
+        if(user_id > 0 || (cart_key != '' && cart_key != undefined)){
+        
+            var sql = "SELECT COUNT(cp.quantity) AS total FROM cart c INNER JOIN cart_products cp ON (c.id = cp.cart_id)";
+
+            if(user_id > 0){
+              sql += " WHERE c.user_id ="+user_id;
+            }else{
+              sql += " WHERE c.cart_key = '"+cart_key+"'";
+            }
+
+            dbModel.rawQuery(sql, function(err, result) {
+              if (err){
+                return callback(err);
+              } else{
+                if(result.length > 0){
+                  callback(null, result[0].total);
+                }else{
+                  callback(null, cartCount);
+                }
+              }
+            });
+        
+        }else{
+            callback(null, cartCount);
+        }
+
+    }
    
 }
 
