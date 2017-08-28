@@ -266,8 +266,8 @@ function CollectionController() {
 
         var $total_products = getProductlistwithfilters.sync(null, reqData, true);
         var product_ids = getProductIds.sync(null, $result);
-
-        var $colors = getColorFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
+        var $colors=[];
+        //var $colors = getColorFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
         var $flowers = getFlowerTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids,language_id);
         var $occasions = getOccasionsFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
         var $sympathy = getSympathyTypeFilterByCountryProvince.sync(null, delivery_country_id, province_id, product_ids, language_id);
@@ -334,7 +334,7 @@ function CollectionController() {
           "filter_orderby": $orderby,
           "filter_productdeliverymethod": $delivery,
           "filter_productprice": $priceFilter,
-          "filter_productcolor": $colors,
+        //  "filter_productcolor": $colors,
           "filter_productoccasion": $occasions,
           "filter_productsympahty": $sympathy,
           "filter_productflowertype": $flowers
@@ -633,15 +633,16 @@ function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, 
 
 function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
 
-  var sql = "select `occasions`.`id`,`language_translation`.`translated_text` as 'name'";
+  var sql = "select `occasions`.`id`,`language_types`.`name` as 'name'";
     sql += " from `products`";
     sql += " inner join `occasion_product` on `products`.`id` = `occasion_product`.`product_id`";
     sql += " inner join `occasions` on `occasions`.`id` = `occasion_product`.`occasion_id` ";
     sql += " inner join `location_product` on `products`.`id` = `location_product`.`product_id`";
     sql += " inner join `occasion_country` on `occasions`.`id` = `occasion_country`.`occasion_id`";
     sql += " inner join `vendor` on `vendor`.`id` = `products`.`vendor_id`";
-    sql += " INNER JOIN `translation` ON `translation`.`id` = `occasions`.`translation_id`";
-    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";
+    sql += " INNER JOIN `language_types` ON `language_types`.`type_id` = `occasions`.`id`";
+    /*sql += " INNER JOIN `translation` ON `translation`.`id` = `occasions`.`translation_id`";
+    sql += " INNER JOIN `language_translation` ON `language_translation`.`translation_id` = `translation`.`id`";*/
     sql += " where `vendor`.`status` = 1";
     sql += " and `products`.`product_status` = 1";
     sql += " and `products`.`frontend_show` = 1";
@@ -658,9 +659,14 @@ function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, p
       sql += " AND `occasion_product`.`product_id` in ("+product_ids+")";
     }     
 
-    sql += " AND `language_translation`.`language_id` = "+language_id;
+    sql += " AND `language_types`.`type` = 'occasion'";
+    sql += " AND `language_types`.`language_id` = "+language_id;
+    sql += " GROUP BY `occasions`.`id`,`language_types`.`name`";
+    sql += " ORDER BY `language_types`.`name` ASC";
+
+    /*sql += " AND `language_translation`.`language_id` = "+language_id;
     sql += " GROUP BY `occasions`.`id`,`language_translation`.`translated_text`";
-    sql += " ORDER BY `language_translation`.`translated_text` ASC";
+    sql += " ORDER BY `language_translation`.`translated_text` ASC";*/
 
   //console.log(sql);
 
