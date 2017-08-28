@@ -310,8 +310,8 @@ function HomeController() {
                  callback();
               });
 
-<<<<<<< HEAD
           },
+          */
           function continentcountries(callback) {
               
               var continent = [];
@@ -378,9 +378,6 @@ function HomeController() {
               });
 
           },                
-=======
-          },*/
->>>>>>> fbbcabb4dfad80a997c2348a1f7d9539ffb894c1
           function countriesprovinces(callback) {
             var country = [];
             
