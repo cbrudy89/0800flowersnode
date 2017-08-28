@@ -639,8 +639,8 @@ module.exports = {
         cartController.updateCart(req, res);
     });
 
-    app.delete('/removeCart', function(req, res){
-        cartController.removeCart(req, res);
+    app.delete('/removeCartProduct', function(req, res){
+        cartController.removeCartProduct(req, res);
     });
 
     app.get('/getCart', function(req, res){
