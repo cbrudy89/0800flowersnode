@@ -990,6 +990,12 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
            
            var newdate = inputDate.getFullYear()+'-'+ (inputDate.getMonth() + 1 )+ '-'+inputDate.getDate()+' '+inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
        }
+       else if(format == 4){
+
+            // yyyy/mm/dd   2017-08-29
+           var dateArr = inputDate.split("-");
+           var newdate = dateArr[0]+'-'+ dateArr[1]+'-'+dateArr[2];
+       }
 
        return newdate;
 
