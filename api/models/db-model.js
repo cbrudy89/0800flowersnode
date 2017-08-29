@@ -1,5 +1,6 @@
 var config = require('./../../config');
 var connection = require('./../../database');
+var async = require('async');
 
 function DbModel(){
 
@@ -279,7 +280,7 @@ function DbModel(){
 			if (err) {
 				callback(err);
 			}
-			else {					
+			else {
 				callback(null, con);
 			}
 		});
@@ -288,7 +289,7 @@ function DbModel(){
 
 	this.beginTransaction = function(con, sql, callback){
 		con.beginTransaction(function(err){
-			if (err) { 
+			if (err) {
 				callback(err);
 			}
 			con.query(sql, function (err, result) {
@@ -299,14 +300,14 @@ function DbModel(){
 	          	}else{
 	          		callback(null, result);
 	          	}
-	      	});	
+	      	});
 		});
 	}
 
 
 	// Query to use when using transactions
 	this.transactionQuery = function(con, sql, callback) {
-		
+
 		con.query(sql, function (err, result) {
 	      	if (err) {
 				con.rollback(function() {
@@ -316,13 +317,13 @@ function DbModel(){
 	      		callback(null, result);
 	      	}
 	  	});
-	}	
+	}
 
 
 	this.commit = function(con, callback){
 
             con.commit(function(err) {
-                if (err) { 
+                if (err) {
                   con.rollback(function() {
                     callback(err);
                   });
@@ -332,6 +333,72 @@ function DbModel(){
             });
 
 	}
+
+	this.checkAndAddRecord = function(table, newIds, product_id, field, callback) {
+        connection.acquire(function(err, con) {
+            if (err) {
+                callback(err);
+            } else {
+                // Checking if promo code already exist in database
+                con.query('SELECT '+field+' FROM '+table+' WHERE product_id = ?', [product_id], function(err, result) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        var productList = result;
+	                    async.each(productList, function(product, productCallback){
+	                            if(newIds.indexOf(product[field]) > -1){
+	                                delete newIds[newIds.indexOf(product[field])];
+	                            } else {
+	                                var query = "Delete from "+table+" WHERE "+field+" = '" + product[field] + "' AND product_id = '" + product_id + "'";
+	                              con.query(query);
+	                            }
+	                           productCallback();
+	                    }, function(){
+	                    	var records = [];
+	                        if(newIds.length){
+		                        async.each(newIds, function(newId, itemCallback){
+		                            var data = [newId, product_id];
+		                            records.push(data);
+		                            itemCallback();
+		                        }, function(){
+		                          var sql = "INSERT INTO "+table+" ("+field+", product_id) VALUES ?";
+		                          //Create promo code
+		                            con.query(sql, [records], function(err, results) {
+		                              if (err) {
+		                                  callback(err);
+		                              } else {
+		                                  callback(null, results);
+			                            con.release();
+		                              }
+		                            });
+		                        });
+	                        }
+	                    });
+                    }
+                });
+            }
+        });
+    }
+
+    this.insertMultiplRecords = function(sql = '', records = [], callback) {
+		connection.acquire(function(err, con) {
+			if (err) {
+				callback(err);
+			}
+			else {
+				con.query(sql, [records], function (err, result) {
+		          	if (err) {
+		          		callback(err);
+		          	}else{
+		          		callback(null, result);
+		          	}
+		          	con.release();
+		      	});
+
+			}
+		});
+	}
+
 
 
 }

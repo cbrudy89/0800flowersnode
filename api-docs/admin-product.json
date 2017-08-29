@@ -1,0 +1,808 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Product APIs",
+      "description":"All APIs related to the admin product controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Product",
+         "description":"API for admin product usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/product/list":{
+         "get":{
+            "tags":[
+               "Admin Product"
+            ],
+            "description":"List/Search all products",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Products found.",
+                  "schema":{
+                      "$ref":"#/definitions/200listproducts"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500listproducts"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get products.",
+                  "schema":{
+                     "$ref":"#/definitions/400listproducts"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/product/search":{
+         "get":{
+            "tags":[
+               "Admin Product"
+            ],
+            "description":"List/Search all products",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"product_code",
+                  "in":"query",
+                  "description":"Product Code",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_name",
+                  "in":"query",
+                  "description":"Product Name",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_start_dt",
+                  "in":"query",
+                  "description":"Start Date",
+                  "required":false,
+                  "type":"date"
+               },
+               {
+                  "name":"search_end_dt",
+                  "in":"query",
+                  "description":"End Date",
+                  "required":false,
+                  "type":"date"
+               },
+               {
+                  "name":"search_delivery_days",
+                  "in":"query",
+                  "description":"Delivery Days",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_admin_status",
+                  "in":"query",
+                  "description":"Admin Status",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_vendor",
+                  "in":"query",
+                  "description":"Vendor Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_country",
+                  "in":"query",
+                  "description":"Country Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_categories",
+                  "in":"query",
+                  "description":"Category Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_occasions",
+                  "in":"query",
+                  "description":"Occasion Type Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_color",
+                  "in":"query",
+                  "description":"Color Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_flower_type",
+                  "in":"query",
+                  "description":"Flower Type Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_mixed_bouquet",
+                  "in":"query",
+                  "description":"Mixed Bouquet Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_price_from",
+                  "in":"query",
+                  "description":"Price From",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"search_price_to",
+                  "in":"query",
+                  "description":"Price To",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Products found.",
+                  "schema":{
+                      "$ref":"#/definitions/200searchproducts"
+                  }
+               },
+               "500":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/500searchproducts"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get products.",
+                  "schema":{
+                     "$ref":"#/definitions/400searchproducts"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/product/view/{id}":{
+         "get":{
+            "tags":[
+               "Admin Product"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"The product ID.",
+                  "required":true,
+                  "type":"integer",
+                  "minimum": 1
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Countries found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewproduct"
+                  }
+               },
+               "404":{
+                  "description":"No records found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewproduct"
+                  }
+               },
+               "400":{
+                  "description":"Failed to get countries.",
+                  "schema":{
+                     "$ref":"#/definitions/400viewproduct"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/product/update":{
+         "put":{
+            "tags":[
+               "Admin Product"
+            ],
+            "description":"Update product",
+            "operationId":"put",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Product Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"Vendor Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_name",
+                  "in":"formData",
+                  "description":"Product Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"product_description",
+                  "in":"formData",
+                  "description":"Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"product_specification",
+                  "in":"formData",
+                  "description":"Product Specification",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"alternate_text",
+                  "in":"formData",
+                  "description":"Alternate Text",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"atlas_product_name",
+                  "in":"formData",
+                  "description":"Atlas Product Name",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"product_code",
+                  "in":"formData",
+                  "description":"Product Code",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"snip_picture",
+                  "in":"formData",
+                  "description":"Product Picture",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"method",
+                  "in":"formData",
+                  "description":"Delivery Method",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"Surcharge",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Activate Product",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"varient",
+                  "in":"formData",
+                  "description":"Variant Name",
+                  "required":true,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"compare_price",
+                  "in":"formData",
+                  "description":"Compare Price",
+                  "required":true,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"}
+               },
+               {
+                  "name":"price",
+                  "in":"formData",
+                  "description":"Price",
+                  "required":true,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"}
+               },
+               {
+                  "name":"sku",
+                  "in":"formData",
+                  "description":"SKU",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"}
+               },
+               {
+                  "name":"old_price_image",
+                  "in":"formData",
+                  "description":"old_price_image",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string"}
+               },
+               {
+                  "name":"base64_variant_image",
+                  "in":"formData",
+                  "description":"New Image",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string"}
+               },
+               {
+                  "name":"addons",
+                  "in":"formData",
+                  "description":"Addons",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"categories",
+                  "in":"formData",
+                  "description":"Categories",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"Occasions-chk",
+                  "in":"formData",
+                  "description":"Occasions",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"Sympathy",
+                  "in":"formData",
+                  "description":"Sympathy",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"MixedBouquets",
+                  "in":"formData",
+                  "description":"MixedBouquets",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"flowerstypes",
+                  "in":"formData",
+                  "description":"Flower Types",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"colors",
+                  "in":"formData",
+                  "description":"Colors",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"relatedproducts",
+                  "in":"formData",
+                  "description":"Related Products",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "integer"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"sentiments",
+                  "in":"formData",
+                  "description":"Right Sentiments",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"preserve",
+                  "in":"formData",
+                  "description":"preserved_item",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"seasonal",
+                  "in":"formData",
+                  "description":"seasonal_item",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"province_id",
+                  "in":"formData",
+                  "description":"Province Id / State Id",
+                  "required":false,
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string"},
+                  "uniqueItems": true
+               },
+               {
+                  "name":"delivery_policy",
+                  "in":"formData",
+                  "description":"Delivery Policy",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"delivered_by",
+                  "in":"formData",
+                  "description":"Delivered By",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"subtitution_policy",
+                  "in":"formData",
+                  "description":"Substitution Policy",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
+                  "name":"seo_keywords",
+                  "in":"formData",
+                  "description":"SEO Keywords",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"seo_description",
+                  "in":"formData",
+                  "description":"SEO Description",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"seo_title",
+                  "in":"formData",
+                  "description":"SEO Title",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"no_index",
+                  "in":"formData",
+                  "description":"Index No Follow",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Product updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateproduct"
+                  }
+               },
+               "500":{
+                  "description":"Unable to update product.",
+                  "schema":{
+                     "$ref":"#/definitions/500updateproduct"
+                  }
+               },
+               "403":{
+                  "description":"Product has not been updated.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateproduct"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200listproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Categories found."
+            }
+         }
+      },
+      "500listproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400listproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get products."
+            }
+         }
+      },
+      "200searchproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Categories found."
+            }
+         }
+      },
+      "500searchproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400searchproducts":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get products."
+            }
+         }
+      },
+      "200viewproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product found."
+            }
+         }
+      },
+      "404viewproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"No records found."
+            }
+         }
+      },
+      "400viewproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Failed to get countries."
+            }
+         }
+      },
+      "200updateproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product updated successfully."
+            }
+         }
+      },
+      "500updateproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to update product."
+            }
+         }
+      },
+      "403updateproduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product has not been updated."
+            }
+         }
+      }
+   }
+}
