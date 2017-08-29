@@ -438,8 +438,43 @@ module.exports = {
 
 
     /************************  END Surcharge Calendar Date  ****************************/
+<<<<<<< HEAD
 
 
+=======
+    
+      /************************  START Custom Text Calendar Date  ****************************/
+   
+    // listing
+    app.post('/admin/getCustomTextCalendarDates', authenticateController.isAuthenticated, function(req, res) {
+        calendarsettingController.getCustomTextCalendarDates(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createCustomTextCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createCustomTextCalendarDate),function(req, res) {
+        calendarsettingController.createCustomTextCalendarDate(req, res);
+    });
+    
+     // update one
+    app.post('/admin/updateSelectedCustomTextCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedCustomTextCalendarDate), function(req, res) {
+        calendarsettingController.updateSelectedCustomTextCalendarDate(req, res);
+    });
+    
+    
+    // get selected one
+    app.post('/admin/getSelectedCustomTextCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedCustomTextCalendarDate) ,function(req, res) {
+        calendarsettingController.getSelectedCustomTextCalendarDate(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteCustomTextCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.deleteCustomTextCalendarDate),function(req, res) {
+        calendarsettingController.deleteCustomTextCalendarDate(req, res);
+    });
+    
+    
+    /************************  END Custom Text Calendar Date  ****************************/
+    
+>>>>>>> c6343af3f3e764b985425c23b5d9d11468317de7
    /************************* START Get vendors and prodcts lists for calendar setting  Routes ************************/
 
     // get vendors list by country id  (restrict calendar date and surcharge calendar date section)
