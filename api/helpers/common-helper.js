@@ -1045,6 +1045,26 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
         }
 
     }
+
+    // get calender custom text dates
+    this.getCalenderCustomTextDates = function ($date, $vendor_id, $country_id, $product_id, callback) {
+        $sql = "SELECT `customtext_calendars`.`title`";
+        $sql += " FROM `customtext_calendars`";
+        $sql += " INNER JOIN `product_customtext_calendar` on `product_customtext_calendar`.`customtext_calendar_id` = `customtext_calendars`.`id`";
+        $sql += " WHERE `customtext_calendars`.`vendor_id` = " + $vendor_id;
+        $sql += " AND `customtext_calendars`.`start_date` = '" + $date + "'";
+        $sql += " AND `customtext_calendars`.`country_id` = " + $country_id;
+        $sql += " AND `product_customtext_calendar`.`product_id` = " + $product_id;
+        $sql += " AND `customtext_calendars`.`status` = 1";
+        //console.log($sql);
+        dbModel.rawQuery($sql, function(err, $customtextCalDate) {
+            if (err) return callback(err);
+            else {
+                if ($customtextCalDate.length > 0) callback(null, $customtextCalDate[0].title);
+                else return callback(null, '');
+            }
+        });
+    }
    
 }
 

@@ -246,7 +246,6 @@ function ProductController() {
                                         var $deldate = '';
                                         for (var $item in $getDates) {
                                             $deldate = $getDates[$item].deliveryDate;
-                                            //console.log($deldate);
                                             
                                             if($adminRestictedRates.indexOf($deldate) >= 0 ){
                                                 continue; //admin date found
@@ -263,10 +262,17 @@ function ProductController() {
                                                 $totSurcharge = parseFloat($totSurcharge).toFixed(2);
                                             }
 
-                                            //console.log($totSurcharge);
+                                            var currentDate = new Date($deldate); 
+                                            var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);  
+                                            var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
+                                            var caldate = currentDate.getFullYear() + "-" + twoDigitMonth + "-" + twoDigitDate; 
+                                            
+                                            $customtextdate = commonHelper.getCalenderCustomTextDates.sync(null, caldate, $vendorId, $currentCountry, $product[0].id);
+                                            
                                             $infoArray[$deldate] = {
                                                 'deliveryDate': $deldate,
-                                                'totSurcharge': $totSurcharge
+                                                'totSurcharge': $totSurcharge,
+                                                'customtext' : $customtextdate
                                             };
 
                                             $dateArray.push($deldate);
