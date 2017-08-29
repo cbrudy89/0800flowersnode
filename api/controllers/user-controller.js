@@ -50,7 +50,7 @@ function AdminController() {
       connection.acquire(function(err, con) {
         bcrypt.hash(password, config.SALT_ROUND, function(err, hash) {
           if (err) {
-            console.log(err);
+            //console.log(err);
             res.status(config.HTTP_SERVER_ERROR).send({
               status: config.ERROR, 
               code : config.HTTP_SERVER_ERROR, 
@@ -77,8 +77,7 @@ function AdminController() {
                 }else{
                     
                   var hashedPassword = hash;
-                  var profileImagePath = "uploads/profile_images";
-                  
+                  var profileImagePath = "uploads/profile_images";                  
 
                     if(profile_image != ""){
 
@@ -94,14 +93,7 @@ function AdminController() {
                         }
 
                       });
-
-                      
-                      
-                      
                     }
-                    
-                  
-                  
 
                   // Store hash in your password DB.
                   con.query('INSERT INTO users(name,email,password,country_id,province_id,address,phone_number,profile_image,confirmed,status,type,confirmation_code) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',[name,email,hashedPassword,country_id,province_id,address,phone_no,profile_image,confirmed,status,type,confirmation_code], function (err, results, fields) {

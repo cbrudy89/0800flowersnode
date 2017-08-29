@@ -1,0 +1,781 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Cms Pages APIs",
+      "description":"All APIs related to the admin cms controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Cms",
+         "description":"API for admin cms pages usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getCmsList/":{
+         "post":{
+            "tags":[
+               "Admin Cms"
+            ],
+            "description":"List all cms pages from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, id-asc",
+                  "required":false,
+                  "type":"string"
+               },  
+               {
+                  "name":"search_page_name",
+                  "in":"formData",
+                  "description":"search_page_name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_slug",
+                  "in":"formData",
+                  "description":"search_slug Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_page_title",
+                  "in":"formData",
+                  "description":"search_page_title Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               }                              
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Cms Pages listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getCmsList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getCmsList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get cms page.",
+                  "schema":{
+                     "$ref":"#/definitions/403getCmsList"
+                  }
+               },                                               
+               "400":{
+                  "description":"No cms page found.",
+                  "schema":{
+                     "$ref":"#/definitions/400getCmsList"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createCms":{
+         "post":{
+            "tags":[
+               "Admin Cms"
+            ],
+            "description":"Create Cms Page",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"page_name",
+                  "in":"formData",
+                  "description":"Page Name Example: stringtext ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"slug",
+                  "in":"formData",
+                  "description":"Slug Example: test-page-new",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"page_title",
+                  "in":"formData",
+                  "description":"Page Title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"canonical_url",
+                  "in":"formData",
+                  "description":"Url Example: https://www.google.co.in/ ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"h1text_description_arr",
+                  "in":"formData",
+                  "description":"H1 Text & Description Example: [{\"language_id\":\"1\", \"h1_text\":\"H1 Text eng\",\"description\":\"description english\"},{ \"language_id\":\"2\", \"h1_text\":\"H1 Tex french\", \"description\":\"description french\"},{ \"language_id\":\"3\", \"h1_text\":\"H1 Text german\", \"description\":\"description lllgerman\"}] ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"placement",
+                  "in":"formData",
+                  "description":" Top-1, Bottom-0 Example: 1 or 0 ",
+                  "required":false,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta keywords Example : stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta Desciption Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Cms page inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createCms"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createCms"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create cms page.",
+                  "schema":{
+                     "$ref":"#/definitions/403createCms"
+                  }
+               },
+               "409":{
+                  "description":"The specified cms page name or slug already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409createCms"
+                  }
+               }                                               
+            }
+         }
+      },
+      "/admin/getSelectedCms/":{
+         "post":{
+            "tags":[
+               "Admin Cms"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The Cms page ID.",
+                  "required":true,
+                  "type":"integer"                 
+               },               
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Cms Page found.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSelectedCms"
+                  }
+               },
+               "404":{
+                  "description":"No cms page found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSelectedCms"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get cms page.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSelectedCms"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSelectedCms"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateCms":{
+         "post":{
+            "tags":[
+               "Admin Cms"
+            ],
+            "description":"Update Cms",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Cms page id Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"page_name",
+                  "in":"formData",
+                  "description":"Page Name Example: stringtext ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"slug",
+                  "in":"formData",
+                  "description":"Slug Example: test-page-new",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"page_title",
+                  "in":"formData",
+                  "description":"Page Title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"canonical_url",
+                  "in":"formData",
+                  "description":"Url Example: https://www.google.co.in/ ",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"h1text_description_arr",
+                  "in":"formData",
+                  "description":"H1 Text & Description Example: [{\"language_id\":\"1\", \"h1_text\":\"H1 Text eng\",\"description\":\"description english\"},{ \"language_id\":\"2\", \"h1_text\":\"H1 Tex french\", \"description\":\"description french\"},{ \"language_id\":\"3\", \"h1_text\":\"H1 Text german\", \"description\":\"description lllgerman\"}] ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"placement",
+                  "in":"formData",
+                  "description":" Top-1, Bottom-0 Example: 1 or 0 ",
+                  "required":false,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"meta_keywords",
+                  "in":"formData",
+                  "description":"Meta keywords Example : stringtext",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"meta_description",
+                  "in":"formData",
+                  "description":"Meta Desciption Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":"Status Example: 1 or 0",
+                  "required":false,
+                  "type":"integer"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Cms page updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateCms"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateCms"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update cms page.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateCms"
+                  }
+               },
+               "404":{
+                  "description":"No cms page found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateCms"
+                  }
+               },
+               "409":{
+                  "description":"The specified cms page name or slug already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409updateCms"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/deleteCms":{
+         "delete":{
+            "tags":[
+               "Admin Cms"
+            ],
+            "description":"Delete Cms Page",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired cms page to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Cms page deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteCms"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete cms page.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteCms"
+                  }
+               },
+               "404":{
+                  "description":"No cms page found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteCms"
+                  }
+               }                                
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200getCmsList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 Cms pages listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getCmsList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getCmsList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get cms page."
+            }
+         }
+      },      
+      "400getCmsList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No cms page found."
+            }
+         }
+      },            
+      "200createCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Cms page inserted successfully."
+            }
+         }
+      },
+      "500createCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create cms page."
+            }
+         }
+      },
+      "409createCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified cms page name or slug already exists."
+            }
+         }
+      },      
+      "200getSelectedCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Cms page found."
+            }
+         }
+      },
+      "404getSelectedCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No cms page found."
+            }
+         }
+      },
+      "500getSelectedCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403getSelectedCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get cms page."
+            }
+         }
+      },      
+      "200updateCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Cms page updated successfully."
+            }
+         }
+      },
+      "500updateCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update cms page."
+            }
+         }
+      },
+      "404updateCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No cms page found."
+            }
+         }
+      },
+      "409updateCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified cms page name or slug already exists."
+            }
+         }
+      },             
+      "200deleteCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Cms page deleted successfully"
+            }
+         }
+      },
+      "403deleteCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete cms page."
+            }
+         }
+      },
+      "404deleteCms":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No cms page found."
+            }
+         }
+      }            
+   }
+}

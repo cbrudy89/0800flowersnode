@@ -458,6 +458,8 @@ function VendorController() {
       //var jsonData = JSON.parse(vendor_cutoff_time);
       var jsonData = vendor_cutoff_time;
 
+      
+
       // Getting Connection Object
       dbModel.getConnection(function(error, con){
         if (error) {
@@ -485,7 +487,7 @@ function VendorController() {
               });                    
             }else{  
 
-               dbModel.transactionQuery(con, "SELECT id FROM vendor_secondary_contact WHERE vendor_id="+vendor_id, function (error, result){
+               dbModel.transactionQuery(con, "SELECT id FROM vendor_secondary_contact WHERE vendor_id="+id, function (error, result){
                   if (error) {    
                     res.status(config.HTTP_SERVER_ERROR).send({
                       status:config.ERROR,
@@ -498,7 +500,7 @@ function VendorController() {
                     if(result.length >0 && result[0].id > 0){
                       var sql = "UPDATE vendor_secondary_contact SET name='"+new_contact_name+"', email='"+new_contact_email+"', phone="+new_contact_phone+" WHERE id ="+result[0].id;
                     }else{
-                      var sql = "INSERT INTO vendor_secondary_contact SET name='"+new_contact_phone+"', email='"+new_contact_email+"', phone="+new_contact_phone;
+                      var sql = "INSERT INTO vendor_secondary_contact SET vendor_id="+id+", name='"+new_contact_phone+"', email='"+new_contact_email+"', phone="+new_contact_phone;
                     }
 
                     //console.log(sql);
@@ -528,52 +530,34 @@ function VendorController() {
                             });
                           }else{
 
-                            //console.log('sadf');
-
-                            Sync(function(){
-
                               //console.log('asdf');
+                              Sync(function(){
 
-                              for (var i = 0; i < jsonData.length; i++) {                                      
-                                var lang = jsonData[i];
+                                for (var i = 0; i < jsonData.length; i++) {                                      
+                                  var lang = jsonData[i];
 
-                                //console.log(lang);
+                                  //console.log(lang);
 
-                                if(lang.timezone_id == '' && lang.timezone_id == undefined)
-                                  continue;
-                                                            
-                                var group_vendor_id = checkGroup_entry.sync(null, country_id, vendor_id, lang.timezone_id);
+                                  if(lang.timezone_id == '' && lang.timezone_id == undefined)
+                                    continue;
+                                                              
+                                  var group_vendor_id = checkGroup_entry.sync(null, country_id, vendor_id, lang.timezone_id);
 
-                                if(group_vendor_id !='' && group_vendor_id > 0){
-                                  dbModel.delete("group_vendor", "id="+group_vendor_id, function(err, result) {
-                                    if (err) {
-                                      
-                                      //console.log("Error: ");
-                                      res.status(config.HTTP_SERVER_ERROR).send({
-                                        status:config.ERROR,
-                                        code: config.HTTP_SERVER_ERROR,
-                                        message:'Unable to update vendor information.',
-                                        error: error
-                                      });
-                                                                
-                                      //console.log("Error: "+err);
-                                      //callback(err);
-                                    } else {
-                                      if(result.affectedRows > 0 ){                
-                                        //console.log('Delete and Insert');
-                                        //console.log(result);
-                                        
-                                        var result = insertGroup_entry.sync(null,country_id, vendor_id, lang);
-                                      }
+                                  if(group_vendor_id !='' && group_vendor_id > 0){
+                                    
+                                    var deletedResult =  deleteGroup_entry.sync(null, group_vendor_id);
+                                    if(deletedResult.affectedRows > 0){
+                                      var result1 = insertGroup_entry.sync(null,country_id, vendor_id, lang);
                                     }
-                                  });
 
-                                }else{
-                                  //console.log('Insert only');
-                                  var result = insertGroup_entry.sync(null,country_id, vendor_id, lang);
+                                  }else{
+                                    //console.log('Insert only');
+                                    var result1 = insertGroup_entry.sync(null,country_id, vendor_id, lang);
+                                  }
+                                  
                                 }
-                                
-                              }
+
+                              });
 
                               //console.log(result);
 
@@ -582,8 +566,6 @@ function VendorController() {
                                 code: config.HTTP_SUCCESS,
                                 message:'Vendor information updated successfully.'
                               });
-
-                            });
 
                           }                                  
 
@@ -674,6 +656,17 @@ function checkGroup_entry(country_id, vendor_id, timezone_id, callback){
     }
   });
 
+}
+
+function deleteGroup_entry(group_vendor_id, callback){
+
+    dbModel.delete("group_vendor", "id="+group_vendor_id, function(err, result) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, result);
+    }
+  });
 }
 
 function getVendor(vendor_id, callback){

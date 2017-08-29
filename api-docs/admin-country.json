@@ -57,6 +57,13 @@
                   "type":"integer"
                },
                {
+                  "name":"language_id",
+                  "in":"formData",
+                  "description":"Select a Language",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
                   "name":"country_name",
                   "in":"formData",
                   "description":"Country Name",
@@ -280,6 +287,13 @@
                   "required":true,
                   "type":"integer"
                },
+               {
+                  "name":"language_id",
+                  "in":"formData",
+                  "description":"Select a Language",
+                  "required":true,
+                  "type":"integer"
+               },               
                {
                   "name":"country_name",
                   "in":"formData",

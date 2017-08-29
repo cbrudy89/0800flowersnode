@@ -39,7 +39,7 @@ function ProductController() {
             },
             function productdata(callback) {
 
-                $sql = "Select `product_name`, `product_description`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`delivery_method_id`,`products`.`vendor_id` from `products` ";
+                $sql = "Select `product_name`, `product_description`, `product_specification`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`delivery_method_id`,`products`.`vendor_id` from `products` ";
                 $sql += "INNER JOIN `language_product` on `products`.`id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` ";
                 $sql += "WHERE (`product_status` = 1 and `language_product`.`language_id` = " + $sessLang + " and `products`.`slug` = '" + $slug + "') ";

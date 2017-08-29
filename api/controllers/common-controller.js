@@ -1,9 +1,12 @@
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var async = require('async');
+var Sync = require('sync');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
+var commonModel = require('./../helpers/common-helper');
+var fs = require('fs');
 //var userHelper = require('./../helpers/user-helper');
 //var userModel = require('./../../../user-model');
 
@@ -229,13 +232,33 @@ function CommonController() {
   // Header Page API (Countries, Province, Language, Currency, Language Translation Content)
   this.header = function(req, res) {
 
-    var language_id=req.params.langauge_code;
+    var language_id = req.params.langauge_code;
 
     if(language_id == undefined){
       language_id = process.env.SITE_LANGUAGE;
     }
 
+    var token = req.headers['token'] || 0 ;
+    var cart_key = req.headers['cart_key'] || '';
+    var user_id = 0;
+
+    Sync(function(){
+
+      if(token){
+        var decoded = commonModel.getUserId.sync(null, token);
+        user_id = decoded.id;
+      }
+
+    });    
+
     var return_data = {};
+    //return_data.default_logo = config.RESOURCE_URL+"logo.png";
+    var path = config.RESOURCE_URL+"logo.png";
+    if (fs.existsSync(path)) {
+      return_data.default_logo = config.RESOURCE_URL+"logo.png";
+    }else{
+      return_data.default_logo = "";
+    }    
 
     //This functions will be executed at the same time
     async.parallel([
@@ -250,16 +273,83 @@ function CommonController() {
         },
         function languages(callback){
 
-            dbModel.find('languages','id,name,lang_icon,short_code2 AS "code"', 'status=1', '', '', function(err, result) {
+            dbModel.find('languages','id,name, CONCAT("'+config.RESOURCE_URL+'", REPLACE(lang_icon, "+","%2B")) as lang_icon,short_code2 AS "code"', 'status=1', '', '', function(err, result) {
                if (err) return callback(err);
                return_data.languages = result;
                callback();
             });
         },
+        function continentcountries(callback) {
+              
+            var continent = [];
+            dbModel.rawQuery("SELECT id, continent_name FROM continents WHERE status = 1", function(err, continents) {
+              if (err) return callback(err);
+              else 
+                if(continents.length > 0){
+
+                    sql = "SELECT continent_id, phone, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1";
+                    //console.log(sql);
+                      
+                    dbModel.rawQuery(sql, function(err, countries) {
+                      if (err) return callback(err);
+                      else 
+                        if(countries.length > 0){
+                          for ( var i=0 ; i < continents.length; i++) {
+                            var country = [];
+
+                            id = continents[i].id;
+                            continent_name = continents[i].continent_name;
+
+                              for ( var j=0 ; j < countries.length; j++) {
+
+                                if(id == countries[j].continent_id){
+                                  
+                                  //console.log(countries[j]);
+                                  country.push({
+                                    "country_id": countries[j].id,
+                                    "country_name": countries[j].country_name,
+                                    "alias": countries[j].alias,
+                                    "short_code": countries[j].short_code,
+                                    "iso_code": countries[j].iso_code,
+                                    "country_flag": countries[j].country_flag,
+                                    "show_state": countries[j].show_state,
+                                    "redirect_url": countries[j].redirect_url,
+                                    "preferred_currency_id": countries[j].preferred_currency_id,
+                                    "preferred_currency_code": countries[j].preferred_currency_code,
+                                    "language_id": countries[j].language_id,
+                                    "language_code": countries[j].language_code,
+                                    "company_logo": countries[j].company_logo,
+                                    "phone": countries[j].phone
+                                  });
+
+                                }
+                              }                              
+
+                              continent.push({
+                                "continent_id": id, 
+                                "country_name": continent_name,
+                                "countries": country
+                              });
+                          }
+
+                          return_data.continents_and_countries = continent;
+                          callback();
+                       }                        
+
+                    });
+                 
+
+               }else{
+                  callback(null, []);
+               }
+
+            });
+
+        },        
         function countriesprovinces(callback) {
           var country = [];
 
-            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code FROM country_list WHERE status = 1", function(err, countries) {
+            dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1", function(err, countries) {
               if (err) return callback(err);
               else 
                 if(countries.length > 0){
@@ -275,7 +365,9 @@ function CommonController() {
                     show_state = countries[i].show_state;
                     redirect_url = countries[i].redirect_url;
                     preferred_currency_id = countries[i].preferred_currency_id;
-                    preferred_currency_code = countries[i].preferred_currency_code;                    
+                    preferred_currency_code = countries[i].preferred_currency_code;
+                    language_id = countries[i].language_id;
+                    language_code = countries[i].language_code;                                        
                     company_logo = countries[i].company_logo;
 
 
@@ -291,6 +383,8 @@ function CommonController() {
                       "redirect_url": redirect_url,
                       "preferred_currency_id": preferred_currency_id,
                       "preferred_currency_code": preferred_currency_code,
+                      "language_id": language_id,
+                      "language_code": language_code,                      
                       "company_logo": company_logo
                     });
                   }
@@ -380,6 +474,74 @@ function CommonController() {
                 callback();
                }
             });          
+
+        },
+        function cartCount(callback){
+
+            var cartCount = 0;
+            //return_data.cartCount = cartCount;
+
+            if(user_id > 0 || (cart_key != '' && cart_key != undefined)){
+              
+              var sql = "SELECT COUNT(cp.quantity) AS total FROM cart c INNER JOIN cart_products cp ON (c.id = cp.cart_id)";
+
+              if(user_id > 0){
+                sql += " WHERE c.user_id ="+user_id;
+              }else{
+                sql += " WHERE c.cart_key = '"+cart_key+"'";
+              }
+
+              dbModel.rawQuery(sql, function(err, result) {
+                if (err){
+                  return callback(err);
+                } else{
+                  if(result.length > 0){
+                    return_data.cartCount = result[0].total;
+                  }else{
+                    return_data.cartCount = cartCount;
+                  }
+                  callback();
+                }
+              });
+              
+            }else{
+              return_data.cartCount = cartCount;
+              callback();
+            }
+
+        },
+        function wishlistCount(callback){
+
+            var wishlistCount = 0;
+
+            if(user_id > 0){
+              
+              var sql = "SELECT COUNT(w.qty) AS total FROM wishlist w ";
+                  sql += " WHERE w.user_id ="+user_id;
+
+              dbModel.rawQuery(sql, function(err, result) {
+                if (err){
+                  return callback(err);
+                } else{
+                  if(result.length > 0){
+                    return_data.wishlistCount = result[0].total;
+                  }else{
+                    return_data.wishlistCount = wishlistCount;
+                  }
+                  callback();
+                }
+              });
+              
+            }else{
+              return_data.wishlistCount = wishlistCount;
+              callback();
+            }
+
+        },
+        function notificationCount(callback){
+            var notificationCount = 0;
+            return_data.notificationCount = notificationCount;
+            callback();
 
         }
       ], function (err, result) {

@@ -1,13 +1,13 @@
 var authenticateController = require('./api/controllers/authenticate-controller');
-var adminController = require('./api/controllers/admin/admin-controller');
-var adminVendorController = require('./api/controllers/admin/vendor-controller');
-var countryController = require('./api/controllers/admin/country-controller');
 
 // For Backend Controllers
+var adminController = require('./api/controllers/admin/admin-controller');
 var adminCustomerController = require('./api/controllers/admin/admin-customer-controller');
+var adminVendorController = require('./api/controllers/admin/vendor-controller');
 var categoryController = require('./api/controllers/admin/category-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 var colorController = require('./api/controllers/admin/color-controller');
+var countryController = require('./api/controllers/admin/country-controller');
 var currencyController = require('./api/controllers/admin/currency-controller');
 var deliveryMethodsController = require('./api/controllers/admin/deliverymethods-controller');
 var discountController = require('./api/controllers/admin/discount-controller');
@@ -15,12 +15,19 @@ var flowerController = require('./api/controllers/admin/flower-controller');
 var languageController = require('./api/controllers/admin/language-controller');
 var mixedBouquetController = require('./api/controllers/admin/mixedbouquet-controller');
 var occasionController = require('./api/controllers/admin/occasion-controller');
+
 var promobannerController = require('./api/controllers/admin/promobanner-controller');
+var categoryController = require('./api/controllers/admin/category-controller');
+var adminhomeController = require('./api/controllers/admin/home-controller');
 var provinceController = require('./api/controllers/admin/province-controller');
 var sympathyController = require('./api/controllers/admin/sympathy-controller');
 var timezoneController = require('./api/controllers/admin/timezone-controller');
 var adminProductController = require('./api/controllers/admin/admin-product-controller');
 
+
+// For Vendor Controllers
+var vendorController = require('./api/controllers/vendor/vendor-controller');
+var cmsController = require('./api/controllers/admin/cms-controller');
 
 
 // For Frontend Controllers
@@ -36,7 +43,7 @@ var cartController = require('./api/controllers/cart-controller');
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
 
-// Validation Configuration for controller
+// Validation Configuration for Admin 
 var adminCustomerValidation = require('./api/validation/admin/admin-customer-validation');
 var adminValidation = require('./api/validation/admin/admin-validation');
 var adminVendorValidation = require('./api/validation/admin/vendor-validation');
@@ -54,8 +61,21 @@ var orderTrackingValidation = require('./api/validation/order-tracking-validatio
 var productValidation = require('./api/validation/product-validation');
 var promobannerValidation = require('./api/validation/admin/promobanner-validation');
 var sympathyValidation = require('./api/validation/admin/sympathy-validation');
+var flowerValidation = require('./api/validation/admin/flower-validation');
+var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-validation');
+var adminhomeValidation = require('./api/validation/admin/adminhome-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 var adminProductValidation = require('./api/validation/admin/admin-product-validation');
+
+
+// Validation Configuration for Vendor
+var vendorValidation = require('./api/validation/vendor/vendor-validation');
+
+
+var adminValidation = require('./api/validation/admin/admin-validation');
+var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
+var occasionValidation = require('./api/validation/admin/occasion-validation');
+var cmsValidation = require('./api/validation/admin/cms-validation');
 
 
 module.exports = {
@@ -463,8 +483,34 @@ module.exports = {
 
     /************************  END Occasion  ****************************/
 
+    /************************  START CMS  ****************************/
 
-
+    // listing
+    app.post('/admin/getCmsList', authenticateController.isAuthenticated, function(req, res) {
+        cmsController.getCmsList(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createCms', authenticateController.isAuthenticated, validate(cmsValidation.createCms),function(req, res) {
+        cmsController.createCms(req, res);
+    });
+        
+    // update 
+    app.post('/admin/updateCms', authenticateController.isAuthenticated,validate(cmsValidation.updateCms), function(req, res) {
+        cmsController.updateCms(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteCms', authenticateController.isAuthenticated, validate(cmsValidation.deleteCms),function(req, res) {
+        cmsController.deleteCms(req, res);
+    });
+        
+    // get selected one
+    app.post('/admin/getSelectedCms', authenticateController.isAuthenticated,validate(cmsValidation.getSelectedCms) ,function(req, res) {
+        cmsController.getSelectedCms(req, res);
+    }); 
+    
+    /************************  END Occasion  ****************************/      
 
     /************************* Home Page Routes ************************/
 
@@ -633,8 +679,8 @@ module.exports = {
         cartController.updateCart(req, res);
     });
 
-    app.delete('/removeCart', function(req, res){
-        cartController.removeCart(req, res);
+    app.delete('/removeCartProduct', function(req, res){
+        cartController.removeCartProduct(req, res);
     });
 
     app.get('/getCart', function(req, res){
@@ -645,23 +691,23 @@ module.exports = {
 
     /************************ Vendor Functionality ********************************/
 
-    app.post('/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
+    app.post('/admin/vendor/list', authenticateController.isAuthenticated, validate(adminVendorValidation.list), function(req, res){
         adminVendorController.list(req, res);
     });
 
-    app.post('/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
+    app.post('/admin/vendor/view', authenticateController.isAuthenticated, validate(adminVendorValidation.view), function(req, res){
         adminVendorController.view(req, res);
     });
 
-    app.post('/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
+    app.post('/admin/vendor/add', authenticateController.isAuthenticated, validate(adminVendorValidation.add), function(req, res){
         adminVendorController.add(req, res);
     });
 
-    app.put('/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
+    app.put('/admin/vendor/update', authenticateController.isAuthenticated, validate(adminVendorValidation.update), function(req, res){
         adminVendorController.update(req, res);
     });
 
-    app.delete('/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
+    app.delete('/admin/vendor/delete', authenticateController.isAuthenticated, validate(adminVendorValidation.delete), function(req, res){
         adminVendorController.delete(req, res);
     });
 
@@ -681,10 +727,28 @@ module.exports = {
         deliveryMethodsController.addeditmethod(req, res);
     });
 
-    app.delete('/admin/deletemethod', authenticateController.isAuthenticated, function(req, res){
+    app.delete('/admin/deletemethod', authenticateController.isAuthenticated, validate(deliveryMethodsValidation.deletemethod), function(req, res){
         deliveryMethodsController.deletemethod(req, res);
+    });    
+    /*********************** Delivery Methods Functionality Ends Here ************************/  
+    /************************ Admin Home Functionality ********************************/
+
+    app.post('/admin/getalltopcountires', authenticateController.isAuthenticated, function(req, res){
+        adminhomeController.getalltopcountires(req, res);
     });
-    /*********************** Delivery Methods Functionality Ends Here ************************/
+
+    app.post('/admin/gettopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.gettopcountry), function(req, res){
+        adminhomeController.gettopcountry(req, res);
+    }); 
+
+    app.post('/admin/addedittopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.addedittopcountry), function(req, res){
+        adminhomeController.addedittopcountry(req, res);
+    });
+
+    app.delete('/admin/deletetopcountry', authenticateController.isAuthenticated, validate(adminhomeValidation.deletetopcountry), function(req, res){
+        adminhomeController.deletetopcountry(req, res);
+    });    
+    /*********************** Admin Home Functionality Ends Here ************************/ 
 
     /************************ Promo Banner Functionality ********************************/
 
@@ -768,5 +832,36 @@ module.exports = {
         adminProductController.update(req, res);
     });
     /************** Admin Product End **********/
+
+    /************************** Vendor Section *****************************/
+    
+    /**************** Vendor Login Section Start Here ****************/
+
+    app.post('/vendor/login', validate(vendorValidation.login), function(req, res) {
+        vendorController.login(req, res);
+    });
+
+    app.get('/vendor/view', authenticateController.isAuthenticated, function(req, res) {
+        vendorController.view(req, res);
+    });
+
+    app.put('/vendor/update', authenticateController.isAuthenticated, function(req, res) {
+        vendorController.update(req, res);
+    });
+
+    app.put('/vendor/changePassword', authenticateController.isAuthenticated, validate(vendorValidation.changePassword), function(req, res) {
+        vendorController.changePassword(req, res);
+    });      
+
+    /**************** Vendor Login End Here ****************/ 
+
+
+
+
+
+    /*************************** Vendor Section End *****************************/
+
    }
+
+
 }
