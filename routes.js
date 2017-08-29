@@ -438,12 +438,8 @@ module.exports = {
 
 
     /************************  END Surcharge Calendar Date  ****************************/
-<<<<<<< HEAD
-
-
-=======
     
-      /************************  START Custom Text Calendar Date  ****************************/
+    /************************  START Custom Text Calendar Date  ****************************/
    
     // listing
     app.post('/admin/getCustomTextCalendarDates', authenticateController.isAuthenticated, function(req, res) {
@@ -473,8 +469,7 @@ module.exports = {
     
     
     /************************  END Custom Text Calendar Date  ****************************/
-    
->>>>>>> c6343af3f3e764b985425c23b5d9d11468317de7
+
    /************************* START Get vendors and prodcts lists for calendar setting  Routes ************************/
 
     // get vendors list by country id  (restrict calendar date and surcharge calendar date section)
