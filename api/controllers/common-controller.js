@@ -241,14 +241,14 @@ function CommonController() {
     var token = req.headers['token'] || 0 ;
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
-
+/*
     if((country_shortcode == '' || country_shortcode == undefined) && (country_slug == '' || country_slug == undefined)){
       return res.status(config.HTTP_SERVER_ERROR).send({
           status: config.ERROR, 
           code : config.HTTP_SERVER_ERROR,          
           message: "country short code OR country slug is missing"
       }); 
-    }
+    }*/
 
     if(language_id == undefined){
       language_id = process.env.SITE_LANGUAGE;
