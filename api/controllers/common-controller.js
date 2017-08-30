@@ -236,6 +236,19 @@ function CommonController() {
     var country_shortcode = req.headers['country_shortcode'] || '';
     var country_slug = req.headers['country_slug'] || '';
 
+    var data = {
+      'short': country_shortcode,
+      'slug': country_slug
+    };
+
+    res.status(config.HTTP_SERVER_ERROR).send({
+        status: config.ERROR, 
+        code : config.HTTP_SERVER_ERROR,          
+        message: "country short code OR country slug is missing",
+        data : data
+    }); 
+
+
     var token = req.headers['token'] || 0 ;
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
