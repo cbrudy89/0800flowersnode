@@ -891,7 +891,7 @@ function getProductlistwithfilters($filters, $find_total = false, callback) {
         //var filter_keyword = $filters.filter_keyword;
         $filters.filter_keyword = $filters.filter_keyword.trim();        
 
-        $sql += " AND `language_product`.`product_name` LIKE '"+$filters.filter_keyword+"%'";
+        $sql += " AND `language_product`.`product_name` LIKE '%"+$filters.filter_keyword+"%'";
     }
 
     if($filters.delivery_methods != undefined && $filters.delivery_methods != ''){

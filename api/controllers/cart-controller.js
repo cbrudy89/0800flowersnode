@@ -174,18 +174,19 @@ function CartController() {
                       if(result_cart_product.insertId > 0){
                         // Return cart id to user
 
-                        var resp = {
-                          "cart_key" : cart_key
-                        };
 
                         var cartCount = commonHelper.cartCount.sync(null, user_id, cart_key);
+
+                        var resp = {
+                          "cart_key" : cart_key,
+                          "cartCount" : cartCount
+                        };
 
                         res.status(config.HTTP_SUCCESS).send({
                             status: config.SUCCESS, 
                             code : config.HTTP_SUCCESS, 
                             message: 'Product Added to cart!',
-                            result : resp,
-                            cartCount: cartCount
+                            result : resp
                         });
 
                       }else{
@@ -271,7 +272,7 @@ function CartController() {
     var cart_product_id = req.body.cart_product_id;
     var product_id = req.body.product_id;
     var product_variant_id = req.body.product_variant_id;
-    var country_id = req.body.country_id;
+    //var country_id = req.body.country_id;
 
     var token = req.headers['token'] || '' ;
     var cart_id = '';
@@ -319,7 +320,8 @@ function CartController() {
 
           }else if (cartData[0].id > 0){
 
-            cart_id = cartData[0].id;            
+            cart_id = cartData[0].id; 
+            cart_key = cartData[0].cart_key;
 
           }else{
 
@@ -343,6 +345,7 @@ function CartController() {
 
         // Check Product Exist in Cart
         var isDeleted = isCartProductDeleted.sync(null, cart_id, cart_product_id, product_id, product_variant_id);
+        //console.log(isDeleted);
         if(isDeleted){
 
           res.status(config.HTTP_NOT_FOUND).send({
@@ -354,8 +357,71 @@ function CartController() {
         }else{
 
           // Delete products from cart
+          var cond = [
+              {'id': {'val': cart_product_id, 'cond': '='}},
+              {'cart_id': {'val': cart_id, 'cond': '='}},
+              {'product_id': {'val': product_id, 'cond': '='}},
+              {'product_variant_id': {'val': product_variant_id, 'cond': '='}}
+          ];
 
-          console.log("Delete "+cart_product_id);
+          dbModel.delete("cart_products", cond, function(error, result){
+            
+            if(error){
+
+              res.status(config.HTTP_SERVER_ERROR).send({
+                  status: config.ERROR, 
+                  code : config.HTTP_SERVER_ERROR,          
+                  message: "Unable to delete cart product",
+                  error: error
+              });
+
+            }else{
+
+              Sync(function(){
+
+                // Check cart quanity grater then Zero.
+                var cartCount = commonHelper.cartCount.sync(null, user_id, cart_key);
+                var resp = {
+                  "cart_key" : null,
+                  "cartCount" : cartCount
+                };
+
+                if(cartCount != undefined && cartCount <= 0){
+
+                  var cond1 = [{
+                    'cart_id': {
+                      'val': cart_id, 
+                      'cond': '='
+                    }
+                  }];
+
+                  dbModel.delete("cart", cond1, function(error, result){});
+
+                  res.status(config.HTTP_SUCCESS).send({
+                      status: config.SUCCESS, 
+                      code : config.HTTP_SUCCESS,          
+                      message: "Cart is empty!",
+                      result: resp
+                  });                  
+
+                }else{
+
+                  resp.cart_key = cart_key;
+
+                  res.status(config.HTTP_SUCCESS).send({
+                      status: config.SUCCESS, 
+                      code : config.HTTP_SUCCESS,          
+                      message: "Product removed from cart!",
+                      result: resp
+                  });
+                  
+                }
+
+              });
+
+            }
+
+          });
 
         }
     });
@@ -364,32 +430,141 @@ function CartController() {
 
   this.getCart = function(req, res){
 
-    var cart_key = req.body.cart_key;
+    var language_code = req.headers['language_code'];
+    var country_id = req.headers['country_id'] || '';
+    var currency_id = req.headers['currency_id'] || '';
+
+    var token = req.headers['token'] || '' ;
+    var cart_id = '';
+    var cart_key = req.headers['cart_key'] || '';
+    var user_id = 0;
+
     Sync(function(){
-      
-      // Check if cart key exist or not.
-      var isCartExist = isCartProductExist.sync(null, cart_key, product_id);
-      if(isCartExist){
 
-        // Working Here
+        if(token != '' && token != undefined){
+          var decoded = commonHelper.getUserId.sync(null, token);
+          //console.log('i am hrere');
+          if(decoded != '' && decoded != undefined && decoded.id > 0){
+            user_id = decoded.id;
+          }
+        }      
+        
+        var cartData = 0;
+        if(cart_key != '' && cart_key != undefined){
+            
+            // Check if cart is exist
+            cartData = isCartKeyExist.sync(null, cart_key);      
+        }
 
-        // Update product in cart
+        if(cartData || user_id > 0){
 
-        dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
+          // Logged In User
+          if(user_id != '' && user_id != undefined && user_id > 0){
 
-        });
+            // Check User has cart
+            var userCart = getUserCart.sync(null, user_id);
+            if(userCart){
+
+              cart_key = userCart[0].cart_key;
+              cart_id = userCart[0].id;
+
+            }
+
+          }
+
+          if (cartData[0].id > 0){
+
+            cart_id = cartData[0].id; 
+            cart_key = cartData[0].cart_key;
+
+          }
+
+          if(cart_id == '' && cart_id == undefined && cart_key == '' && cart_key == undefined){
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+          }
+          
+        }else{
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+        }
+
+        // Getting Currency Details from current country
+        var currency_details = commonHelper.getCurrencyDetails.sync(null, currency_id, 0);
+
+        // Get Cart Products
+        var cartItems = getCartProdcuts.sync(null, cart_id, language_code);
 
 
-      }else{
+        //var cartProducts = [];
+        if(cartItems.length > 0 && currency_details.length > 0){
 
-        res.status(config.HTTP_NOT_FOUND).send({
-            status: config.ERROR, 
-            code : config.HTTP_NOT_FOUND,          
-            message: "Unable to process request, Please try again!",
-            err: []
-        });
+          for(var i=0; i < cartItems.length; i++){
 
-      }
+              //console.log(cartItems);
+
+               //console.log($variantdetails[i].price_value);
+              var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+              //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+              var current_currency = currency_details[0].currency_code;
+
+              var currentCurrSymbl = currency_details[0].symbol;
+              if(current_currency !== "USD"){ 
+                  actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+              }
+              
+              price = currentCurrSymbl + actPrice;
+              cartItems[i].price_value = price;
+
+          }
+            
+        }
+
+        //console.log(cartItems);
+
+
+/*        $cartItems = Cart::all();
+        $title = 'Shopping Cart - ' . Config::get('constants.site_title');
+
+        foreach ($cartItems as $items) {
+            $productMethod = MethodVendor::where('method_id', '=', $items->attributes['delivery_method_id'])
+                            ->where('vendor_id', '=', $items->attributes['vendor_id'])->first();
+
+            if (count($productMethod) == 0) {
+                //Get The Default Delivery Method Created By Admin
+                //------------------------------------------------
+                $productMethod = Method::where('id', $items->attributes['delivery_method_id'])->first();
+            }
+            $attributes = $items->attributes;
+            $attributes['productMethod'] = $productMethod;
+
+            Cart::update($items->__raw_id, array('attributes' => $attributes));
+        }*/
+
+
+
+        var resp = {
+          "cartCount": 0,
+          "cartItems": cartItems
+        }
+
+        return res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS,          
+            message: "Products in cart",
+            result: resp
+        });      
 
     });
 
@@ -492,9 +667,9 @@ function updateCartProductQuantity(cart_id, product_id, product_variant_id, deli
       callback(error);            
     }else{
       if(result.affectedRows > 0){
-        callback(null, 'true');
+        callback(null, true);
       }else{
-        callback(null, 'false');
+        callback(null, false);
       }            
     }
 
@@ -516,16 +691,49 @@ function isCartProductDeleted(cart_id, cart_product_id, product_id, product_vari
       callback(error);
     } else {
 
-      if(result.length > 0){
-        callback(null, 'false');
+      if(result.length > 0 && result[0].id > 0){
+        callback(null, false);
       }else{
-        callback(null, 'true');
+        callback(null, true);
       }
     }
 
   });
 
 }
+
+function getCartProdcuts(cart_id, language_id, callback){
+
+  var sql = "SELECT lp.product_name, p.product_code, p.vendor_id, p.product_picture, cp.*,pp.price_value FROM cart c INNER JOIN cart_products cp ON(c.id = cp.cart_id)";
+  sql += " LEFT JOIN product_prices pp ON(pp.product_id = cp.product_id)";
+  sql += " LEFT JOIN products p ON(p.id = pp.product_id)";
+  sql += " LEFT JOIN language_product lp ON(lp.product_id = p.id)";
+  sql += " WHERE p.product_status = 1";
+  sql += " AND p.admin_confirm = 1";
+  sql += " AND p.product_status = 1";
+  sql += " AND c.id ="+cart_id;
+  sql += " AND lp.language_id ="+language_id;
+
+  //console.log(sql);
+
+  dbModel.rawQuery(sql, function(error, result){
+
+    if(error){
+      callback(error);
+    } else {
+
+      if(result.length > 0){
+        callback(null, result);
+      }else{
+        callback(null, []);
+      }
+    }
+
+  });
+
+}
+
+
 
 /*function isCartProductExist(cart_key, product_id, callback){
 

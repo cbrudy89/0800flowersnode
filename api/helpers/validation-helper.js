@@ -18,7 +18,7 @@ module.exports = function validate(schema) {
       return next();
     }
 
-    ['params', 'body', 'query'].forEach(function (key) {
+    ['params', 'body', 'query', 'headers'].forEach(function (key) {
       if (schema[key]) {
         toValidate[key] = req[key];
       }
