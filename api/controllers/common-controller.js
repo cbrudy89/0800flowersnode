@@ -231,8 +231,8 @@ function CommonController() {
 
   // Header Page API (Countries, Province, Language, Currency, Language Translation Content)
   this.header = function(req, res) {
-    var country_shortcode = req.headers['country_shortcode'] || '';
-    var country_slug = req.headers['country_slug'] || '';
+    var country_shortcode = req.headers['country_shortcode'] || req.headers.country_shortcode;
+    var country_slug = req.headers['country_slug']  || req.headers.country_slug;
     var language_id = req.params.langauge_code|| '';
 
     var token = req.headers['token'] || 0 ;
