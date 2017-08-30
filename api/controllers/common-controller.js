@@ -233,13 +233,19 @@ function CommonController() {
   this.header = function(req, res) {
     
     var language_id = req.params.langauge_code || '';
-    var country_shortcode = req.headers['country_shortcode'] || '';
-    var country_slug = req.headers['country_slug'] || '';
+    var country_shortcode = req.params.country_shortcode || '';
+    var country_slug = req.params.country_slug || '';
 
+    var token = req.headers['token'] || 0 ;
+    var cart_key = req.headers['cart_key'] || '';
+    var user_id = 0;
+/*
     var data = {
+      'token': token,
+      'cart_key': cart_key,
       'short': country_shortcode,
       'slug': country_slug
-    };
+    };*/
 
     res.status(config.HTTP_SERVER_ERROR).send({
         status: config.ERROR, 
@@ -249,9 +255,6 @@ function CommonController() {
     }); 
 
 
-    var token = req.headers['token'] || 0 ;
-    var cart_key = req.headers['cart_key'] || '';
-    var user_id = 0;
 
     if((country_shortcode == undefined || country_shortcode == '') && (country_slug == undefined || country_slug == '')){
       return res.status(config.HTTP_SERVER_ERROR).send({

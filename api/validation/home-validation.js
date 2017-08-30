@@ -8,7 +8,7 @@ module.exports = {
 	  }  	
   },
   home : {
-  	headers: {
+  	params: {
   		country_shortcode: Joi.string().max(2).required()
   	}
   }

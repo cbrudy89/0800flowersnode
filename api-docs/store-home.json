@@ -82,7 +82,7 @@
             }
          }
       },
-      "/home/{langauge_code}":{
+      "/home/{langauge_code}/{country_shortcode}":{
          "get":{
             "tags":[
                "Store Home"
@@ -95,7 +95,7 @@
             "parameters":[
                {
                   "name":"country_shortcode",
-                  "in":"header",
+                  "in":"path",
                   "description":"Site country_shortcode",
                   "required":true,
                   "type":"string"

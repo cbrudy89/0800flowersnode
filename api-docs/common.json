@@ -240,7 +240,7 @@
             }
          }
       },
-      "/common/header/{langauge_code}":{
+      "/common/header/{langauge_code}/{country_shortcode}/{country_slug}":{
          "get":{
             "tags":[
                "Common"
@@ -267,14 +267,14 @@
                },
                {
                   "name":"country_shortcode",
-                  "in":"header",
+                  "in":"path",
                   "description":"country shortcode",
                   "required":false,
                   "type":"string"
                },
                {
                   "name":"country_slug",
-                  "in":"header",
+                  "in":"path",
                   "description":"country slug",
                   "required":false,
                   "type":"string"

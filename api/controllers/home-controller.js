@@ -222,7 +222,7 @@ function HomeController() {
         language_id = process.env.SITE_LANGUAGE;
       }
 
-      var country_shortcode = req.headers['country_shortcode'];
+      var country_shortcode = req.params.country_shortcode;
       var token = req.headers['token'] || '' ;
       var cart_key = req.headers['cart_key'] || '';
       var user_id = 0;
