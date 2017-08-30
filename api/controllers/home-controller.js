@@ -217,6 +217,7 @@ function HomeController() {
   // Home page data
   this.home  = function(req, res) {
 
+      var country_shortcode = req.headers['country_shortcode'];
       var language_id = req.params.langauge_code;
       if(language_id == undefined){
         language_id = process.env.SITE_LANGUAGE;
@@ -235,19 +236,17 @@ function HomeController() {
             user_id = decoded.id;
           }
         }          
-
-
-      //console.log(user_id);
-
+      
       var return_data = {};
 
-      //return_data.default_logo = config.RESOURCE_URL+"logo.png";
+      country = commonModel.countrydetails.sync(null,country_shortcode, '');
+      if(country.length > 0){
+        
+        var country_id= country[0].country_id;
+        language_id= country[0].language_id;
 
-      var path = config.RESOURCE_URL+"logo.png";
-      if (fs.existsSync(path)) {
-        return_data.default_logo = config.RESOURCE_URL+"logo.png";
-      }else{
-        return_data.default_logo = "";
+        return_data.default_country_details = country[0];
+        return_data.default_logo = country[0].default_logo;  
       }      
 
       //This functions will be executed at the same time

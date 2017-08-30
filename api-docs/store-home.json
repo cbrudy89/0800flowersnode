@@ -94,10 +94,17 @@
             ],
             "parameters":[
                {
+                  "name":"country_shortcode",
+                  "in":"header",
+                  "description":"Site country_shortcode",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
                   "name":"langauge_code",
                   "in":"path",
                   "description":"Site language id",
-                  "required":true,
+                  "required":false,
                   "type":"integer"
                },  
                {

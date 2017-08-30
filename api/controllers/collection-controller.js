@@ -57,7 +57,8 @@ function CollectionController() {
              callback();
           }
         });
-      },
+      }
+     /* ,
       function homeoffer(callback){
           dbModel.find('home_offer','id, line1, line2, line3, line4', '', '', '', function(err, result) {
             if (err) return callback(err);
@@ -67,7 +68,7 @@ function CollectionController() {
             }
           });
 
-      }     
+      } */    
     ], function (err, result) {
 
         if (err) {
@@ -726,7 +727,8 @@ function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id
 function getCurrencyDetails($currency_id = null, $country_id, callback){
 
   // Get price details from currency tables by country
-  var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+//  var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+  var $sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
   //console.log(sql);
 
@@ -833,7 +835,7 @@ function getProductlistwithfilters($filters, $find_total = false, callback) {
 
     if($find_total == false){
       
-      var $sql = "SELECT `products`.`id`, CONCAT('"+config.RESOURCE_URL+"',REPLACE(`products`.`product_picture`, '+','%2B')) as product_picture, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`,`methods`.`delivery_within`, (CASE WHEN `methods`.`delivery_within` = 0 THEN 'candeliver' WHEN `methods`.`delivery_within` = 1 THEN 'delivertom' WHEN `methods`.`delivery_within` = 2 THEN 'delivertom' END) AS 'delivery_within_key',`language_product`.`product_name`";
+      var $sql = "SELECT `products`.`id`, views, CONCAT('"+config.RESOURCE_URL+"',REPLACE(`products`.`product_picture`, '+','%2B')) as product_picture, `products`.`product_code`, `products`.`slug`, `methods`.`delivery_method`,`methods`.`delivery_within`, (CASE WHEN `methods`.`delivery_within` = 0 THEN 'candeliver' WHEN `methods`.`delivery_within` = 1 THEN 'delivertom' WHEN `methods`.`delivery_within` = 2 THEN 'delivertom' END) AS 'delivery_within_key',`language_product`.`product_name`";
     }else{
       var $sql = "SELECT COUNT(*) AS total_products";
     }
@@ -891,7 +893,7 @@ function getProductlistwithfilters($filters, $find_total = false, callback) {
         //var filter_keyword = $filters.filter_keyword;
         $filters.filter_keyword = $filters.filter_keyword.trim();        
 
-        $sql += " AND `language_product`.`product_name` LIKE '"+$filters.filter_keyword+"%'";
+        $sql += " AND `language_product`.`product_name` LIKE '%"+$filters.filter_keyword+"%'";
     }
 
     if($filters.delivery_methods != undefined && $filters.delivery_methods != ''){

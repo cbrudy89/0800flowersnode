@@ -255,13 +255,27 @@
                   "name":"langauge_code",
                   "in":"path",
                   "description":"Site language id.",
-                  "required":true,
+                  "required":false,
                   "type":"integer"
                },
                {
                   "name":"token",
                   "in":"header",
                   "description":"Logged in customer token.",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"country_shortcode",
+                  "in":"header",
+                  "description":"country shortcode",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"country_slug",
+                  "in":"header",
+                  "description":"country slug",
                   "required":false,
                   "type":"string"
                }                                
