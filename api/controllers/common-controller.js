@@ -239,22 +239,6 @@ function CommonController() {
     var token = req.headers['token'] || 0 ;
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
-/*
-    var data = {
-      'token': token,
-      'cart_key': cart_key,
-      'short': country_shortcode,
-      'slug': country_slug
-    };*/
-
-    res.status(config.HTTP_SERVER_ERROR).send({
-        status: config.ERROR, 
-        code : config.HTTP_SERVER_ERROR,          
-        message: "country short code OR country slug is missing",
-        data : data
-    }); 
-
-
 
     if((country_shortcode == undefined || country_shortcode == '') && (country_slug == undefined || country_slug == '')){
       return res.status(config.HTTP_SERVER_ERROR).send({
