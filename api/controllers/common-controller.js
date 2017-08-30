@@ -231,24 +231,22 @@ function CommonController() {
 
   // Header Page API (Countries, Province, Language, Currency, Language Translation Content)
   this.header = function(req, res) {
-    /*var country_shortcode = req.headers['country_shortcode'] || req.headers.country_shortcode;
-    var country_slug = req.headers['country_slug']  || req.headers.country_slug;*/
-
-    var language_id = req.params.langauge_code|| '';
-    var country_shortcode = req.headers.country_shortcode || '';
-    var country_slug = req.headers.country_slug || '';    
+    
+    var language_id = req.params.langauge_code || '';
+    var country_shortcode = req.headers['country_shortcode'] || '';
+    var country_slug = req.headers['country_slug'] || '';
 
     var token = req.headers['token'] || 0 ;
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
-/*
-    if((country_shortcode == '' || country_shortcode == undefined) && (country_slug == '' || country_slug == undefined)){
+
+    if((country_shortcode == undefined || country_shortcode == '') && (country_slug == undefined || country_slug == '')){
       return res.status(config.HTTP_SERVER_ERROR).send({
           status: config.ERROR, 
           code : config.HTTP_SERVER_ERROR,          
           message: "country short code OR country slug is missing"
       }); 
-    }*/
+    }
 
     if(language_id == undefined){
       language_id = process.env.SITE_LANGUAGE;
