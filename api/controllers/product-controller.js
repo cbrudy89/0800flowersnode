@@ -39,7 +39,7 @@ function ProductController() {
             },
             function productdata(callback) {
 
-                $sql = "Select `product_name`, `product_description`, `product_specification`, `product_content`, `products`.`id`, `products`.`product_code`,`products`.`slug`, `products`.`delivery_method_id`,`products`.`vendor_id` from `products` ";
+                $sql = "Select `product_name`, `product_description`, `product_specification`, `product_content`, `products`.`id`, `views`,`products`.`product_code`,`products`.`slug`, `products`.`delivery_method_id`,`products`.`vendor_id` from `products` ";
                 $sql += "INNER JOIN `language_product` on `products`.`id` = `language_product`.`product_id` ";
                 $sql += "INNER JOIN `location_product` on `products`.`id` = `location_product`.`product_id` ";
                 $sql += "WHERE (`product_status` = 1 and `language_product`.`language_id` = " + $sessLang + " and `products`.`slug` = '" + $slug + "') ";
@@ -55,10 +55,11 @@ function ProductController() {
                     if (err) return callback(err);
                     else {
                         if ($product.length > 0) {
-                            
+
                             /////////////////////Product data/////////////////////////////////
                             $title = $product[0].product_name + '-' + config.SITE_TITLE;
                             Sync(function() {
+                                commonHelper.incrementProductViews.sync(null, $product[0].id);
                                 $variantdetails = getVariantDetails.sync(null, $product[0].id);
                                 $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);
                                 // For Related Products---------------------
@@ -246,7 +247,6 @@ function ProductController() {
                                         var $deldate = '';
                                         for (var $item in $getDates) {
                                             $deldate = $getDates[$item].deliveryDate;
-                                            //console.log($deldate);
                                             
                                             if($adminRestictedRates.indexOf($deldate) >= 0 ){
                                                 continue; //admin date found
@@ -263,10 +263,17 @@ function ProductController() {
                                                 $totSurcharge = parseFloat($totSurcharge).toFixed(2);
                                             }
 
-                                            //console.log($totSurcharge);
+                                            var currentDate = new Date($deldate); 
+                                            var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);  
+                                            var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
+                                            var caldate = currentDate.getFullYear() + "-" + twoDigitMonth + "-" + twoDigitDate; 
+                                            
+                                            $customtextdate = commonHelper.getCalenderCustomTextDates.sync(null, caldate, $vendorId, $currentCountry, $product[0].id);
+                                            
                                             $infoArray[$deldate] = {
                                                 'deliveryDate': $deldate,
-                                                'totSurcharge': $totSurcharge
+                                                'totSurcharge': $totSurcharge,
+                                                'customtext' : $customtextdate
                                             };
 
                                             $dateArray.push($deldate);

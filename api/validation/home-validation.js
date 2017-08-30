@@ -6,5 +6,10 @@ module.exports = {
 	  body: {
 	    email: Joi.string().email().required()
 	  }  	
+  },
+  home : {
+  	headers: {
+  		country_shortcode: Joi.string().max(2).required()
+  	}
   }
 };

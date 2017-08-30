@@ -13,9 +13,43 @@ function CommonHelper(){
 	}
 
 
-	// get country code
-	this.countrycode=function (countryid,callback) {
-	    dbModel.rawQuery('SELECT iso_code FROM country_list WHERE id = '+countryid, function(err, result) {  
+    // get country details
+    this.countrydetails=function (short_code, country_slug, callback) {
+        sql='SELECT id as country_id,LOWER(REPLACE(country_name, " ", "-")) as country_slug,country_name,preferred_currency_id,language_id,short_code,calling_code,phone,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`company_logo`, "+","%2B")) as default_logo,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`country_flag`, "+","%2B")) as country_flag,ga_code FROM country_list';
+        var cond = '';
+        if(short_code != '' && short_code != undefined){
+            cond = ' WHERE short_code = "'+short_code+'"';
+        }
+        else if(country_slug != '' && country_slug != undefined){
+            cond += ' WHERE LOWER(REPLACE(country_name, " ", "-")) = "'+country_slug+'"';   
+        
+        }
+        
+        dbModel.rawQuery(sql+cond, function(err, result) {  
+            //console.log(result);
+            if (err) return callback(err,null);
+            else {
+                if(result.length > 0){
+                    callback(null,result);                    
+                }else{
+
+                    var cond = " WHERE short_code = 'US'";
+                    dbModel.rawQuery(sql+cond, function(err, result) { 
+                        if (err) return callback(err,null);
+                        else{
+                            callback(null,result);
+                        }      
+                    });
+
+                }
+            }
+        });
+
+    }
+    // increment Product Views
+	this.incrementProductViews=function (product_id,callback) {
+
+	    dbModel.rawQuery('UPDATE products set views=views+1 WHERE id = '+product_id, function(err, result) {   
 	    	//console.log(result);
 	        if (err) return callback(err,null);
 	        else
@@ -23,6 +57,17 @@ function CommonHelper(){
 	    });
 
 	}
+
+    // get country code
+    this.countrycode=function (countryid,callback) {
+        dbModel.rawQuery('SELECT iso_code FROM country_list WHERE id = '+countryid, function(err, result) {  
+            //console.log(result);
+            if (err) return callback(err,null);
+            else
+                callback(null,result);
+        });
+
+    }
 
 	this.getPromoBanner = function(language_id, type, callback ){
 
@@ -1044,6 +1089,26 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
             callback(null, cartCount);
         }
 
+    }
+
+    // get calender custom text dates
+    this.getCalenderCustomTextDates = function ($date, $vendor_id, $country_id, $product_id, callback) {
+        $sql = "SELECT `customtext_calendars`.`title`";
+        $sql += " FROM `customtext_calendars`";
+        $sql += " INNER JOIN `product_customtext_calendar` on `product_customtext_calendar`.`customtext_calendar_id` = `customtext_calendars`.`id`";
+        $sql += " WHERE `customtext_calendars`.`vendor_id` = " + $vendor_id;
+        $sql += " AND `customtext_calendars`.`start_date` = '" + $date + "'";
+        $sql += " AND `customtext_calendars`.`country_id` = " + $country_id;
+        $sql += " AND `product_customtext_calendar`.`product_id` = " + $product_id;
+        $sql += " AND `customtext_calendars`.`status` = 1";
+        //console.log($sql);
+        dbModel.rawQuery($sql, function(err, $customtextCalDate) {
+            if (err) return callback(err);
+            else {
+                if ($customtextCalDate.length > 0) callback(null, $customtextCalDate[0].title);
+                else return callback(null, '');
+            }
+        });
     }
    
 }

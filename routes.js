@@ -561,7 +561,7 @@ module.exports = {
     });*/
 
     // Load all home page data.
-    app.get('/home/:langauge_code', function(req, res){
+    app.get('/home/:langauge_code', validate(homeValidation.home), function(req, res){
         homeController.home(req, res);
     });
 
