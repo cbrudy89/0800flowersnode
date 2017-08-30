@@ -275,7 +275,107 @@
                }
             }
          }
-      }      
+      },
+      "/admin/venderListByCountryId/":{
+         "post":{
+            "tags":[
+               "Common"
+            ],
+            "description":"List all vendor by country id.",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response.",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 1 ",
+                  "required":true,
+                  "type":"integer"
+               }                        
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Vendor list.",
+                  "schema":{
+                      "$ref":"#/definitions/200venderListByCountryId"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500venderListByCountryId"
+                  }
+               },                                                              
+               "404":{
+                  "description":"No vendor found.",
+                  "schema":{
+                     "$ref":"#/definitions/404venderListByCountryId"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/productListByVendorId/":{
+         "post":{
+            "tags":[
+               "Common"
+            ],
+            "description":"List all product list by vendor id ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 1 ",
+                  "required":true,
+                  "type":"integer"
+               }                                        
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Product list.",
+                  "schema":{
+                      "$ref":"#/definitions/200productListByVendorId"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500productListByVendorId"
+                  }
+               },                                                           
+               "404":{
+                  "description":"No product found.",
+                  "schema":{
+                     "$ref":"#/definitions/404productListByVendorId"
+                  }
+               } 
+            }
+
+         }
+      }                                        
    },
    "definitions":{
       "create":{
@@ -607,6 +707,104 @@
                "example":"Unable to process request, Please try again!"
             }
          }
-      }      
+      },
+      "200venderListByCountryId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example": "true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found"
+            }
+         }
+      },
+      "404venderListByCountryId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No record found"
+            }
+         }
+      },
+      "500venderListByCountryId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      },
+      "200productListByVendorId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example": "true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Record found"
+            }
+         }
+      },
+      "404productListByVendorId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No record found"
+            }
+         }
+      },
+      "500productListByVendorId":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }
+
+
    }
 }
