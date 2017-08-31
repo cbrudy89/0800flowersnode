@@ -118,7 +118,8 @@ function CommonHelper(){
 	this.getCurrencyDetails = function($currency_id = null, $country_id, callback){
 
 	  // Get price details from currency tables by country
-	  var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+	  //var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+      var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
 	  //console.log(sql);
 
@@ -130,7 +131,7 @@ function CommonHelper(){
 	    }else{
 
 	      // If Preferred Currency Id not found for selected country then Use selected Currency Rate
-	      var $sql = "SELECT * from `currency` WHERE id = "+$currency_id;
+	      var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
 	      dbModel.rawQuery($sql, function(err, currency_result) {
 	        if (err) return callback(err);

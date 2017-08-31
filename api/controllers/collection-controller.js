@@ -130,7 +130,7 @@ function CollectionController() {
       }       
 
       // Getting Currency Details from current country
-      var $currency_details = getCurrencyDetails.sync(null, currency_id, delivery_country_id);
+      var $currency_details = commonHelper.getCurrencyDetails.sync(null, currency_id, delivery_country_id);
       //console.log($currency_details);
 
       reqData = {
@@ -727,10 +727,8 @@ function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id
 function getCurrencyDetails($currency_id = null, $country_id, callback){
 
   // Get price details from currency tables by country
-//  var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
-  var $sql = "SELECT * from `currency` WHERE id = "+$currency_id;
-
-  //console.log(sql);
+  //var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
+  var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
   dbModel.rawQuery(sql, function(err, currency_result) {
     if (err) return callback(err);
@@ -740,7 +738,7 @@ function getCurrencyDetails($currency_id = null, $country_id, callback){
     }else{
 
       // If Preferred Currency Id not found for selected country then Use selected Currency Rate
-      var $sql = "SELECT * from `currency` WHERE id = "+$currency_id;
+      var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
       dbModel.rawQuery($sql, function(err, currency_result) {
         if (err) return callback(err);

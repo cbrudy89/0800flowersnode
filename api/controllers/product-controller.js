@@ -61,7 +61,7 @@ function ProductController() {
                             Sync(function() {
                                 commonHelper.incrementProductViews.sync(null, $product[0].id);
                                 $variantdetails = getVariantDetails.sync(null, $product[0].id);
-                                $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);
+                                $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id, $currentCountry);
                                 // For Related Products---------------------
                                 $delivery_country_show_state = 0;
                                 $relatedProductsData = $relatedProducts=[];
