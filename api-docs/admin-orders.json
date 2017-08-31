@@ -1,0 +1,448 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Orders APIs",
+      "description":"All APIs related to the admin orders controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Orders",
+         "description":"API for admin orders section usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getOrdersList/":{
+         "post":{
+            "tags":[
+               "Admin Orders"
+            ],
+            "description":"List all orders from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: created_at-desc",
+                  "required":false,
+                  "type":"string"
+               },  
+               {
+                  "name":"search_day",
+                  "in":"formData",
+                  "description":"Search day Example: today or yesterday",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_status",
+                  "in":"formData",
+                  "description":"Search status Example: 0 for pending, 1 for in-progress, 2 from delivered, 3 for cancelled ",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_start_date",
+                  "in":"formData",
+                  "description":"Search start date Example: 2018-08-22",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_end_date",
+                  "in":"formData",
+                  "description":"Search start date Example: 2018-08-23",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_first_name",
+                  "in":"formData",
+                  "description":"Search first name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_last_name",
+                  "in":"formData",
+                  "description":"Search last name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_order_id",
+                  "in":"formData",
+                  "description":"Search Invoice Id Example:  18F1458728675",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_delivery_date",
+                  "in":"formData",
+                  "description":"Search delivery date Example: 2018-08-22",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_email",
+                  "in":"formData",
+                  "description":"Search email Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_contact",
+                  "in":"formData",
+                  "description":"Search contact Example: 101126502455",
+                  "required":false,
+                  "type":"string"
+               }
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Order listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getOrdersList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getOrdersList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get order.",
+                  "schema":{
+                     "$ref":"#/definitions/403getOrdersList"
+                  }
+               },                                               
+               "404":{
+                  "description":"No order found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getOrdersList"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/getAtlasOrdersList/":{
+         "post":{
+            "tags":[
+               "Admin Orders"
+            ],
+            "description":"List all atlas orders from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: created_at-desc",
+                  "required":false,
+                  "type":"string"
+               },  
+               {
+                  "name":"search_day",
+                  "in":"formData",
+                  "description":"Search day Example: today or yesterday",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_status",
+                  "in":"formData",
+                  "description":"Search status Example: 0 for pending, 1 for in-progress, 2 from delivered, 3 for cancelled ",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_start_date",
+                  "in":"formData",
+                  "description":"Search start date Example: 2018-08-22",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_end_date",
+                  "in":"formData",
+                  "description":"Search start date Example: 2018-08-23",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_first_name",
+                  "in":"formData",
+                  "description":"Search first name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_last_name",
+                  "in":"formData",
+                  "description":"Search last name Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_order_id",
+                  "in":"formData",
+                  "description":"Search Invoice Id Example:  18F1458728675",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_delivery_date",
+                  "in":"formData",
+                  "description":"Search delivery date Example: 2018-08-22",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_email",
+                  "in":"formData",
+                  "description":"Search email Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"search_contact",
+                  "in":"formData",
+                  "description":"Search contact Example: 101126502455",
+                  "required":false,
+                  "type":"string"
+               }
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Order listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getAtlasOrdersList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getAtlasOrdersList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get order.",
+                  "schema":{
+                     "$ref":"#/definitions/403getAtlasOrdersList"
+                  }
+               },                                               
+               "404":{
+                  "description":"No order found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getAtlasOrdersList"
+                  }
+               } 
+            }
+
+         }
+      }      
+          
+   },
+   "definitions":{
+      "200getOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 order listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get order."
+            }
+         }
+      },      
+      "404getOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No order found."
+            }
+         }
+      },
+      "200getAtlasOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 order listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getAtlasOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getAtlasOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get order."
+            }
+         }
+      },      
+      "404getAtlasOrdersList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No order found."
+            }
+         }
+      }      
+            
+   }
+}

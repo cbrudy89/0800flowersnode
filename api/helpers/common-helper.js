@@ -996,12 +996,36 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
            var dateArr = inputDate.split("-");
            var newdate = dateArr[0]+'-'+ dateArr[1]+'-'+dateArr[2];
        }
+       else if(format == 5){
 
+           // inputDate is   new Date() OBJECT
+           // YYYY-MM-DD HH:MM:SS'  convert into   YYYY-MM-DD
+           
+           var newdate = inputDate.getFullYear()+'-'+ (inputDate.getMonth() + 1 )+ '-'+inputDate.getDate();
+       }
+       
        return newdate;
 
        //return datetime.toISOString().substring(0, 19).replace('T', ' ')
    }  
-
+  
+    this.getYesterdaysDate = function( inputDate ) {
+        
+        var yesterdaysDate = new Date();
+            yesterdaysDate.setDate(yesterdaysDate.getDate()-1);
+            
+        return yesterdaysDate;
+    }
+  
+    this.getTomorrowDate = function( inputDate ) {
+        
+        var tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate()+1);
+            
+        return tomorrowDate;
+    }
+    
+    
    this.getUserId = function (token, callback){
 
         jwt.verify(token, process.env.SECRET_KEY,function(err,decoded){
@@ -1014,7 +1038,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
 
     }
 
-    this.cartCount = function(user_id, cart_key, callback){
+   this.cartCount = function(user_id, cart_key, callback){
 
         var cartCount = 0;
 
@@ -1045,6 +1069,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
         }
 
     }
+   
    
 }
 

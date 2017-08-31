@@ -10,6 +10,7 @@ var colorController = require('./api/controllers/admin/color-controller');
 var calendarsettingController = require('./api/controllers/admin/calendarsetting-controller');
 var occasionController = require('./api/controllers/admin/occasion-controller');
 var cmsController = require('./api/controllers/admin/cms-controller');
+var ordersController = require('./api/controllers/admin/orders-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -35,7 +36,7 @@ var adminValidation = require('./api/validation/admin/admin-validation');
 var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 var occasionValidation = require('./api/validation/admin/occasion-validation');
 var cmsValidation = require('./api/validation/admin/cms-validation');
-
+var ordersValidation = require('./api/validation/admin/orders-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -367,6 +368,21 @@ module.exports = {
     
     /************************  END Occasion  ****************************/      
       
+    /************************  START Orders   ****************************/
+   
+    // listing all orders
+    app.post('/admin/getOrdersList', authenticateController.isAuthenticated, validate(ordersValidation.getOrdersList), function(req, res) {
+        ordersController.getOrdersList(req, res);
+    });
+    
+    // listing only atlas orders
+    app.post('/admin/getAtlasOrdersList', authenticateController.isAuthenticated, validate(ordersValidation.getAtlasOrdersList), function(req, res) {
+        ordersController.getAtlasOrdersList(req, res);
+    });
+      
+    /************************  END Restrict Calendar Date  ****************************/
+   
+   
       
     /************************* Home Page Routes ************************/
 
