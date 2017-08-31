@@ -141,7 +141,7 @@ module.exports = {
         commonController.countrylanguage(req, res);
     });
 
-    app.get('/common/header/:langauge_code/:country_shortcode/:country_slug', function(req, res) {
+    app.get('/common/header', function(req, res) {
         commonController.header(req, res);
     });
 
@@ -561,7 +561,7 @@ module.exports = {
     });*/
 
     // Load all home page data.
-    app.get('/home/:langauge_code/:country_shortcode', function(req, res){
+    app.get('/home', validate(homeValidation.home), function(req, res){
         homeController.home(req, res);
     });
 

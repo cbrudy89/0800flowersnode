@@ -5,7 +5,7 @@ var Sync = require('sync');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
-var commonModel = require('./../helpers/common-helper');
+var commonHelper = require('./../helpers/common-helper');
 var fs = require('fs');
 //var userHelper = require('./../helpers/user-helper');
 //var userModel = require('./../../../user-model');
@@ -232,13 +232,18 @@ function CommonController() {
   // Header Page API (Countries, Province, Language, Currency, Language Translation Content)
   this.header = function(req, res) {
     
-    var language_id = req.params.langauge_code || '';
-    var country_shortcode = req.params.country_shortcode || '';
-    var country_slug = req.params.country_slug || '';
+    var language_id = req.query.langauge_code || '';
+    var country_shortcode = req.query.country_shortcode || '';
+    var country_slug = req.query.country_slug || '';
 
-    var token = req.headers['token'] || 0 ;
+    //console.log(country_shortcode +" : "+ country_slug);
+
+    var token = req.headers['token'] || '' ;
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
+
+/*    console.log("token: "+token);
+    console.log("cart_key: "+cart_key);*/
 
     if((country_shortcode == undefined || country_shortcode == '') && (country_slug == undefined || country_slug == '')){
       return res.status(config.HTTP_SERVER_ERROR).send({
@@ -255,14 +260,17 @@ function CommonController() {
 
     Sync(function(){
 
-      if(token){
-        var decoded = commonModel.getUserId.sync(null, token);
-        user_id = decoded.id;
+      if(token != '' && token != undefined){
+        var decoded = commonHelper.getUserId.sync(null, token);
+        //console.log('i am hrere');
+        if(decoded != '' && decoded != undefined && decoded.id > 0){
+          user_id = decoded.id;
+        }
       }
 
       var return_data = {};
       
-      country = commonModel.countrydetails.sync(null,country_shortcode, country_slug);
+      country = commonHelper.countrydetails.sync(null,country_shortcode, country_slug);
       if(country.length > 0){
 
         var country_id= country[0].country_id;
@@ -339,7 +347,7 @@ function CommonController() {
 
                                 continent.push({
                                   "continent_id": id, 
-                                  "country_name": continent_name,
+                                  "continent_name": continent_name,
                                   "countries": country
                                 });
                             }

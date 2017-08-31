@@ -240,7 +240,7 @@
             }
          }
       },
-      "/common/header/{langauge_code}/{country_shortcode}/{country_slug}":{
+      "/common/header":{
          "get":{
             "tags":[
                "Common"
@@ -252,13 +252,6 @@
             ],
             "parameters":[
                {
-                  "name":"langauge_code",
-                  "in":"path",
-                  "description":"Site language id.",
-                  "required":false,
-                  "type":"integer"
-               },
-               {
                   "name":"token",
                   "in":"header",
                   "description":"Logged in customer token.",
@@ -266,15 +259,29 @@
                   "type":"string"
                },
                {
+                  "name":"cart_key",
+                  "in":"header",
+                  "description":"Cart key.",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"langauge_code",
+                  "in":"query",
+                  "description":"Site language id.",
+                  "required":false,
+                  "type":"integer"
+               },
+               {
                   "name":"country_shortcode",
-                  "in":"path",
+                  "in":"query",
                   "description":"country shortcode",
                   "required":false,
                   "type":"string"
                },
                {
                   "name":"country_slug",
-                  "in":"path",
+                  "in":"query",
                   "description":"country slug",
                   "required":false,
                   "type":"string"

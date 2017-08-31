@@ -82,7 +82,7 @@
             }
          }
       },
-      "/home/{langauge_code}/{country_shortcode}":{
+      "/home":{
          "get":{
             "tags":[
                "Store Home"
@@ -95,14 +95,14 @@
             "parameters":[
                {
                   "name":"country_shortcode",
-                  "in":"path",
+                  "in":"query",
                   "description":"Site country_shortcode",
-                  "required":false,
+                  "required":true,
                   "type":"string"
                },  
                {
                   "name":"langauge_code",
-                  "in":"path",
+                  "in":"query",
                   "description":"Site language id",
                   "required":false,
                   "type":"integer"

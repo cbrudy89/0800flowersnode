@@ -5,7 +5,7 @@ var Sync = require('sync');
 var config = require('./../../config');
 var connection = require('./../../database');
 var dbModel = require('./../models/db-model');
-var commonModel = require('./../helpers/common-helper');
+var commonHelper = require('./../helpers/common-helper');
 var fs = require('fs');
 
 function HomeController() {
@@ -217,29 +217,30 @@ function HomeController() {
   // Home page data
   this.home  = function(req, res) {
 
-      var language_id = req.params.langauge_code;
-      if(language_id == undefined){
-        language_id = process.env.SITE_LANGUAGE;
-      }
-
-      var country_shortcode = req.params.country_shortcode;
+      var language_id = req.query.langauge_code || '';
+      var country_shortcode = req.query.country_shortcode || '';
       var token = req.headers['token'] || '' ;
       var cart_key = req.headers['cart_key'] || '';
       var user_id = 0;
 
+      if(language_id == undefined){
+        language_id = process.env.SITE_LANGUAGE;
+      }
+
+
       Sync(function(){
 
         if(token != '' && token != undefined){
-          var decoded = commonModel.getUserId.sync(null, token);
+          var decoded = commonHelper.getUserId.sync(null, token);
           //console.log('i am hrere');
           if(decoded != '' && decoded != undefined && decoded.id > 0){
             user_id = decoded.id;
           }
-        }          
+        }        
       
         var return_data = {};
 
-        country = commonModel.countrydetails.sync(null,country_shortcode, '');
+        country = commonHelper.countrydetails.sync(null,country_shortcode, '');
         if(country.length > 0){
           
           var country_id= country[0].country_id;
@@ -252,7 +253,7 @@ function HomeController() {
         //This functions will be executed at the same time
         async.parallel([
             function topbanner(callback){
-               commonModel.getPromoBanner(language_id, 'home', function(err, result) {
+               commonHelper.getPromoBanner(language_id, 'home', function(err, result) {
                    if (err) return callback(err);
                    else {
                       if(result.length > 0 && result[0].description != ''){
@@ -359,7 +360,7 @@ function HomeController() {
 
                                   continent.push({
                                     "continent_id": id, 
-                                    "country_name": continent_name,
+                                    "continent_name": continent_name,
                                     "countries": country
                                   });
                               }
@@ -512,7 +513,7 @@ function HomeController() {
             },       
             function cartCount(callback){
 
-                commonModel.cartCount(user_id, cart_key, function(error, cartCount){
+                commonHelper.cartCount(user_id, cart_key, function(error, cartCount){
                   if(error){
                     callback(error)
                   }else{

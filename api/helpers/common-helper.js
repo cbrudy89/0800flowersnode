@@ -14,17 +14,22 @@ function CommonHelper(){
 
 
     // get country details
-    this.countrydetails=function (short_code, country_slug, callback) {
+    this.countrydetails=function (short_code = '', country_slug = '', callback) {
+
+
         sql='SELECT id as country_id,LOWER(REPLACE(country_name, " ", "-")) as country_slug,country_name,preferred_currency_id,language_id,short_code,calling_code,phone,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`company_logo`, "+","%2B")) as default_logo,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`country_flag`, "+","%2B")) as country_flag,ga_code FROM country_list';
         var cond = '';
-        if(short_code != '' && short_code != undefined){
+        
+        if(short_code != '' && (typeof short_code != undefined)){
             cond = ' WHERE short_code = "'+short_code+'"';
         }
         else if(country_slug != '' && country_slug != undefined){
             cond += ' WHERE LOWER(REPLACE(country_name, " ", "-")) = "'+country_slug+'"';   
         
-        }
-        
+        }        
+
+        //console.log(sql+cond);
+
         dbModel.rawQuery(sql+cond, function(err, result) {  
             //console.log(result);
             if (err) return callback(err,null);
