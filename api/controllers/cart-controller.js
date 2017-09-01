@@ -573,6 +573,8 @@ function CartController() {
 
   this.applyPromoCode = function(req, res){
 
+
+
   }
 
   this.removePromoCode = function(req, res){
@@ -580,6 +582,810 @@ function CartController() {
   }
 
 
+}
+
+/*function calculateCartTotal()
+{
+    $cartItems = Cart::all();
+    $cartTotal = 0;
+    $extraCharges = 0;
+    if (Cart::countRows() > 0) {
+        foreach ($cartItems as $item) {
+            $extra_charge = 0;
+
+            if ($item['attributes']['extra_charge'] != '' && $item['attributes']['extra_charge'] > 0) {
+                $extra_charge = $item['attributes']['extra_charge'];
+            }
+            $addonsTotal = 0;
+            if (count($item['attributes']['addons']) > 0) {
+                $addonItems = $item['attributes']['addons'];
+
+                foreach ($addonItems as $adnItem) {
+                    $addonsTotal += $adnItem['addon_price_value'];
+                }
+            }
+
+            $extraCharges += $extra_charge + $addonsTotal;
+        }//end foreach cart items
+    }//end cart count rows
+
+    $cartTotal = (Cart::total() + $extraCharges);
+    return $cartTotal;
+}*/
+
+function isExistsDiscountAccordingToCountry($code, $delivery_country_id){
+  
+  var sql = "SELECT * from `discounts` inner join `discount_country_list`";
+    sql += " ON `discount_country_list`.`discount_id` = `discounts`.`id`";
+    sql += " WHERE `discount_code` = '"+$code+"'";
+    sql += " AND `limit_usage_by` > 0 AND `status` = 1"
+    sql += " AND `discount_country_list`.`country_id` = "+$delivery_country_id;
+
+    dbModel.rawQuery(sql, function(error, result){
+      if(error){
+        callback(error);
+      }else{  
+        if(result.length > 0){
+          callback(null, result);
+        }else{
+          callback(null, []);
+        }
+      }
+
+    });
+
+}
+
+function checkDiscountCodeForDiscount($code, $delivery_country_id, callback)
+{
+    $country_id = $delivery_country_id;
+    $discount = isExistsDiscountAccordingToCountry.sync($code, $country_id);
+
+    if(!discount && discount.length <= 0){
+      return res.status(config.HTTP_NOT_FOUND).send({
+          status: config.ERROR, 
+          code : config.HTTP_NOT_FOUND,          
+          message: "Not a valid discount code."
+      });
+    }else{
+
+        /*$cartTotal = calculateCartTotal();
+        $returnData = array();
+
+        $tax = 0;
+        $service_charge = 0;
+        $total_service_charge = 0;
+        $delivery_charge = 0;
+        $total_delivery_charge = 0;
+        $surcharge = 0;
+        $product_count = 0;
+
+        $discount_product_tax = 0;
+        $discount_total = 0;
+        $discount_tax = 0;
+        $addons_charge = 0;
+        $total_addon_charge = 0;
+
+        $cart_data = Session::get('cart');
+        foreach ($cart_data['default'] as $key => $value) {
+            $data = json_decode($value);
+            $product_count += $data->qty;
+            $province_id = $data->attributes->province_id;
+            $province_data = Province::where('id', '=', $province_id)->first();
+
+            $location_tax_percentage = 0;
+            if (isset($province_data) && sizeof($province_data)) {
+                $location_tax_percentage = $province_data['location_tax'];
+            }
+
+            $methods = Method::where('id', '=', $data->attributes->delivery_method_id)->first();
+            if ($data->attributes->delivery_method_id == 1) {
+                $service_charge = $methods['delivery_charge'];
+                $delivery_charge = 0;
+            } else {
+                $service_charge = 0;
+                $delivery_charge = $methods['delivery_charge'];
+            }
+            $total_service_charge += $service_charge;
+            $total_delivery_charge += $delivery_charge;
+
+            $extra_charge = 0;
+            if ($data->attributes->extra_charge != '' && $data->attributes->extra_charge > 0) {
+                $extra_charge = $data->attributes->extra_charge;
+            }
+            $surcharge += $extra_charge;
+
+            if (isset($data->attributes->addons) && sizeof($data->attributes->addons)) {
+                $addonItems = $data->attributes->addons;
+
+
+                foreach ($addonItems as $k => $adnItem) {
+                    $addons_charge += $adnItem->addon_price_value;
+
+                    $addon_tax_amount =$addon_service_charge_amount = $addon_discount_amount =$addon_discount_amount_percent = $addon_shipping_charge_amount = $addon_gift_certificate_amount =0;
+                    $addon_tax_amount = (($adnItem->addon_price_value + $addon_service_charge_amount
+                            ) * ($location_tax_percentage / 100));
+
+                    $addOn     = $value['attributes'];
+
+                    $addOn['addons'][$k]['addon_tax_amount'] = $addon_tax_amount;
+                    $addOn['addons'][$k]['addon_service_charge_amount'] = $addon_service_charge_amount;
+                    $addOn['addons'][$k]['addon_discount_amount'] = $addon_discount_amount;
+                    $addOn['addons'][$k]['addon_discount_amount_percent'] = $addon_discount_amount_percent;
+                    $addOn['addons'][$k]['addon_shipping_charge_amount'] = $addon_shipping_charge_amount;
+                    $addOn['addons'][$k]['addon_gift_certificate_amount'] = $addon_gift_certificate_amount;
+                    Cart::update($value['__raw_id'], array('attributes' => $addOn));
+
+                }
+            }
+
+            $total_addon_charge += $addons_charge;
+
+            $particular_tax = (($data->total + $service_charge + $delivery_charge + $extra_charge + $addons_charge) * ($location_tax_percentage / 100));
+            $tax = $tax + $particular_tax;
+
+            $attributes     = $value['attributes'];
+            $attributes['tax_amount'] = $particular_tax;
+            $attributes['service_charge_amount'] = $service_charge;
+            $attributes['shipping_charge_amount'] = 0.00;
+            $attributes['gift_certificate_amount'] = 0.00;
+            $attributes['discount_amount'] = 0;
+            $attributes['discount_amount_percent'] = 0;
+
+            Cart::update($value['__raw_id'], array('attributes' => $attributes));
+
+        }
+
+        Session::put('tax', $tax);
+        Session::put('service_charge', $total_service_charge);
+
+        if ($product_count > 1) {
+            //$cartTotal += 2;
+            //$surcharge += 2;
+        }
+
+        Session::put('total_amount', ($total_service_charge + $tax + $cartTotal + $total_delivery_charge));
+        Session::put('addons_charge', $addons_charge);
+        Session::put('delivery_charge', $total_delivery_charge);
+        Session::put('total_amount_before_tax', ($total_service_charge + $cartTotal + $total_delivery_charge));
+
+        Session::put('surcharge', $surcharge);
+
+        if (count($discount) > 0) {
+            $discount = $discount[0];
+            if ($discount['apply_on'] == 'merchandise') {
+                switch ($discount['discount_apply_on']) {
+                    case 1:
+
+                        $product_numbers = explode(',', $discount['product_sku']);
+
+                        $product_exist = 0;
+                        $product_code = 0;
+                        $varient_id = 0;
+                        $product_price = 0;
+                        $tax = 0;
+                        $total_addon_charge = 0;
+                        $row_id = 0;
+                        foreach ($cart_data['default'] as $key => $value) {
+                            $data = json_decode($value);
+                            $province_id = $data->attributes->province_id;
+                            $province_data = Province::where('id', '=', $province_id)->first();
+                            $location_tax_percentage = 0;
+                            if (isset($province_data) && sizeof($province_data)) {
+                                $location_tax_percentage = $province_data['location_tax'];
+                            }
+                            if ($data->attributes->delivery_method_id == 1) {
+                                $service_charge = $methods['delivery_charge'];
+                                $delivery_charge = 0;
+                            } else {
+                                $service_charge = 0;
+                                $delivery_charge = $methods['delivery_charge'];
+                            }
+                            $addons_charge = 0;
+                            $extra_charge = $data->attributes->extra_charge;
+
+                            if (isset($data->attributes->addons) && sizeof($data->attributes->addons)) {
+                                $addonItems = $data->attributes->addons;
+
+                                foreach ($addonItems as $k => $adnItem) {
+                                    $addons_charge += $adnItem->addon_price_value;
+
+                                    $addon_tax_amount =$addon_service_charge_amount = $addon_discount_amount =$addon_discount_amount_percent = $addon_shipping_charge_amount = $addon_gift_certificate_amount =0;
+                                    $addon_tax_amount = (($adnItem->addon_price_value + $addon_service_charge_amount
+                                        ) * ($location_tax_percentage / 100));
+
+                                    $addOn     = $value['attributes'];
+
+                                    $addOn['addons'][$k]['addon_tax_amount'] = $addon_tax_amount;
+                                    $addOn['addons'][$k]['addon_service_charge_amount'] = $addon_service_charge_amount;
+                                    $addOn['addons'][$k]['addon_discount_amount'] = $addon_discount_amount;
+                                    $addOn['addons'][$k]['addon_discount_amount_percent'] = $addon_discount_amount_percent;
+                                    $addOn['addons'][$k]['addon_shipping_charge_amount'] = $addon_shipping_charge_amount;
+                                    $addOn['addons'][$k]['addon_gift_certificate_amount'] = $addon_gift_certificate_amount;
+                                    Cart::update($value['__raw_id'], array('attributes' => $addOn));
+                                }
+                            }
+                            $total_addon_charge += $addons_charge;
+                            if (in_array($data->attributes->code, $product_numbers)) {
+                                $product_exist = 1;
+                                $product_code = $data->attributes->code;
+                                $varient_id = $data->attributes->varient_id;
+                                $row_id = $value['__raw_id'];
+                                $product_price = $data->price;
+                                $discount_total = $data->total + $service_charge + $delivery_charge + $extra_charge + $addons_charge;
+                                $discount_tax = $location_tax_percentage / 100;
+                                //break;
+                            } else {
+                                $tax = $tax + (($data->total + $service_charge + $delivery_charge + $extra_charge + $addons_charge) * ($location_tax_percentage / 100));
+                            }
+
+
+                        }
+
+                        Session::put('tax', $tax);
+                        Session::put('total_amount', ($total_service_charge + $tax + $cartTotal + $total_delivery_charge));
+                        Session::put('total_amount_before_tax', ($total_service_charge + $cartTotal + $total_delivery_charge));
+
+                        //Check cart on product number
+                        //---------------------------
+                        if (!$product_code) {
+                            $discountMsg = 'The promotion code is not valid for the selected products.';
+                            $discountArray = array(
+                                'discount_value' => 0,
+                                'discount_value_type' => '',
+                                'discount_amount' => 0,
+                                'discount_code' => '',
+                                'discount_type' => '',
+                                'discount_format' => '',
+                                'apply_on' => '',
+                                'discount_apply_on' => 0
+                            );
+
+                            Session::put('discount', $discountArray);
+                            $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                        } else {
+                            //Check discount start/end date
+                            //-----------------------------
+                            if ((date("Y-m-d") >= $discount['start_date']) && (date("Y-m-d") <= $discount['expiry_date'])) {
+
+                                //Check code limit usage
+                                //----------------------
+                                if ($discount['limit_usage_by'] >= 1) {
+                                    $discountValue = $discount['discount_value'];
+                                    $discountValueType = $discount['discount_value_type'];
+                                    $discountCode = $discount['discount_code'];
+                                    $discount_type = $discount['discount_type'];
+                                    $discount_format = $discount['discount_format'];
+                                    $apply_on = $discount['apply_on'];
+                                    $discount_apply_on = $discount['discount_apply_on'];
+
+                                    $product_details = '';
+                                    //Check code type
+                                    //---------------
+                                    if ($discountValueType == '%') {
+                                        $discountAmount = ((($product_price + $total_addon_charge) * $discountValue) / 100);
+                                    } else if ($discountValueType == '$') {
+                                        $discountAmount = $discountValue;
+                                    } else {
+                                        $discountAmount = 0;
+                                    }
+
+                                    $discountArray = array(
+                                        'discount_value' => $discountValue,
+                                        'discount_value_type' => $discountValueType,
+                                        'discount_amount' => $discountAmount,
+                                        'discount_code' => $discountCode,
+                                        'discount_type' => $discount_type,
+                                        'discount_format' => $discount_format,
+                                        'apply_on' => $apply_on,
+                                        'discount_apply_on' => $discount_apply_on
+                                    );
+
+                                    $particular_tax = (($discount_total - $discountAmount) * $discount_tax);
+                                    $tax = $tax + $particular_tax;
+                                    Session::put('tax', $tax);
+
+
+                                    foreach ($cart_data['default'] as $key => $value){
+
+                                        if($value['__raw_id'] == $row_id) {
+                                            $attributes     = $value['attributes'];
+                                            $attributes['tax_amount'] = $particular_tax;
+                                            $attributes['discount_amount'] = number_format($discountAmount,2);
+                                            $attributes['discount_amount_percent'] = $discountValue;
+
+                                            Cart::update($value['__raw_id'], array('attributes' => $attributes));
+                                        }
+                                    }
+
+
+                                    $total_amount = ($total_service_charge + $tax + $cartTotal + $total_delivery_charge) - $discountAmount;
+
+                                    Session::put('total_amount', $total_amount);
+                                    Session::put('total_amount_before_tax', ($total_amount - $tax));
+
+                                    $discountMsg = 'Promo Code Applied Successfully';
+                                    Session::put('discount', $discountArray);
+                                    
+                                    $round99_total_amount = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge')+Session::get('tax'), $discountAmount);
+                                    $round99_total_amount_before_tax = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge'), $discountAmount); 
+                                    
+                                    $returnData = array('success' => true, 'discountMsg' => $discountMsg, 'round99_total_amount' => $round99_total_amount, 'round99_total_amount_before_tax' => $round99_total_amount_before_tax, 'actDiscountAmount' => $discountAmount, 'discountAmount' => convertPrice($discountAmount), 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                                } else {
+                                    $discountMsg = 'The coupon has been reached to its maximum usage';
+                                    $discountArray = array(
+                                        'discount_value' => 0,
+                                        'discount_value_type' => '',
+                                        'discount_amount' => 0,
+                                        'discount_code' => '',
+                                        'discount_type' => '',
+                                        'discount_format' => '',
+                                        'apply_on' => '',
+                                        'discount_apply_on' => 0
+                                    );
+
+                                    Session::put('discount', $discountArray);
+                                    $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                                }
+                            } else {
+                                Session::forget('discount');
+
+                                $discountMsg = 'The promotion code has been expired';
+                                $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                            }
+                        }
+
+                        break;
+
+                    case 2:
+
+                        break;
+
+                    case 3:
+
+                        //Discount Applied On Cart Total Min Amount Only
+                        //----------------------------------------------
+
+                        if ($cartTotal <= $discount['fixed_amount']) {
+                            $discountMsg = 'The promotion code applies for a minimum order value of $' . $discount['fixed_amount'];
+                            $discountArray = array(
+                                'discount_value' => 0,
+                                'discount_value_type' => '',
+                                'discount_amount' => 0,
+                                'discount_code' => '',
+                                'discount_type' => '',
+                                'discount_format' => '',
+                                'apply_on' => '',
+                                'discount_apply_on' => 0
+                            );
+
+                            Session::put('discount', $discountArray);
+                            $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                        } else {
+                            //Check discount start/end date
+                            //-----------------------------
+                            if ((date("Y-m-d") >= $discount['start_date']) && (date("Y-m-d") <= $discount['expiry_date'])) {
+
+                                //Check code limit usage
+                                //----------------------
+                                if ($discount['limit_usage_by'] >= 1) {
+                                    $tax = 0;
+                                    $discountValue = $discount['discount_value'];
+                                    $discountValueType = $discount['discount_value_type'];
+                                    $discountCode = $discount['discount_code'];
+                                    $discount_type = $discount['discount_type'];
+                                    $discount_format = $discount['discount_format'];
+                                    $apply_on = $discount['apply_on'];
+                                    $discount_apply_on = $discount['discount_apply_on'];
+
+                                    //Check code type
+                                    //---------------
+                                    if ($discountValueType == '%') {
+                                        $discountAmount = ((Cart::total() + $total_addon_charge) * $discountValue) / 100;
+                                    } else if ($discountValueType == '$') {
+                                        $discountAmount = $discountValue;
+                                    } else {
+                                        $discountAmount = 0;
+                                    }
+
+
+                                    $discountArray = array(
+                                        'discount_value' => $discountValue,
+                                        'discount_value_type' => $discountValueType,
+                                        'discount_amount' => $discountAmount,
+                                        'discount_code' => $discountCode,
+                                        'discount_type' => $discount_type,
+                                        'discount_format' => $discount_format,
+                                        'apply_on' => $apply_on,
+                                        'discount_apply_on' => $discount_apply_on
+                                    );
+
+                                    $discountMsg = 'Promo Code Applied Successfully';
+                                    Session::put('discount', $discountArray);
+
+                                    $tax = (($cartTotal - $discountAmount) * ($location_tax_percentage / 100));
+                                    Session::put('tax', $tax);
+
+
+
+                                    $total_amount = ($total_service_charge + $tax + $cartTotal + $total_delivery_charge) - $discountAmount;
+                                    Session::put('total_amount', $total_amount);
+                                    Session::put('total_amount_before_tax', ($total_amount - $tax));
+
+
+                                    foreach ($cart_data['default'] as $key => $value) {
+                                        $data = json_decode($value);
+                                        $province_id = $data->attributes->province_id;
+                                        $province_data = Province::where('id', '=', $province_id)->first();
+                                        $location_tax_percentage = 0;
+                                        if (isset($province_data) && sizeof($province_data)) {
+                                            $location_tax_percentage = $province_data['location_tax'];
+                                        }
+                                        if ($data->attributes->delivery_method_id == 1) {
+                                            $service_charge = $methods['delivery_charge'];
+                                            $delivery_charge = 0;
+                                        } else {
+                                            $service_charge = 0;
+                                            $delivery_charge = $methods['delivery_charge'];
+                                        }
+                                        $addons_charge = 0;
+                                        $extra_charge = $data->attributes->extra_charge;
+
+                                        if (isset($data->attributes->addons) && sizeof($data->attributes->addons)) {
+                                            $addonItems = $data->attributes->addons;
+
+                                            foreach ($addonItems as $k => $adnItem) {
+                                                $addons_charge += $adnItem->addon_price_value;
+
+                                                $addon_tax_amount =$addon_service_charge_amount = $addon_discount_amount =$addon_discount_amount_percent = $addon_shipping_charge_amount = $addon_gift_certificate_amount =0;
+                                                $addon_tax_amount = (($adnItem->addon_price_value + $addon_service_charge_amount
+                                                    ) * ($location_tax_percentage / 100));
+
+                                                $addOn     = $value['attributes'];
+
+                                                $addOn['addons'][$k]['addon_tax_amount'] = $addon_tax_amount;
+                                                $addOn['addons'][$k]['addon_service_charge_amount'] = $addon_service_charge_amount;
+                                                $addOn['addons'][$k]['addon_discount_amount'] = $addon_discount_amount;
+                                                $addOn['addons'][$k]['addon_discount_amount_percent'] = $addon_discount_amount_percent;
+                                                $addOn['addons'][$k]['addon_shipping_charge_amount'] = $addon_shipping_charge_amount;
+                                                $addOn['addons'][$k]['addon_gift_certificate_amount'] = $addon_gift_certificate_amount;
+                                                Cart::update($value['__raw_id'], array('attributes' => $addOn));
+                                            }
+                                        }
+                                        //Check code type
+                                        //---------------
+                                        if ($discountValueType == '%') {
+                                            $product_discountAmount = (($data->total + $addons_charge) * $discountValue) / 100;
+                                        } else if ($discountValueType == '$') {
+                                            $product_discountAmount = $discountValue;
+                                        } else {
+                                            $product_discountAmount = 0;
+                                        }
+
+                                        $tax = (($data->total - $product_discountAmount) * ($location_tax_percentage / 100));
+
+                                        $attributes     = $value['attributes'];
+                                        $attributes['tax_amount'] = $tax;
+                                        $attributes['discount_amount'] = number_format($product_discountAmount,2);
+                                        $attributes['discount_amount_percent'] = $discountValue;
+
+                                        //echo "<pre>";print_r($attributes);
+                                        Cart::update($value['__raw_id'], array('attributes' => $attributes));
+
+                                    }//die();
+                                    $round99_total_amount = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge')+Session::get('tax'), $discountAmount);
+                                    $round99_total_amount_before_tax = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge'), $discountAmount);
+                                    
+                                    $returnData = array('success' => true, 'discountMsg' => $discountMsg, 'round99_total_amount' => $round99_total_amount, 'round99_total_amount_before_tax' => $round99_total_amount_before_tax, 'actDiscountAmount' => $discountAmount, 'discountAmount' => convertPrice($discountAmount), 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                                } else {
+                                    $discountMsg = 'The coupon has been reached to its maximum usage';
+                                    $discountArray = array(
+                                        'discount_value' => 0,
+                                        'discount_value_type' => '',
+                                        'discount_amount' => 0,
+                                        'discount_code' => '',
+                                        'discount_type' => '',
+                                        'discount_format' => '',
+                                        'apply_on' => '',
+                                        'discount_apply_on' => 0
+                                    );
+
+                                    Session::put('discount', $discountArray);
+                                    $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                                }
+                            } else {
+                                Session::forget('discount');
+                                $discountMsg = 'The promotion code has been expired';
+                                $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'merchandise');
+                            }
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+            } else {
+                switch ($discount['discount_apply_on']) {
+                    case 1:
+
+                        $product_numbers = explode(',', $discount['product_sku']);
+
+                        $product_exist = 0;
+                        $product_code = 0;
+                        $varient_id = 0;
+                        $product_price = 0;
+                        $tax = 0;
+                        $total_addon_charge = 0;
+                        foreach ($cart_data['default'] as $key => $value) {
+                            $data = json_decode($value);
+                            $province_id = $data->attributes->province_id;
+                            $province_data = Province::where('id', '=', $province_id)->first();
+                            $location_tax_percentage = 0;
+                            if (isset($province_data) && sizeof($province_data)) {
+                                $location_tax_percentage = $province_data['location_tax'];
+                            }
+                            if ($data->attributes->delivery_method_id == 1) {
+                                $service_charge = $methods['delivery_charge'];
+                                $delivery_charge = 0;
+                            } else {
+                                $service_charge = 0;
+                                $delivery_charge = $methods['delivery_charge'];
+                            }
+                            $addons_charge = 0;
+                            $extra_charge = $data->attributes->extra_charge;
+
+                            if (isset($data->attributes->addons) && sizeof($data->attributes->addons)) {
+                                $addonItems = $data->attributes->addons;
+
+                                foreach ($addonItems as $adnItem) {
+                                    $addons_charge += $adnItem->addon_price_value;
+                                }
+                            }
+                            $total_addon_charge += $addons_charge;
+                            if (in_array($data->attributes->code, $product_numbers)) {
+                                $product_exist = 1;
+                                $product_code = $data->attributes->code;
+                                $varient_id = $data->attributes->varient_id;
+                                $product_price = $data->price;
+
+                                $discount_total = $data->total + $service_charge + $delivery_charge + $extra_charge + $addons_charge;
+                                $discount_tax = $location_tax_percentage / 100;
+                                //break;
+                            } else {
+                                $tax = $tax + (($data->total + $service_charge + $delivery_charge + $extra_charge + $addons_charge) * ($location_tax_percentage / 100));
+                            }
+                        }
+
+                        Session::put('tax', $tax);
+                        Session::put('total_amount', ($total_service_charge + $tax + $cartTotal + $total_delivery_charge));
+                        Session::put('total_amount_before_tax', ($total_service_charge + $cartTotal + $total_delivery_charge));
+
+                        //Check cart on product number
+                        //---------------------------
+                        if (!$product_code) {
+                            $discountMsg = 'The promotion code is not valid for the selected products.';
+                            $discountArray = array(
+                                'discount_value' => 0,
+                                'discount_value_type' => '',
+                                'discount_amount' => 0,
+                                'discount_code' => '',
+                                'discount_type' => '',
+                                'discount_format' => '',
+                                'apply_on' => '',
+                                'discount_apply_on' => 0
+                            );
+
+                            Session::put('discount', $discountArray);
+                            $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                        } else {
+                            //Check discount start/end date
+                            //-----------------------------
+                            if ((date("Y-m-d") >= $discount['start_date']) && (date("Y-m-d") <= $discount['expiry_date'])) {
+
+                                //Check code limit usage
+                                //----------------------
+                                if ($discount['limit_usage_by'] >= 1) {
+                                    $discountValue = $discount['discount_value'];
+                                    $discountValueType = $discount['discount_value_type'];
+                                    $discountCode = $discount['discount_code'];
+                                    $discount_type = $discount['discount_type'];
+                                    $discount_format = $discount['discount_format'];
+                                    $apply_on = $discount['apply_on'];
+                                    $discount_apply_on = $discount['discount_apply_on'];
+
+                                    $product_details = '';
+                                    //Check code type
+                                    //---------------
+                                    if ($discountValueType == '%') {
+                                        $discountAmount = (($delivery_charge * $discountValue) / 100);
+                                    } else if ($discountValueType == '$') {
+                                        if ($delivery_charge > $discountValue) {
+                                            $discountAmount = $discountValue;
+                                        } else {
+                                            $discountAmount = $delivery_charge;
+                                        }
+                                    } else {
+                                        $discountAmount = 0;
+                                    }
+
+                                    $discountArray = array(
+                                        'discount_value' => $discountValue,
+                                        'discount_value_type' => $discountValueType,
+                                        'discount_amount' => $discountAmount,
+                                        'discount_code' => $discountCode,
+                                        'discount_type' => $discount_type,
+                                        'discount_format' => $discount_format,
+                                        'apply_on' => $apply_on,
+                                        'discount_apply_on' => $discount_apply_on
+                                    );
+
+                                    $tax = $tax + (($discount_total - $discountAmount) * $discount_tax);
+                                    Session::put('tax', $tax);
+
+                                    $total_amount = ($total_service_charge + $tax + $cartTotal + $total_delivery_charge) - $discountAmount;
+
+                                    Session::put('total_amount', $total_amount);
+                                    Session::put('total_amount_before_tax', ($total_amount - $tax));
+
+                                    $discountMsg = 'Promo Code Applied Successfully';
+                                    Session::put('discount', $discountArray);
+                                    
+                                    $round99_total_amount = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge')+Session::get('tax'), $discountAmount);
+                                    $round99_total_amount_before_tax = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge'), $discountAmount);
+                                    
+                                    $returnData = array('success' => true, 'discountMsg' => $discountMsg, 'round99_total_amount' => $round99_total_amount, 'round99_total_amount_before_tax' => $round99_total_amount_before_tax, 'actDiscountAmount' => $discountAmount, 'discountAmount' => convertPrice($discountAmount), 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                                } else {
+                                    $discountMsg = 'The coupon has been reached to its maximum usage';
+                                    $discountArray = array(
+                                        'discount_value' => 0,
+                                        'discount_value_type' => '',
+                                        'discount_amount' => 0,
+                                        'discount_code' => '',
+                                        'discount_type' => '',
+                                        'discount_format' => '',
+                                        'apply_on' => '',
+                                        'discount_apply_on' => 0
+                                    );
+
+                                    Session::put('discount', $discountArray);
+                                    $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                                }
+                            } else {
+                                Session::forget('discount');
+
+                                $discountMsg = 'The promotion code has been expired';
+                                $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                            }
+                        }
+
+                        break;
+
+                    case 2:
+
+                        break;
+
+                    case 3:
+
+                        //Discount Applied On Cart Total Min Amount Only
+                        //----------------------------------------------
+
+                        if ($cartTotal <= $discount['fixed_amount']) {
+                            $discountMsg = 'The promotion code applies for a minimum order value of $' . $discount['fixed_amount'];
+                            $discountArray = array(
+                                'discount_value' => 0,
+                                'discount_value_type' => '',
+                                'discount_amount' => 0,
+                                'discount_code' => '',
+                                'discount_type' => '',
+                                'discount_format' => '',
+                                'apply_on' => '',
+                                'discount_apply_on' => 0
+                            );
+
+                            Session::put('discount', $discountArray);
+                            $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                        } else {
+                            //Check discount start/end date
+                            //-----------------------------
+                            if ((date("Y-m-d") >= $discount['start_date']) && (date("Y-m-d") <= $discount['expiry_date'])) {
+
+                                //Check code limit usage
+                                //----------------------
+                                if ($discount['limit_usage_by'] >= 1) {
+                                    $tax = 0;
+                                    $discountValue = $discount['discount_value'];
+                                    $discountValueType = $discount['discount_value_type'];
+                                    $discountCode = $discount['discount_code'];
+                                    $discount_type = $discount['discount_type'];
+                                    $discount_format = $discount['discount_format'];
+                                    $apply_on = $discount['apply_on'];
+                                    $discount_apply_on = $discount['discount_apply_on'];
+
+                                    //Check code type
+                                    //---------------
+                                    if ($discountValueType == '%') {
+                                        $discountAmount = ($delivery_charge * $discountValue) / 100;
+
+                                    } else if ($discountValueType == '$') {
+                                        if ($delivery_charge > $discountValue) {
+                                            $discountAmount = $discountValue;
+                                        } else {
+                                            $discountAmount = $delivery_charge;
+                                        }
+
+                                    } else {
+                                        $discountAmount = 0;
+
+                                    }
+
+                                    $discountArray = array(
+                                        'discount_value' => $discountValue,
+                                        'discount_value_type' => $discountValueType,
+                                        'discount_amount' => $discountAmount,
+                                        'discount_code' => $discountCode,
+                                        'discount_type' => $discount_type,
+                                        'discount_format' => $discount_format,
+                                        'apply_on' => $apply_on,
+                                        'discount_apply_on' => $discount_apply_on
+                                    );
+
+                                    $discountMsg = 'Your Promo Code Has Been Applied Successfully on shipping.';
+                                    Session::put('discount', $discountArray);
+
+                                    $tax = (($cartTotal - $discountAmount) * ($location_tax_percentage / 100));
+                                    Session::put('tax', $tax);
+
+                                    $total_amount = ($total_service_charge + $tax + $cartTotal + $total_delivery_charge) - $discountAmount;
+                                    Session::put('total_amount', $total_amount);
+                                    Session::put('total_amount_before_tax', ($total_amount - $tax));
+                                    
+                                    $round99_total_amount = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge')+Session::get('tax'), $discountAmount);
+                                    $round99_total_amount_before_tax = cartAmountToNineNine(Session::get('service_charge')+Session::get('delivery_charge')+Session::get('surcharge'), $discountAmount);
+                                    
+                                    $returnData = array('success' => true, 'discountMsg' => $discountMsg, 'round99_total_amount' => $round99_total_amount, 'round99_total_amount_before_tax' => $round99_total_amount_before_tax, 'actDiscountAmount' => $discountAmount, 'discountAmount' => convertPrice($discountAmount), 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                                } else {
+                                    $discountMsg = 'The coupon has been reached to its maximum usage';
+                                    $discountArray = array(
+                                        'discount_value' => 0,
+                                        'discount_value_type' => '',
+                                        'discount_amount' => 0,
+                                        'discount_code' => '',
+                                        'discount_type' => '',
+                                        'discount_format' => '',
+                                        'apply_on' => '',
+                                        'discount_apply_on' => 0
+                                    );
+
+                                    Session::put('discount', $discountArray);
+                                    $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                                }
+                            } else {
+                                Session::forget('discount');
+                                $discountMsg = 'The promotion code has been expired';
+                                $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'), 'apply_on' => 'shipping');
+                            }
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        } else {
+
+            Session::forget('discount');
+
+            $discountMsg = 'The promotion code you entered does not exist';
+            $returnData = array('success' => false, 'discountMsg' => $discountMsg, 'tax' => convertPrice(Session::get('tax')), 'service_charge' => convertPrice(Session::get('service_charge')), 'total_amount' => convertPrice(Session::get('total_amount')), 'delivery_charge' => convertPrice(Session::get('delivery_charge')), 'surcharge' => convertPrice(Session::get('surcharge')), 'total_amount_before_tax' => convertPrice(Session::get('total_amount_before_tax')), 'before_convert_total_amount' => Session::get('total_amount'), 'before_convert_total_amount_before_tax' => Session::get('total_amount_before_tax'));
+        }
+        return $returnData;*/
+
+
+    }
+
+    
 }
 
 function isCartKeyExist(cart_key, callback){
@@ -704,7 +1510,7 @@ function isCartProductDeleted(cart_id, cart_product_id, product_id, product_vari
 
 function getCartProdcuts(cart_id, language_id, callback){
 
-  var sql = "SELECT lp.product_name, p.product_code, p.vendor_id, p.product_picture, cp.*,pp.price_value FROM cart c INNER JOIN cart_products cp ON(c.id = cp.cart_id)";
+  var sql = "SELECT lp.product_name, p.product_code, p.vendor_id, CONCAT('"+config.RESOURCE_URL+"',REPLACE(p.product_picture, '+','%2B')) as product_picture, cp.*,pp.price_value FROM cart c INNER JOIN cart_products cp ON(c.id = cp.cart_id)";
   sql += " LEFT JOIN product_prices pp ON(pp.product_id = cp.product_id)";
   sql += " LEFT JOIN products p ON(p.id = pp.product_id)";
   sql += " LEFT JOIN language_product lp ON(lp.product_id = p.id)";
