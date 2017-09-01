@@ -207,12 +207,13 @@ function ProductController() {
                 $sql += "WHERE (`product_status` = 1 and `language_product`.`language_id` = " + $sessLang + " and `product_prices`.`sku`  = '" + $sku + "') ";
                 $sql += "AND `location_product`.`country_id` = " + $currentCountry;
 
-
                 if ($province_id != undefined && $province_id != '') {
                     $sql += " AND `location_product`.`province_id` = '" + $province_id + "'";
                 }
+
                 $sql += " LIMIT 1";
                 $product = [];
+
                 dbModel.rawQuery($sql, function(err, $product) {
                     if (err) return callback(err);
                     else {
@@ -366,7 +367,7 @@ function ProductController() {
 
                                 $todayExtraCharge = commonHelper.getSurcharge.sync(null, $product[0].id, $currentCountry, $vendorId);
                                 if ($admCalSurcharge_ctd !== false) {
-                                    $todayExtraCharge = Number($todayExtraCharge) + Number($admCalSurcharge_ctd);
+                                    $todayExtraCharge = $todayExtraCharge + $admCalSurcharge_ctd;
                                 }
 
 
@@ -507,12 +508,12 @@ function ProductController() {
                                     'stoppage_time': $stoppage_time,
                                     'currentCountry': $currentCountry,
                                     'todayAnchorId': $todayAnchorId,
-                                    'todayExtraCharge': $todayExtraCharge,
+                                    'todayExtraCharge': parseFloat($todayExtraCharge).toFixed(2),
                                     'todayRestrict': $todayRestrict,
                                     'firstEnableDate': $firstEnableDate,
                                     'firstExtraCharge': parseFloat($firstExtraCharge).toFixed(2),
                                     'nextEnableDate': $nextEnableDate,
-                                    'nextExtraCharge': $nextExtraCharge,
+                                    'nextExtraCharge': parseFloat($nextExtraCharge).toFixed(2),
                                     'nextRestrict': $nextRestrict,
                                     'nextToNextEnableDate': $nextToNextEnableDate,
                                     'datExtraCharge': $datExtraCharge,
@@ -547,8 +548,6 @@ function ProductController() {
                 });
             }
         });
-
-
 
     }
 

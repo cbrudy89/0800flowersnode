@@ -131,13 +131,12 @@ function CartController() {
 
           dbModel.save('cart', cart_data, cart_id, function(error, result){
             if(error) {
-                res.status(config.HTTP_SERVER_ERROR).send({
-                    status: config.ERROR, 
-                    code : config.HTTP_SERVER_ERROR,          
-                    message: "Unable to process request, Please try again!",
-                    err: error
-                });
-
+              res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to process request, Please try again!",
+                err: error
+              });
             } else{
               //console.log(result);
 
@@ -153,7 +152,8 @@ function CartController() {
                   "product_variant_id" : product_variant_id,
                   "quantity" : quantity,
                   "type": "product",
-                  "prod_delivery_method_id": prod_delivery_method_id
+                  "prod_delivery_method_id": prod_delivery_method_id,
+                  "delivery_date": delivery_date
                 };
 
                 dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
@@ -435,9 +435,24 @@ function CartController() {
     var currency_id = req.headers['currency_id'] || '';
 
     var token = req.headers['token'] || '' ;
-    var cart_id = '';
     var cart_key = req.headers['cart_key'] || '';
-    var user_id = 0;
+    var user_id = cartCount = 0;
+    var cart_id = current_currency = '';
+    var total = 0.00;
+
+    //var cart_total = {};
+
+    //var cartProducts = [];
+    //var total = '';
+    
+    // var discount = ''; // Promo Discount
+    // var surcharge = ''; // Surcharge
+    // var service_charge = ''; // Service Charge
+    // var delivery_charge = ''; //Shipping Charge
+    // var total_amount_before_tax = ''; // Total Amount Before Tax
+    // var tax = ''; // Total Tax
+    // var total = ''; // In Current Currency if not USD
+    // var ordear_total = '' // In USD    
 
     Sync(function(){
 
@@ -479,7 +494,7 @@ function CartController() {
 
           }
 
-          if(cart_id == '' && cart_id == undefined && cart_key == '' && cart_key == undefined){
+          if((cart_id == '' || cart_id == undefined)){
 
             return res.status(config.HTTP_SERVER_ERROR).send({
                 status: config.ERROR, 
@@ -505,31 +520,66 @@ function CartController() {
         // Get Cart Products
         var cartItems = getCartProdcuts.sync(null, cart_id, language_code);
 
-
-        //var cartProducts = [];
         if(cartItems.length > 0 && currency_details.length > 0){
 
-          for(var i=0; i < cartItems.length; i++){
-
+          for(var i=0,j=1; i < cartItems.length; i++){
               //console.log(cartItems);
 
-               //console.log($variantdetails[i].price_value);
-              var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+              var sub_total = '';
 
-              //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
-              var current_currency = currency_details[0].currency_code;
+              if(currency_details[0].currency_code == 'INR'){
 
-              var currentCurrSymbl = currency_details[0].symbol;
-              if(current_currency !== "USD"){ 
-                  actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                sub_total = cartItems[i].price_value * cartItems[i].quantity;              
+                total += sub_total;
+
+                 //console.log($variantdetails[i].price_value);
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+              }else{
+
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+                sub_total = actPrice * cartItems[i].quantity;              
+                total += sub_total;                
+                
               }
               
               price = currentCurrSymbl + actPrice;
               cartItems[i].price_value = price;
 
+              cartCount += j;
           }
+
+          if(currency_details[0].currency_code == 'INR'){
+
+            total = commonHelper.number_format.sync(null, (total * currency_details[0].exchange_rate), 2, '.', ',');
+            if(currency_details[0].currency_code !== "USD"){ 
+                actPrice = commonHelper.roundToNineNine.sync(null, total, currency_details[0].currency_code);
+            }        
+
+            total = currency_details[0].symbol + total;
             
+          }else{
+            total = currency_details[0].symbol + total;
+          }
         }
+        //cart_total.total = current_currency + total;
 
         //console.log(cartItems);
 
@@ -555,8 +605,9 @@ function CartController() {
 
 
         var resp = {
-          "cartCount": 0,
-          "cartItems": cartItems
+          "cartCount": cartCount,
+          "cartItems": cartItems,
+          "sub_total": total
         }
 
         return res.status(config.HTTP_SUCCESS).send({
@@ -583,6 +634,67 @@ function CartController() {
 
 
 }
+/*
+public function getNextOrderNumber(){
+        
+    try { 
+        $curlData = array(
+            "esbSaltaServiceRequest" => array(
+                "getOrderNumberRequest" => array(
+                "customerId" => $this->_customer_id,
+                "customerType" => $this->_customer_type,
+                "storeId" => $this->_store_id,
+                "siteId" => $this->_site_id,
+                "sourceSystem" => $this->_source_system,
+                "brandCode" => $this->_brand_code,
+                "sourceId" => $this->_sourceId
+                )
+            )
+        );
+        $curlData = json_encode($curlData); 
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $this->_get_next_order_number_url); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( 
+            'Content-Type:application/json',
+            'X-IBM-Client-Id:' . $this->_client_id,
+            'X-IBM-Client-Secret:' . $this->_client_secret 
+        ));
+        
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch); 
+
+        $getResult = json_decode($result);
+        $arrResult = (array)$getResult;
+        
+        if (array_key_exists("httpCode",$arrResult)){
+            $arrResult['success'] = false;
+            return json_encode($arrResult);
+        }else{ 
+            $flwsErrors = (array)$getResult->esbSaltaServiceResponse->getOrdderNumberResponse->getOrdderNumberResult->flwsErrors;
+            $flwsError = (array)$flwsErrors['flwsError'];
+
+            //Check error on the object
+            //-------------------------
+            if(count($flwsError) > 0 && $flwsError['errorCode'] != ''){ 
+                $orderNumber = '';
+            }else{
+                $orderNumber = $getResult->esbSaltaServiceResponse->getOrdderNumberResponse->getOrdderNumberResult->OrderNumber;
+            }
+
+            return json_encode(array('success' => true, 'nextOrderNumber' => $this->_sourceId.$orderNumber));
+        }
+    } catch (Exception $ex) {
+        
+        return $ex->getMessage();
+        
+    }
+    
+}*/
 
 /*function calculateCartTotal()
 {
