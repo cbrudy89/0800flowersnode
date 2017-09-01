@@ -1116,6 +1116,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
             }
         });
     }
+
    
 }
 
