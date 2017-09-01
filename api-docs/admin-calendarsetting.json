@@ -1,0 +1,2124 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Calendar Setting APIs",
+      "description":"All APIs related to the admin calendarsetting controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Calendar Setting",
+         "description":"API for admin calendarsetting usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getRestrictCalendarDates/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"List all restrict calendar date ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, title-asc",
+                  "required":false,
+                  "type":"string"
+               }                          
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Restrict calendar date list.",
+                  "schema":{
+                      "$ref":"#/definitions/200getRestrictCalendarDates"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getRestrictCalendarDates"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get restrict calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getRestrictCalendarDates"
+                  }
+               },                                               
+               "404":{
+                  "description":"No restrict calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getRestrictCalendarDates"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createRestrictCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Create Restrict calendar setting ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example: 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Restrict calendar date inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createRestrictCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createRestrictCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create restrict calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403createRestrictCalendarDate"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/getSelectedRestrictCalendarDate/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The restrict calendar date ID.",
+                  "required":true,
+                  "type":"integer"                 
+               },               
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Restrict calendar date found.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSelectedRestrictCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No restrict calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSelectedRestrictCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get restrict calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSelectedRestrictCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSelectedRestrictCalendarDate"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateSelectedRestrictCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Update Restrict Calendar Date",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"id Example: 50 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example : 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               }
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Restrict calendar date updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateSelectedRestrictCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateSelectedRestrictCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update restrict calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateSelectedRestrictCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No restrict calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateSelectedRestrictCalendarDate"
+                  }
+               }
+                                                           
+            }
+         }
+      },
+      "/admin/deleteRestrictCalendarDate":{
+         "delete":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Delete restrict calendar date",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired restrict calendar date to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Restrict calendar date deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteRestrictCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete restrict calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteRestrictCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No restrict calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteRestrictCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteRestrictCalendarDate"
+                  }
+               }                                               
+            }
+         }
+      },
+      "/admin/getSurchargeCalendarDates/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"List all surcharge calendar dates ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, title-asc",
+                  "required":false,
+                  "type":"string"
+               }                          
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Surcharge calendar date list.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSurchargeCalendarDates"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSurchargeCalendarDates"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get surcharge calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSurchargeCalendarDates"
+                  }
+               },                                               
+               "404":{
+                  "description":"No surcharge calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSurchargeCalendarDates"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createSurchargeCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Create surcharge calendar date ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example: 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"surcharge  Example: 50",
+                  "required":true,
+                  "type":"string"
+               }               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Surcharge calendar date inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createSurchargeCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createSurchargeCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create surcharge calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403createSurchargeCalendarDate"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/getSelectedSurchargeCalendarDate/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The surcharge calendar date ID.",
+                  "required":true,
+                  "type":"integer"                 
+               },               
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Surcharge calendar date found.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSelectedSurchargeCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No surcharge calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSelectedSurchargeCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get surcharge calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSelectedSurchargeCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSelectedSurchargeCalendarDate"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateSelectedSurchargeCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Update Surcharge Calendar Date",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"id Example: 50 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example : 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"surcharge",
+                  "in":"formData",
+                  "description":"surcharge  Example: 50",
+                  "required":true,
+                  "type":"string"
+               }                     
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Surcharge calendar date updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateSelectedSurchargeCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateSelectedSurchargeCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update surcharge calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateSelectedSurchargeCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No surcharge calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateSelectedSurchargeCalendarDate"
+                  }
+               }
+                                                           
+            }
+         }
+      },
+      "/admin/deleteSurchargeCalendarDate":{
+         "delete":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Delete surcharge calendar date",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired surcharge calendar date to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Surcharge calendar date deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteSurchargeCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete surcharge calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteSurchargeCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No surcharge calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteSurchargeCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!.",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteSurchargeCalendarDate"
+                  }
+               }                                              
+            }
+         }
+      },
+      "/admin/getCustomTextCalendarDates/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"List all custom text calendar dates ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, title-asc",
+                  "required":false,
+                  "type":"string"
+               }                          
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Custom text calendar date list.",
+                  "schema":{
+                      "$ref":"#/definitions/200getCustomTextCalendarDates"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getCustomTextCalendarDates"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get custom text calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getCustomTextCalendarDates"
+                  }
+               },                                               
+               "404":{
+                  "description":"No custom text calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getCustomTextCalendarDates"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createCustomTextCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Create custom text calendar date ",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"description",
+                  "in":"formData",
+                  "description":"description Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example: 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               }
+                              
+            ],
+            "responses":{
+               "200":{
+                  "description":"Custom text calendar date inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createCustomTextCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createCustomTextCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create custom text calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403createCustomTextCalendarDate"
+                  }
+               }
+            }
+         }
+      },
+      "/admin/getSelectedCustomTextCalendarDate/":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The custom text calendar date ID.",
+                  "required":true,
+                  "type":"integer"                 
+               },               
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Custom text calendar date found.",
+                  "schema":{
+                      "$ref":"#/definitions/200getSelectedCustomTextCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No custom text calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getSelectedCustomTextCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get custom text calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403getSelectedCustomTextCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getSelectedCustomTextCalendarDate"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateSelectedCustomTextCalendarDate":{
+         "post":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Update custom text calendar Date",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"id Example: 50 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"country_id Example: 15 ",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"vendor_id",
+                  "in":"formData",
+                  "description":"vendor_id Example: 14 ",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"title",
+                  "in":"formData",
+                  "description":"title Example: stringtext",
+                  "required":true,
+                  "type":"string"
+               },                    
+               {
+                  "name":"start_date",
+                  "in":"formData",
+                  "description":"start_date Example: 2017-08-22 ",
+                  "required":true,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"status",
+                  "in":"formData",
+                  "description":" status Example: 1 or 0 ",
+                  "required":true,
+                  "type":"integer"
+               },                                  
+               {
+                  "name":"end_date",
+                  "in":"formData",
+                  "description":"end_date Example : 2017-08-22",
+                  "required":false,
+                  "type":"string"
+               },                                  
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"product ids  Example: 33,37",
+                  "required":true,
+                  "type":"string"
+               }           
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Custom text calendar date updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateSelectedCustomTextCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateSelectedCustomTextCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update custome text calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateSelectedCustomTextCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No custome text calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateSelectedCustomTextCalendarDate"
+                  }
+               }
+                                                           
+            }
+         }
+      },
+      "/admin/deleteCustomTextCalendarDate":{
+         "delete":{
+            "tags":[
+               "Admin Calendar Setting"
+            ],
+            "description":"Delete custom text calendar date",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired custom text calendar date to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Custom text calendar date deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteCustomTextCalendarDate"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete custom text calendar date.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteCustomTextCalendarDate"
+                  }
+               },
+               "404":{
+                  "description":"No custom text calendar date found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteCustomTextCalendarDate"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!.",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteCustomTextCalendarDate"
+                  }
+               }                                              
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200getRestrictCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 restrict calendar date listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getRestrictCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getRestrictCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get restrict calendar date."
+            }
+         }
+      },      
+      "404getRestrictCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No restrict calendar date found."
+            }
+         }
+      },            
+      "200createRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Restrict calendar date inserted successfully."
+            }
+         }
+      },
+      "500createRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create Restrict calendar date."
+            }
+         }
+      },    
+      "200getSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Restrict calendar date found."
+            }
+         }
+      },
+      "404getSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No restrict calendar date found."
+            }
+         }
+      },
+      "500getSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403getSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get restrict calendar date."
+            }
+         }
+      },      
+      "200updateSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Restrict calendar date updated successfully."
+            }
+         }
+      },
+      "500updateSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update restrict calendar date."
+            }
+         }
+      },
+      "404updateSelectedRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No restrict calendar date found."
+            }
+         }
+      },
+      "200deleteRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Restrict calendar date deleted successfully"
+            }
+         }
+      },
+      "403deleteRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete restrict calendar date."
+            }
+         }
+      },
+      "404deleteRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No restrict calendar date found."
+            }
+         }
+      },
+      "500deleteRestrictCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },      
+      "200getSurchargeCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 surcharge calendar date listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getSurchargeCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getSurchargeCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get surcharge calendar date."
+            }
+         }
+      },      
+      "404getSurchargeCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No surcharge calendar date found."
+            }
+         }
+      },            
+      "200createSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Surcharge calendar date inserted successfully."
+            }
+         }
+      },
+      "500createSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create surcharge calendar date."
+            }
+         }
+      },    
+      "200getSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Surcharge calendar date found."
+            }
+         }
+      },
+      "404getSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No surcharge calendar date found."
+            }
+         }
+      },
+      "500getSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403getSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get surcharge calendar date."
+            }
+         }
+      },      
+      "200updateSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Surcharge calendar date updated successfully."
+            }
+         }
+      },
+      "500updateSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update surcharge calendar date."
+            }
+         }
+      },
+      "404updateSelectedSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No surcharge calendar date found."
+            }
+         }
+      },
+      "200deleteSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Surcharge calendar date deleted successfully"
+            }
+         }
+      },
+      "403deleteSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete surcharge calendar date."
+            }
+         }
+      },
+      "404deleteSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No surcharge calendar date found."
+            }
+         }
+      },
+      "500deleteSurchargeCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "200getCustomTextCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 custom text calendar date listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getCustomTextCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getCustomTextCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get custom text calendar date."
+            }
+         }
+      },      
+      "404getCustomTextCalendarDates":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No custom text calendar date found."
+            }
+         }
+      },            
+      "200createCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Custom text calendar date inserted successfully."
+            }
+         }
+      },
+      "500createCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create custom text calendar date."
+            }
+         }
+      },    
+      "200getSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Custom text calendar date found."
+            }
+         }
+      },
+      "404getSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No custom text calendar date found."
+            }
+         }
+      },
+      "500getSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403getSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get custom text calendar date."
+            }
+         }
+      },      
+      "200updateSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Custom text calendar date updated successfully."
+            }
+         }
+      },
+      "500updateSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update custom calendar date."
+            }
+         }
+      },
+      "404updateSelectedCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No custom text calendar date found."
+            }
+         }
+      },
+      "200deleteCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Custom text calendar date deleted successfully"
+            }
+         }
+      },
+      "403deleteCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete custom text calendar date."
+            }
+         }
+      },
+      "404deleteCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No custom text calendar date found."
+            }
+         }
+      },
+      "500deleteCustomTextCalendarDate":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      }                        
+
+   }
+}

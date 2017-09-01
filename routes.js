@@ -450,12 +450,11 @@ module.exports = {
     app.post('/admin/createCustomTextCalendarDate', authenticateController.isAuthenticated, validate(calendarsettingValidation.createCustomTextCalendarDate),function(req, res) {
         calendarsettingController.createCustomTextCalendarDate(req, res);
     });
-    
+
      // update one
     app.post('/admin/updateSelectedCustomTextCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.updateSelectedCustomTextCalendarDate), function(req, res) {
         calendarsettingController.updateSelectedCustomTextCalendarDate(req, res);
     });
-    
     
     // get selected one
     app.post('/admin/getSelectedCustomTextCalendarDate', authenticateController.isAuthenticated,validate(calendarsettingValidation.getSelectedCustomTextCalendarDate) ,function(req, res) {
