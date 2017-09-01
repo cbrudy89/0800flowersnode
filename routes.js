@@ -11,6 +11,7 @@ var calendarsettingController = require('./api/controllers/admin/calendarsetting
 var occasionController = require('./api/controllers/admin/occasion-controller');
 var cmsController = require('./api/controllers/admin/cms-controller');
 var ordersController = require('./api/controllers/admin/orders-controller');
+var adminProductController = require('./api/controllers/admin/admin-product-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -37,6 +38,8 @@ var calendarsettingValidation = require('./api/validation/admin/calendarsetting-
 var occasionValidation = require('./api/validation/admin/occasion-validation');
 var cmsValidation = require('./api/validation/admin/cms-validation');
 var ordersValidation = require('./api/validation/admin/orders-validation');
+var adminProductValidation = require('./api/validation/admin/admin-product-validation');
+
 
 module.exports = {
   configure: function(app, router) {
@@ -381,6 +384,27 @@ module.exports = {
     });
       
     /************************  END Restrict Calendar Date  ****************************/
+   
+    /************** Admin Product **********/
+
+    app.get('/admin/product/list', authenticateController.isAuthenticated, function(req, res) {
+        adminProductController.list(req, res);
+    });
+
+    app.get('/admin/product/search', authenticateController.isAuthenticated, validate(adminProductValidation.search), function(req, res) {
+        adminProductController.search(req, res);
+    });
+
+    app.get('/admin/product/view/:id', authenticateController.isAuthenticated, validate(adminProductValidation.view), function(req, res) {
+        adminProductController.view(req, res);
+    });
+
+    app.put('/admin/product/update', authenticateController.isAuthenticated, validate(adminProductValidation.update), function(req, res) {
+        adminProductController.update(req, res);
+    });
+    /************** Admin Product End **********/
+
+   
    
    
       
