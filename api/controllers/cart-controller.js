@@ -24,17 +24,11 @@ function CartController() {
     var country_id = req.body.country_id;
     var prod_delivery_method_id = req.body.prod_delivery_method_id ? req.body.prod_delivery_method_id : 0;
     var location = req.body.location
-    //var extra_charge = req.body.extra_charge ? req.body.extra_charge : 0;
-/*    var sku = req.body.product_sku;
-    var postalcode = req.body.postalcode ? req.body.postalcode : "00000";*/
 
     var token = req.headers['token'] || '' ;
     var cart_id = '';
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
-
-    /*console.log(token);
-    console.log(cart_key);*/
 
     Sync(function(){
 
@@ -228,48 +222,6 @@ function CartController() {
 
   }
 
-/*  this.updateCartProductQuantity = function(req, res){
-
-    var return_data = {};
-    
-    var cart_key = req.body.cart_key;
-    var product_id = req.body.product_id;
-    var quantity = req.body.quantity;
-
-    Sync(function(){
-      
-      // Check if cart key exist or not.
-      var isCartExist = isCartProductExist.sync(null, cart_key, product_id);
-      if(isCartExist){
-
-        // Working Here
-
-        // Update product in cart
-
-        dbModel.save('cart_products', cart_products, '', function(error, result_cart_product){
-
-        });
-
-
-      }else{
-
-        res.status(config.HTTP_NOT_FOUND).send({
-            status: config.ERROR, 
-            code : config.HTTP_NOT_FOUND,          
-            message: "Unable to process request, Please try again!",
-            err: []
-        });
-
-      }
-
-    });
-
-  }
-
-  this.updateCart = function(req, res){
-
-  }*/
-
   this.removeCartProduct = function(req, res){
 
     var return_data = {};
@@ -434,12 +386,6 @@ function CartController() {
   }
 
   this.getCart = function(req, res){
-
-  /*  
-    var language_code = req.headers['language_code'];
-    var country_id = req.headers['country_id'] || '';
-    var currency_id = req.headers['currency_id'] || '';
-  */
 
     var language_code = req.query.language_code;
     var country_id = req.query.country_id;
