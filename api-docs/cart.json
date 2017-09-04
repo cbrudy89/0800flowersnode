@@ -114,7 +114,7 @@
                }
             }
          }
-      },      
+      },
       "/getCart":{
          "get":{
             "tags":[
@@ -246,7 +246,77 @@
                }
             }
          }
-      }
+      },
+      "/updateCartProductColumn":{
+         "put":{
+            "tags":[
+               "Shopping Cart"
+            ],
+            "description":"Update cart product columns value",
+            "operationId":"/updateCartProductColumn",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"cart_key",
+                  "in":"header",
+                  "description":"Cart key ( For Guest User send cart key)",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"row_id",
+                  "in":"formData",
+                  "description":"Row Id",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"Product Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_variant_id",
+                  "in":"formData",
+                  "description":"Product Variant Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_date",
+                  "in":"formData",
+                  "description":"Delivery date (in YYYY-MM-DD) format",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"quantity",
+                  "in":"formData",
+                  "description":"Product quantity",
+                  "required":false,
+                  "type":"integer"
+               }               
+            ],
+            "responses":{
+               "200":{
+                  "description":"Product delivery date updated",
+                  "schema":{
+                      "$ref":"#/definitions/200updateCartProductColumn"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateCartProductColumn"
+                  }
+               }
+            }
+         }
+      }        
    },
    "definitions":{
       "200addToCart":{
@@ -360,6 +430,38 @@
                "example":"Unable to get cart product."
             }
          }
-      }
+      },
+      "200updateCartProductColumn":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product delivery date updated."
+            }
+         }
+      },
+      "500updateCartProductColumn":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      }      
    }
 }

@@ -697,28 +697,28 @@ module.exports = {
 
     /************************ Cart Functionality ********************************/
 
-    app.post('/addToCart', function(req, res){
+    app.post('/addToCart', validate(cartValidation.addToCart), function(req, res){
         cartController.addToCart(req, res);
     });
 
-    app.put('/updateCartProductQuantity', function(req, res){
-        cartController.updateCartProductQuantity(req, res);
+    app.put('/updateCartProductColumn', validate(cartValidation.updateCartProductColumn), function(req, res){
+        cartController.updateCartProductColumn(req, res);
     });
 
     app.put('/updateCart', function(req, res){
         cartController.updateCart(req, res);
     });
 
-    app.delete('/removeCartProduct', function(req, res){
+    app.delete('/removeCartProduct', validate(cartValidation.removeCartProduct), function(req, res){
         cartController.removeCartProduct(req, res);
     });
 
-    app.get('/getCart', function(req, res){
+    app.get('/getCart', validate(cartValidation.getCart), function(req, res){
         cartController.getCart(req, res);
     });
 
-    app.put('/updateCartProductdDate', validate(cartValidation.updateCartProductdDate), function(req, res){
-        cartController.updateCartProductdDate(req, res);
+    app.put('/getSavedCards', authenticateController.isAuthenticated, validate(cartValidation.getSavedCards), function(req, res){
+        cartController.getSavedCards(req, res);
     });
 
     /*********************** Cart Functionality Ends Here ************************/
