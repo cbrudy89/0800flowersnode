@@ -721,6 +721,10 @@ module.exports = {
         cartController.updateCartProductdDate(req, res);
     });
 
+    app.put('/getSavedCards', authenticateController.isAuthenticated, validate(cartValidation.getSavedCards), function(req, res){
+        cartController.getSavedCards(req, res);
+    });
+
     /*********************** Cart Functionality Ends Here ************************/
 
     /************************ Vendor Functionality ********************************/

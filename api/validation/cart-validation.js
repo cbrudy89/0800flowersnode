@@ -33,5 +33,10 @@ module.exports = {
 	    delivery_date: Joi.string().required(),
 	    quantity: Joi.number()
 	  }	
+  },
+  getSavedCards: {
+	  body: {
+	    customer_id: Joi.number().required()
+	  }	
   }
 };
