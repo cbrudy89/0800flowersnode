@@ -3,7 +3,6 @@ var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 var async = require('async');
 var Sync = require('sync');
-var randtoken = require('rand-token') 
 
 var config = require('./../../config');
 /*var connection = require('./../../database');*/
@@ -152,10 +151,7 @@ function CartController() {
                   cart_id = result.insertId;                  
                 }
 
-                var rowId = randtoken.uid(32);
-
                 var cart_products = {
-                  "row_id": rowId,
                   "cart_id": cart_id,
                   "product_id": product_id,
                   "product_variant_id" : product_variant_id,
@@ -278,7 +274,7 @@ function CartController() {
 
     var return_data = {};
     
-    var cart_product_id = req.body.cart_product_id;
+    var row_id = req.body.row_id;
     var product_id = req.body.product_id;
     var product_variant_id = req.body.product_variant_id;
     //var country_id = req.body.country_id;
@@ -353,7 +349,7 @@ function CartController() {
         }
 
         // Check Product Exist in Cart
-        var isDeleted = isCartProductDeleted.sync(null, cart_id, cart_product_id, product_id, product_variant_id);
+        var isDeleted = isCartProductDeleted.sync(null, cart_id, row_id, product_id, product_variant_id);
         //console.log(isDeleted);
         if(isDeleted){
 
@@ -367,7 +363,7 @@ function CartController() {
 
           // Delete products from cart
           var cond = [
-              {'id': {'val': cart_product_id, 'cond': '='}},
+              {'id': {'val': row_id, 'cond': '='}},
               {'cart_id': {'val': cart_id, 'cond': '='}},
               {'product_id': {'val': product_id, 'cond': '='}},
               {'product_variant_id': {'val': product_variant_id, 'cond': '='}}
@@ -1806,11 +1802,11 @@ function updateCartProductQuantity(cart_id, product_id, product_variant_id, deli
 
 }
 
-function isCartProductDeleted(cart_id, cart_product_id, product_id, product_variant_id, callback){
+function isCartProductDeleted(cart_id, row_id, product_id, product_variant_id, callback){
 
   var sql = "SELECT cp.id FROM cart c INNER JOIN cart_products cp ON(c.id = cp.cart_id)"
   sql += " WHERE c.id = '"+cart_id+"'";
-  sql += " AND cp.id ="+cart_product_id;
+  sql += " AND cp.id ="+row_id;
   sql += " AND cp.product_id ="+product_id;
   sql += " AND cp.product_variant_id ="+product_variant_id;
 

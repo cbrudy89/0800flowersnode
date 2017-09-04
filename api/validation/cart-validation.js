@@ -2,7 +2,7 @@
 var Joi = require('joi');
 
 module.exports = {
-  getwishlist : {
+  /*getwishlist : {
 	  body: {
 	  	token: Joi.string().required(),
 	    user_id: Joi.string().required(),
@@ -23,6 +23,15 @@ module.exports = {
 	    token: Joi.string().required(),
 	    user_id: Joi.string().required(),
 	    product_id: Joi.string().required()
+	  }	
+  },*/
+  updateCartProductdDate : {
+	  body: {
+	    row_id: Joi.number().required(),
+	    product_id: Joi.number().required(),
+	    product_variant_id: Joi.number().required(),
+	    delivery_date: Joi.string().required(),
+	    quantity: Joi.number()
 	  }	
   }
 };

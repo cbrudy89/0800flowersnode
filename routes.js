@@ -66,6 +66,7 @@ var mixedbouquetValidation = require('./api/validation/admin/mixedbouquet-valida
 var adminhomeValidation = require('./api/validation/admin/adminhome-validation');
 var wishlistValidation = require('./api/validation/wishlist-validation');
 var adminProductValidation = require('./api/validation/admin/admin-product-validation');
+var cartValidation = require('./api/validation/cart-validation');
 
 
 // Validation Configuration for Vendor
@@ -714,6 +715,10 @@ module.exports = {
 
     app.get('/getCart', function(req, res){
         cartController.getCart(req, res);
+    });
+
+    app.put('/updateCartProductdDate', validate(cartValidation.updateCartProductdDate), function(req, res){
+        cartController.updateCartProductdDate(req, res);
     });
 
     /*********************** Cart Functionality Ends Here ************************/
