@@ -55,5 +55,10 @@ module.exports = {
 	    recipient_last_name: Joi.string(),
 	    comment: Joi.string()*/
 	  }  	
+  },
+  getSavedCards: {
+	  body: {
+	    customer_id: Joi.number().required()
+	  }	
   }   
 };

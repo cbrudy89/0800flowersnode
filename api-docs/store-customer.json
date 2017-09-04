@@ -208,6 +208,13 @@
             ],
             "parameters":[
                {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
                   "name":"first_name",
                   "in":"formData",
                   "description":"First name of customer",

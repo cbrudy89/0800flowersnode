@@ -673,47 +673,7 @@ function CartController() {
 
   }
 
-    // Get all saved credit cards for customer
-  this.getSavedCards = function(req, res, next){
 
-    var token = req.headers['token'] || '' ;
-    var customer_id = 0;
-    Sync(function(){
-        if(token != '' && token != undefined){
-          var decoded = commonHelper.getUserId.sync(null, token);
-          //console.log('i am hrere');
-          if(decoded != '' && decoded != undefined && decoded.id > 0){
-            customer_id = decoded.id;
-          }
-        }  
-
-        if(customer_id > 0){
-            dbModel.find('customer_cards','id,name_on_card,card_last4digits,card_expiry', 'customer_id='+customer_id, '', '', function(error, result) {
-              if (error) {              
-                  res.status(config.HTTP_SERVER_ERROR).send({
-                    status:config.ERROR,
-                    code: config.HTTP_SERVER_ERROR,
-                    message:'Unable to process result!'
-                  });
-              }else{
-                  res.status(config.HTTP_SUCCESS).send({
-                      status: config.SUCCESS,
-                      code: config.HTTP_SUCCESS,
-                      message: result.length+" customer cards found",
-                      result: result
-                  });
-              }
-          });
-        } else {
-            res.status(config.HTTP_BAD_REQUEST).send({
-                status:config.ERROR,
-                code: config.HTTP_BAD_REQUEST, 
-                message:"Invalid customer id"
-            }); 
-        }
-    }); 
-    
-  }
 
 
 }

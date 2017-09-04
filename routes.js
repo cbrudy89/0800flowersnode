@@ -622,7 +622,7 @@ module.exports = {
     });
 
      // Update Profile
-    app.post('/customer/updateProfile', validate(customerValidation.updateProfile), function(req, res) {
+    app.post('/customer/updateProfile', authenticateController.isAuthenticated, validate(customerValidation.updateProfile), function(req, res) {
         customerController.updateProfile(req, res);
     });
 
@@ -638,6 +638,10 @@ module.exports = {
      // edit customer address
     app.post('/customer/editAddress', authenticateController.isAuthenticated,  function(req, res) {
         customerController.editAddress(req, res);
+    });
+    //fetch all customer saved cards
+    app.put('/customer/getSavedCards', authenticateController.isAuthenticated, validate(customerValidation.getSavedCards), function(req, res){
+        customerController.getSavedCards(req, res);
     });
 
     /************************* END of Customer *****************/
@@ -721,9 +725,7 @@ module.exports = {
         cartController.updateCartProductdDate(req, res);
     });
 
-    app.put('/getSavedCards', authenticateController.isAuthenticated, validate(cartValidation.getSavedCards), function(req, res){
-        cartController.getSavedCards(req, res);
-    });
+
 
     /*********************** Cart Functionality Ends Here ************************/
 
