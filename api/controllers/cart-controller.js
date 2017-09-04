@@ -95,7 +95,7 @@ function CartController() {
           //console.log("Existing cart : "+ cart_key);
           
           // Update cart product quantity if product exist
-          var isUpdated = updateCartProductQuantity.sync(null, cartId, product_id, product_variant_id, delivery_date);
+          var isUpdated = updateCartProductColumn.sync(null, cartId, product_id, product_variant_id, delivery_date,null,null);
 
           // If unable to updated cart product quantity show error.
           if(isUpdated){
@@ -222,8 +222,49 @@ function CartController() {
     });
 
   }
+ 
+ this.updateCartProductdDate = function(req, res){
+   
+    var cart_key = req.headers['cart_key'];
+    var row_id = req.body.row_id;
+    var product_id = req.body.product_id;
+    var product_variant_id = req.body.product_variant_id;
+    var delivery_date = req.body.delivery_date;
+    var quantity = req.body.quantity || null;  /////to update product quantity
 
-/*  this.updateCartProductQuantity = function(req, res){
+    /*var currentDate = new Date($deldate); 
+    var twoDigitMonth=((currentDate.getMonth()+1)>=10)? (currentDate.getMonth()+1) : '0' + (currentDate.getMonth()+1);  
+    var twoDigitDate=((currentDate.getDate())>=10)? (currentDate.getDate()) : '0' + (currentDate.getDate());
+    var caldate = currentDate.getFullYear() + "-" + twoDigitMonth + "-" + twoDigitDate; */ 
+
+    Sync(function(){
+      
+      // Check if cart key exist or not.
+      var isCartExist = isCartProductExist.sync(null, cart_key, product_id, product_variant_id, '');
+      if(isCartExist){
+        // Update product delivery_date in cart
+        resp=updateCartProductColumn.sync(null, isCartExist, product_id, product_variant_id, delivery_date,row_id,quantity);
+        res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS, 
+            message: 'Product delivery date updated',
+            result : resp
+        });
+      }else{
+        res.status(config.HTTP_NOT_FOUND).send({
+            status: config.ERROR, 
+            code : config.HTTP_NOT_FOUND,          
+            message: "Unable to process request, Please try again!",
+            err: []
+        });
+
+      }
+
+    });
+
+  }
+
+/*  this.updateCartProductColumn = function(req, res){
 
     var return_data = {};
     
@@ -269,7 +310,7 @@ function CartController() {
 
     var return_data = {};
     
-    var cart_product_id = req.body.cart_product_id;
+    var row_id = req.body.row_id;
     var product_id = req.body.product_id;
     var product_variant_id = req.body.product_variant_id;
     //var country_id = req.body.country_id;
@@ -344,7 +385,7 @@ function CartController() {
         }
 
         // Check Product Exist in Cart
-        var isDeleted = isCartProductDeleted.sync(null, cart_id, cart_product_id, product_id, product_variant_id);
+        var isDeleted = isCartProductDeleted.sync(null, cart_id, row_id, product_id, product_variant_id);
         //console.log(isDeleted);
         if(isDeleted){
 
@@ -358,7 +399,7 @@ function CartController() {
 
           // Delete products from cart
           var cond = [
-              {'id': {'val': cart_product_id, 'cond': '='}},
+              {'id': {'val': row_id, 'cond': '='}},
               {'cart_id': {'val': cart_id, 'cond': '='}},
               {'product_id': {'val': product_id, 'cond': '='}},
               {'product_variant_id': {'val': product_variant_id, 'cond': '='}}
@@ -1568,16 +1609,33 @@ function isCartProductExist(cart_key, product_id, product_variant_id, delivery_d
 
 }
 
-function updateCartProductQuantity(cart_id, product_id, product_variant_id, delivery_date, callback){
+function updateCartProductColumn(cart_id, product_id, product_variant_id, delivery_date, row_id=null,quantity=null,callback){
 
-  var sql = "UPDATE cart_products SET quantity = (quantity + 1)"
+  if(row_id != null && row_id != undefined){
+    var sql = "UPDATE cart_products SET delivery_date = '"+delivery_date+"'";
+    if(quantity != null && quantity != undefined){
+      sql += ",quantity = "+quantity;
+    }
+  }else{
+    var sql = "UPDATE cart_products SET quantity = (quantity + 1)";
+  }
+
   sql += " WHERE cart_id = "+cart_id;
   sql += " AND product_id ="+product_id;
   sql += " AND product_variant_id ="+product_variant_id;
+  
+  if(row_id != null && row_id != undefined){
+    sql += " AND id = '"+row_id+"'";
+  }else{
 
-  if(delivery_date != '' && delivery_date != undefined){
-    sql += " AND delivery_date = '"+delivery_date+"'";
+    if(delivery_date != '' && delivery_date != undefined){
+      sql += " AND delivery_date = '"+delivery_date+"'";
+    }
+    
   }
+
+
+  //console.log(sql);
 
   dbModel.rawQuery(sql, function(error, result){
     
@@ -1595,11 +1653,11 @@ function updateCartProductQuantity(cart_id, product_id, product_variant_id, deli
 
 }
 
-function isCartProductDeleted(cart_id, cart_product_id, product_id, product_variant_id, callback){
+function isCartProductDeleted(cart_id, row_id, product_id, product_variant_id, callback){
 
   var sql = "SELECT cp.id FROM cart c INNER JOIN cart_products cp ON(c.id = cp.cart_id)"
   sql += " WHERE c.id = '"+cart_id+"'";
-  sql += " AND cp.id ="+cart_product_id;
+  sql += " AND cp.id ="+row_id;
   sql += " AND cp.product_id ="+product_id;
   sql += " AND cp.product_variant_id ="+product_variant_id;
 

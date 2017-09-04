@@ -1030,7 +1030,7 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
        }
        else if(format == 2){
 
-           // dd/mm/yyyy   13-01-2017
+           // Input: dd/mm/yyyy   Output: 2017-01-13
            var dateArr = inputDate.split("/");
            var newdate = dateArr[2]+'-'+ dateArr[1]+'-'+dateArr[0];
        }    
