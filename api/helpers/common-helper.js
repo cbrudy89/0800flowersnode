@@ -138,7 +138,7 @@ function CommonHelper(){
 	      // If Preferred Currency Id not found for selected country then Use selected Currency Rate
 	      var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
-	      dbModel.rawQuery($sql, function(err, currency_result) {
+	      dbModel.rawQuery(sql, function(err, currency_result) {
 	        if (err) return callback(err);
 	        else 
 	            callback(null, currency_result);

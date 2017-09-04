@@ -3,6 +3,7 @@ var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 var async = require('async');
 var Sync = require('sync');
+var randtoken = require('rand-token') 
 
 var config = require('./../../config');
 /*var connection = require('./../../database');*/
@@ -22,11 +23,11 @@ function CartController() {
     //var user_id = req.body.user_id ? req.body.user_id : 0;
     var delivery_date = req.body.delivery_date;
     var country_id = req.body.country_id;
-    var sku = req.body.product_sku;
     var prod_delivery_method_id = req.body.prod_delivery_method_id ? req.body.prod_delivery_method_id : 0;
-    //var extra_charge = req.body.extra_charge ? req.body.extra_charge : 0;
-    var postalcode = req.body.postalcode ? req.body.postalcode : "00000";
     var location = req.body.location
+    //var extra_charge = req.body.extra_charge ? req.body.extra_charge : 0;
+/*    var sku = req.body.product_sku;
+    var postalcode = req.body.postalcode ? req.body.postalcode : "00000";*/
 
     var token = req.headers['token'] || '' ;
     var cart_id = '';
@@ -102,11 +103,16 @@ function CartController() {
 
             var cartCount = commonHelper.cartCount.sync(null, user_id, cart_key);
 
+            var resp = {
+              "cart_key" : cart_key,
+              "cartCount" : cartCount
+            };    
+
             res.status(config.HTTP_SUCCESS).send({
                 status: config.SUCCESS, 
                 code : config.HTTP_SUCCESS, 
-                message: 'Cart updated!',
-                cartCount: cartCount
+                message: 'Product Added to cart!',
+                result: resp
             });
 
           }else{
@@ -146,7 +152,10 @@ function CartController() {
                   cart_id = result.insertId;                  
                 }
 
+                var rowId = randtoken.uid(32);
+
                 var cart_products = {
+                  "row_id": rowId,
                   "cart_id": cart_id,
                   "product_id": product_id,
                   "product_variant_id" : product_variant_id,
@@ -400,7 +409,7 @@ function CartController() {
                   res.status(config.HTTP_SUCCESS).send({
                       status: config.SUCCESS, 
                       code : config.HTTP_SUCCESS,          
-                      message: "Cart is empty!",
+                      message: "Product removed from cart!",
                       result: resp
                   });                  
 
@@ -429,6 +438,218 @@ function CartController() {
   }
 
   this.getCart = function(req, res){
+
+  /*  
+    var language_code = req.headers['language_code'];
+    var country_id = req.headers['country_id'] || '';
+    var currency_id = req.headers['currency_id'] || '';
+  */
+
+    var language_code = req.query.language_code;
+    var country_id = req.query.country_id;
+    var currency_id = req.query.currency_id;
+
+    var token = req.headers['token'] || '' ;
+    var cart_key = req.headers['cart_key'] || '';
+    var user_id = cartCount = 0;
+    var cart_id = current_currency = '';
+    var total = 0.00;
+
+    //var cart_total = {};
+
+    //var cartProducts = [];
+    //var total = '';
+    
+    // var discount = ''; // Promo Discount
+    // var surcharge = ''; // Surcharge
+    // var service_charge = ''; // Service Charge
+    // var delivery_charge = ''; //Shipping Charge
+    // var total_amount_before_tax = ''; // Total Amount Before Tax
+    // var tax = ''; // Total Tax
+    // var total = ''; // In Current Currency if not USD
+    // var ordear_total = '' // In USD    
+
+    Sync(function(){
+
+        if(token != '' && token != undefined){
+          var decoded = commonHelper.getUserId.sync(null, token);
+          //console.log('i am hrere');
+          if(decoded != '' && decoded != undefined && decoded.id > 0){
+            user_id = decoded.id;
+          }
+        }      
+        
+        var cartData = 0;
+        if(cart_key != '' && cart_key != undefined){
+            
+            // Check if cart is exist
+            cartData = isCartKeyExist.sync(null, cart_key);      
+        }
+
+        if(cartData || user_id > 0){
+
+          // Logged In User
+          if(user_id != '' && user_id != undefined && user_id > 0){
+
+            // Check User has cart
+            var userCart = getUserCart.sync(null, user_id);
+            if(userCart){
+
+              cart_key = userCart[0].cart_key;
+              cart_id = userCart[0].id;
+
+            }
+
+          }
+
+          if (cartData[0].id > 0){
+
+            cart_id = cartData[0].id; 
+            cart_key = cartData[0].cart_key;
+
+          }
+
+          if((cart_id == '' || cart_id == undefined)){
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+          }
+          
+        }else{
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+        }
+
+        // Getting Currency Details from current country
+        var currency_details = commonHelper.getCurrencyDetails.sync(null, currency_id, 0);
+
+        // Get Cart Products
+        var cartItems = getCartProdcuts.sync(null, cart_id, language_code);
+
+        if(cartItems.length > 0 && currency_details.length > 0){
+
+          for(var i=0,j=1; i < cartItems.length; i++){
+              //console.log(cartItems);
+
+              var sub_total = '';
+
+              if(currency_details[0].currency_code == 'INR'){
+
+                sub_total = cartItems[i].price_value * cartItems[i].quantity;              
+                total += sub_total;
+
+                 //console.log($variantdetails[i].price_value);
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+              }else{
+
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+                sub_total = actPrice * cartItems[i].quantity;              
+                total += sub_total;                
+                
+              }
+              
+              price = currentCurrSymbl + actPrice;
+              cartItems[i].price_value = price;
+
+              cartCount += j;
+          }
+
+          if(currency_details[0].currency_code == 'INR'){
+
+            total = commonHelper.number_format.sync(null, (total * currency_details[0].exchange_rate), 2, '.', ',');
+            if(currency_details[0].currency_code !== "USD"){ 
+                actPrice = commonHelper.roundToNineNine.sync(null, total, currency_details[0].currency_code);
+            }        
+
+            total = currency_details[0].symbol + total;
+            
+          }else{
+            total = currency_details[0].symbol + total;
+          }
+        }
+        //cart_total.total = current_currency + total;
+
+        //console.log(cartItems);
+
+
+/*        $cartItems = Cart::all();
+        $title = 'Shopping Cart - ' . Config::get('constants.site_title');
+
+        foreach ($cartItems as $items) {
+            $productMethod = MethodVendor::where('method_id', '=', $items->attributes['delivery_method_id'])
+                            ->where('vendor_id', '=', $items->attributes['vendor_id'])->first();
+
+            if (count($productMethod) == 0) {
+                //Get The Default Delivery Method Created By Admin
+                //------------------------------------------------
+                $productMethod = Method::where('id', $items->attributes['delivery_method_id'])->first();
+            }
+            $attributes = $items->attributes;
+            $attributes['productMethod'] = $productMethod;
+
+            Cart::update($items->__raw_id, array('attributes' => $attributes));
+        }*/
+
+
+
+        var resp = {
+          "cartCount": cartCount,
+          "cartItems": cartItems,
+          "sub_total": total
+        }
+
+        return res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS,          
+            message: "Products in cart",
+            result: resp
+        });      
+
+    });
+
+
+  }
+
+
+
+  this.applyPromoCode = function(req, res){
+
+
+
+  }
+
+  this.removePromoCode = function(req, res){
+
+  }
+
+  this.updateCart = function(req, res){
 
     var language_code = req.headers['language_code'];
     var country_id = req.headers['country_id'] || '';
@@ -619,16 +840,6 @@ function CartController() {
 
     });
 
-
-  }
-
-  this.applyPromoCode = function(req, res){
-
-
-
-  }
-
-  this.removePromoCode = function(req, res){
 
   }
 

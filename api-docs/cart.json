@@ -1,0 +1,365 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Shopping Cart APIs",
+      "description":"All APIs related to Shopping cart controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Shopping Cart",
+         "description":"API for shopping cart page"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/addToCart":{
+         "post":{
+            "tags":[
+               "Shopping Cart"
+            ],
+            "description":"Add products to cart page",
+            "operationId":"/addToCart",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response (If Customer is logged in Send token)",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"cart_key",
+                  "in":"header",
+                  "description":"Cart key ( For Guest User send cart key)",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"Product Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_variant_id",
+                  "in":"formData",
+                  "description":"Product Variant Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"langauge_code",
+                  "in":"formData",
+                  "description":"Language code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"formData",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"prod_delivery_method_id",
+                  "in":"formData",
+                  "description":"Delivery method Id",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"location",
+                  "in":"formData",
+                  "description":"Product delivery location",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"delivery_date",
+                  "in":"formData",
+                  "description":"Delivery date (in YYYY-MM-DD) format",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Product Added to cart!",
+                  "schema":{
+                      "$ref":"#/definitions/200addToCart"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request, Please try again!",
+                  "schema":{
+                     "$ref":"#/definitions/500addToCart"
+                  }
+               }
+            }
+         }
+      },      
+      "/getCart":{
+         "get":{
+            "tags":[
+               "Shopping Cart"
+            ],
+            "description":"Get Shopping cart products",
+            "operationId":"getCart",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Customer token ( Send if customer is logged in )",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"cart_key",
+                  "in":"header",
+                  "description":"Cart Key ( Send if customer is Guest )",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"language_code",
+                  "in":"query",
+                  "description":"Language Code",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"country_id",
+                  "in":"query",
+                  "description":"Country Id",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"currency_id",
+                  "in":"query",
+                  "description":"Currency Id",
+                  "required":true,
+                  "type":"integer"
+               }               
+            ],
+             "responses":{
+               "200":{
+                  "description":"Products in Cart.",
+                  "schema":{
+                      "$ref":"#/definitions/200getCart"
+                  }
+               },
+               "500":{
+                  "description":"Unable to get cart product",
+                  "schema":{
+                     "$ref":"#/definitions/500getCart"
+                  }
+               }
+            }
+         }
+      },
+      "/removeCartProduct":{
+         "delete":{
+            "tags":[
+               "Shopping Cart"
+            ],
+            "description":"Remove Product Form Cart",
+            "operationId":"removeCartProduct",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Customer token ( Send if custormer is logged id )",
+                  "required":false,
+                  "type":"string"
+               },
+               {
+                  "name":"cart_key",
+                  "in":"formData",
+                  "description":"Cart key ( Required if a Guest user )",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
+                  "name":"row_id",
+                  "in":"formData",
+                  "description":"Row id for individual cart product.",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_id",
+                  "in":"formData",
+                  "description":"Product Id.",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"product_variant_id",
+                  "in":"formData",
+                  "description":"Product Variant id.",
+                  "required":true,
+                  "type":"integer"
+               }                              
+            ],
+             "responses":{
+               "200":{
+                  "description":"Product removed from cart!",
+                  "schema":{
+                      "$ref":"#/definitions/200removeCartProduct"
+                  }
+               },
+               "404":{
+                  "description":"Product already removed!",
+                  "schema":{
+                     "$ref":"#/definitions/404removeCartProduct"
+                  }
+               },               
+               "500":{
+                  "description":"Unable to delete cart product",
+                  "schema":{
+                     "$ref":"#/definitions/500removeCartProduct"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "200addToCart":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product Added to cart!"
+            }
+         }
+      },
+      "500addToCart":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to process request, Please try again!"
+            }
+         }
+      },
+      "200removeCartProduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product removed from cart!"
+            }
+         }
+      },
+      "404removeCartProduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Product already removed!"
+            }
+         }
+      },
+      "500removeCartProduct":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to delete cart product"
+            }
+         }
+      },
+      "200getCart":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },
+            "message":{
+               "type":"string",
+               "example":"Products in Cart."
+            }
+         }
+      },
+      "500getCart":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },
+            "message":{
+               "type":"string",
+               "example":"Unable to get cart product."
+            }
+         }
+      }
+   }
+}
