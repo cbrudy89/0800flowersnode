@@ -590,6 +590,47 @@
                }                                    
             }
          }
+      },
+      "/customer/getSavedCards":{
+         "put":{
+            "tags":[
+               "Store Customer"
+            ],
+            "description":"Fetch all saved cards of a specific customer.",
+            "operationId":"getSavedCards",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[      
+               {
+                  "name":"token",
+                  "in":"header",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               }                                                                
+            ],
+            "responses":{
+               "200":{
+                  "description":"customer cards found",
+                  "schema":{
+                     "$ref":"#/definitions/200"
+                  }
+               },
+               "404":{
+                  "description":"Something went wrong. Please try again.",
+                  "schema":{
+                     "$ref":"#/definitions/404"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500"
+                  }
+               }                                    
+            }
+         }
       }      
    },
    "definitions":{
@@ -1074,6 +1115,54 @@
          }
       },                 
       "500resetPassword":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "200":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Data found"
+            } 
+         }
+      }, 
+      "404":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },                 
+      "500":{
          "properties":{
             "status":{
                "type":"boolean",

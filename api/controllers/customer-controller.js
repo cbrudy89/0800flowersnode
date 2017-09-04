@@ -675,7 +675,7 @@ function UserController() {
             customer_id = decoded.id;
           }
         }  
-
+        
         if(customer_id > 0){
             dbModel.find('customer_cards','id,name_on_card,card_last4digits,card_expiry', 'customer_id='+customer_id, '', '', function(error, result) {
               if (error) {              
