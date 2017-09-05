@@ -228,7 +228,7 @@ function ProductController() {
                             Sync(function() {
                                 $vendorId = $product[0].vendor_id;
                                 $country = commonHelper.countrycode.sync(null, $currentCountry);                                
-                                $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id = null, $currentCountry);                                
+                                $currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id, $currentCountry);                                
                                 $adminRestictedRates= commonHelper.adminRestictedRates.sync(null, $vendorId, $currentCountry, $product[0].id); ///get admin restricted dates
                                 $vendorHolidayList= commonHelper.vendorHolidayList.sync(null, $vendorId, $currentCountry); ///get vendor restricted holidays
 

@@ -636,11 +636,9 @@ function CartController() {
     var cart_key = req.headers['cart_key'] || '';
     var user_id = 0;
 
-    var row_id = req.body.row_id;
-    var product_id = req.body.product_id;
-    var product_variant_id = req.body.product_variant_id;
-    //var country_id = req.body.country_id;
-    var cartProductsArray = req.body.cartProductsArray;
+    var type = req.body.type;
+    var cardMessage = req.body.cardMessage;
+    var deliveryInformation = req.body.deliveryInformation;
 
     Sync(function(){
 
@@ -706,21 +704,55 @@ function CartController() {
 
         }
 
+        // For Gift Message
+        if(type == 'card_message'){
+  
+          var found = 0;
+          //var jsonData = JSON.parse(cardMessage);
+          var jsonData = cardMessage;
 
-        var found = 0;
-        var jsonData = JSON.parse(cartProductsArray);
+          for (var i = 0; i < jsonData.length; i++) {
+            var cardData = jsonData[i];
 
-        for (var i = 0; i < jsonData.length; i++) {
-          var lang = jsonData[i];
-          var isExist = isSympathyExist.sync(null, id, lang);
-          //console.log(isExist);
-          if(isExist == 'true') found++;
-        }        
+            var row_id = product_id = product_variant_id = '';
+            var prefer_message = gift_occassion = gift_message = '';
 
+            if(cardData.row_id == '' || cardData.product_id == '' || cardData.product_variant_id == '' || cartData.prefer_message == ''){
+              continue;
+            }
 
+            row_id = cardData.row_id;
+            product_id = cardData.product_id;
+            product_variant_id = cardData.product_variant_id;
+            prefer_message = cardData.prefer_message;
+            gift_occassion = cardData.gift_occassion;
+            gift_message = cardData.gift_message;
 
+            var cartId = isCartProductExist.sync(null, cart_key, product_id, product_variant_id, '');
+            if(cartId == 0) continue;
 
+            var sql = "UPDATE cart_products SET prefer_message ='"+prefer_message+"', gift_occassion = '"+gift_occassion+"', gift_message = '"+gift_message+"'";
+            sql += "WHERE row_id ="+row_id+" AND product_id = "+product_id+" AND product_variant_id = "+product_variant_id;
 
+            //console.log(sql);
+            
+            // Update Cart Product
+            var response = dbModel.rawQuery.sync(null, sql);
+
+          }
+
+        }
+
+       /* // For Delivery Info
+        if(type == 'delivery_info'){
+          
+        }*/
+
+        return res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS,          
+            message: "Information saved!"
+        });
 
     });
 
