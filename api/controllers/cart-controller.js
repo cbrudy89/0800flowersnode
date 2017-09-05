@@ -707,7 +707,6 @@ function CartController() {
         // For Gift Message
         if(type == 'card_message'){
   
-          var found = 0;
           //var jsonData = JSON.parse(cardMessage);
           var jsonData = cardMessage;
 
@@ -717,7 +716,10 @@ function CartController() {
             var row_id = product_id = product_variant_id = '';
             var prefer_message = gift_occassion = gift_message = '';
 
-            if(cardData.row_id == '' || cardData.product_id == '' || cardData.product_variant_id == '' || cartData.prefer_message == ''){
+            if(cardData.row_id == '' || 
+              cardData.product_id == '' || 
+              cardData.product_variant_id == '' || 
+              cartData.prefer_message == ''){
               continue;
             }
 
@@ -725,14 +727,14 @@ function CartController() {
             product_id = cardData.product_id;
             product_variant_id = cardData.product_variant_id;
             prefer_message = cardData.prefer_message;
-            gift_occassion = cardData.gift_occassion;
-            gift_message = cardData.gift_message;
+            gift_occassion = cardData.occasion;
+            gift_message = cardData.message;
 
             var cartId = isCartProductExist.sync(null, cart_key, product_id, product_variant_id, '');
             if(cartId == 0) continue;
 
             var sql = "UPDATE cart_products SET prefer_message ='"+prefer_message+"', gift_occassion = '"+gift_occassion+"', gift_message = '"+gift_message+"'";
-            sql += "WHERE row_id ="+row_id+" AND product_id = "+product_id+" AND product_variant_id = "+product_variant_id;
+            sql += " WHERE id ="+row_id+" AND product_id = "+product_id+" AND product_variant_id = "+product_variant_id;
 
             //console.log(sql);
             
@@ -743,10 +745,69 @@ function CartController() {
 
         }
 
-       /* // For Delivery Info
+        // For Delivery Info
         if(type == 'delivery_info'){
+
+          //var jsonData = JSON.parse(cardMessage);
+          var jsonData = deliveryInformation;
+          //console.log(jsonData);
+
+          for (var i = 0; i < jsonData.length; i++) {
+            var deliveryData = jsonData[i];
+
+            var row_id = product_id = product_variant_id = '';
+            var full_name = address1 = address2 = city = provience_id = country_delivery_id = pincode = phone = '';
+
+            if(deliveryData.row_id == '' 
+              || deliveryData.product_id == '' 
+              || deliveryData.product_variant_id == '' 
+              || deliveryData.full_name == '' 
+              || deliveryData.address1 == '' 
+              || deliveryData.address2 == '' 
+              || deliveryData.city == ''                             
+              || deliveryData.provience_id == ''                             
+              || deliveryData.country_delivery_id == ''                             
+              || deliveryData.pincode == ''                             
+              || deliveryData.phone == ''){
+              continue;
+            }
+
+            row_id = deliveryData.row_id;
+            product_id = deliveryData.product_id;
+            product_variant_id = deliveryData.product_variant_id;
+
+            var delivery_address = {
+              "full_name": deliveryData.full_name,
+              "address1": deliveryData.address1,
+              "address2": deliveryData.address2,
+              "city": deliveryData.city,
+              "provience_id": deliveryData.provience_id,
+              "country_delivery_id": deliveryData.country_delivery_id,
+              "pincode": deliveryData.pincode,
+              "phone":deliveryData.phone
+            };
+
+            //console.log(delivery_address);
+
+            delivery_address = JSON.stringify(delivery_address);
+
+            var cartId = isCartProductExist.sync(null, cart_key, product_id, product_variant_id, '');
+            if(cartId == 0) continue;
+
+            var sql = "UPDATE cart_products SET";
+            sql += " delivery_address = '"+delivery_address+"'";
+            sql += " WHERE id ="+row_id;
+            sql += " AND product_id = "+product_id
+            sql += " AND product_variant_id = "+product_variant_id;
+
+            //console.log(sql);
+            
+            // Update Cart Product
+            var response = dbModel.rawQuery.sync(null, sql);
+
+          }          
           
-        }*/
+        }
 
         return res.status(config.HTTP_SUCCESS).send({
             status: config.SUCCESS, 
