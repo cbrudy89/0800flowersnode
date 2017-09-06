@@ -517,8 +517,8 @@ function adminProductController() {
                                             
                                             var language_product_sql ="";                                   
                                             var description_arr = JSON.parse(req.body.description_arr); 
-                                            //console.log(description_arr);
-                                            
+                                            //console.log(req.body.description_arr);
+                                            //process.exit();
                                             if(description_arr.length > 0){
 
                                                for (var m= 0; m < description_arr.length; m++) {

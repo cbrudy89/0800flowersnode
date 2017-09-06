@@ -1,6 +1,20 @@
 'use strict';
 var Joi = require('joi');
 
+
+const adminProductObjectSchema = Joi.object().keys({
+    language_id: Joi.string().empty(''),
+    product_name: Joi.string().min(1).required(),
+    product_description: Joi.string().min(1).required(),
+    product_content: Joi.string().empty('')    
+  }).required();
+
+const adminProductArraySchema = Joi.array().items(adminProductObjectSchema).min(1).required();
+
+/*
+[{"language_id":"1", "product_name":" name english","product_description":"description english","product_content":" content eng","product_specification":" specification english"}, {"language_id":"2", "product_name":" name french","product_description":"description french","product_content":" content french","product_specification":" specification french"},{"language_id":"3", "product_name":" name german","product_description":"description german","product_content":" content german","product_specification":" specification german"}] 
+*/
+
 module.exports = {
   search : {
     query: {
@@ -32,8 +46,8 @@ module.exports = {
       vendor_id: Joi.number().integer().required(),
       product_code: Joi.string().required(),
       // product_name: Joi.string().required(),
-
-      description_arr: Joi.required(),
+      
+      description_arr: Joi.alternatives().try(adminProductObjectSchema, adminProductArraySchema).required(),
       // [{"language_id":"1", "product_name":"product name english","product_description":"description english","product_content":"pprodct content eng","product_specification":"product specification english"},{"language_id":"2", "product_name":"product name french","product_description":"description french","product_content":"pprodct content french","product_specification":"product specification french"},{"language_id":"2", "product_name":"product name german","product_description":"description german","product_content":"prodct content german","product_specification":"product specification german"}]            
       
       atlas_product_name: Joi.string().required(),
