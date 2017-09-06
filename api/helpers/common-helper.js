@@ -17,7 +17,7 @@ function CommonHelper(){
     this.countrydetails=function (short_code = '', country_slug = '', callback) {
 
 
-        sql='SELECT id as country_id,LOWER(REPLACE(country_name, " ", "-")) as country_slug,country_name,preferred_currency_id,(SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code, language_id,short_code,calling_code,phone,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`company_logo`, "+","%2B")) as default_logo,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`country_flag`, "+","%2B")) as country_flag,ga_code FROM country_list';
+        sql='SELECT id as country_id,LOWER(REPLACE(country_name, " ", "-")) as country_slug,country_name,preferred_currency_id,(SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code, language_id, CONCAT(language_id, "," , language_supported) as supported_language_ids,short_code,calling_code,phone,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`company_logo`, "+","%2B")) as default_logo,CONCAT("'+config.RESOURCE_URL+'",REPLACE(`country_flag`, "+","%2B")) as country_flag,ga_code FROM country_list';
         var cond = '';
         
         if(short_code != '' && (typeof short_code != undefined)){

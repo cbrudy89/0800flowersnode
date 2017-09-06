@@ -24,6 +24,7 @@ function CountryController() {
         continet_name: req.body.continet_name,
         preferred_currency_id: req.body.preferred_currency_id,
         language_id: req.body.language_id,
+        language_supported: req.body.language_supported,
         country_name: req.body.country_name,
         short_code: req.body.short_code,
         country_alias: req.body.country_alias,
@@ -176,6 +177,7 @@ function CountryController() {
         var continet_name = req.body.continet_name;
         var preferred_currency_id = req.body.preferred_currency_id;
         var language_id = req.body.language_id;
+        var language_supported = req.body.language_supported;
         var country_name = req.body.country_name;
         var short_code = req.body.short_code;
         var country_alias = req.body.country_alias;

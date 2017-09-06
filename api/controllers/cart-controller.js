@@ -1743,6 +1743,71 @@ function checkDiscountCodeForDiscount($code, $delivery_country_id, callback)
     
 }
 
+/*public function checkAvailability($data){
+    if(is_array($data) && count($data) > 0){
+        $curlData = array(
+            "getDlvrCalRequest" => array(
+                "partnerId" => "",
+                "customerId" => $this->_customer_id,
+                "customerType" => $this->_customer_type, 
+                "country" => $data['country'], //"USA"
+                "deliveryDate" => $data['deliveryDate'], //"30-APR-15"
+                "locationType" => "1", 
+                "productSku" => $data['productSku'], //"1120RD"
+                "backupSku" => "",
+                "backupSkuBrandCode" => "",
+                "siteId" => $this->_site_id,
+                "startDate" => "",
+                "sourceSystem" => $this->_source_system, 
+                "zipCode" => $data['zipCode'], //"11514"
+                "brandCode" => $this->_brand_code
+            )
+        );
+        $curlData = json_encode($curlData); 
+
+        $getResult = $this->_executeCommonCurl($this->_check_availability_url, $curlData, 'checkAvailability'); 
+
+        return $getResult;
+    }else{
+        return false;
+    }
+}
+
+public function getCheckZipService($zipCode) {
+    try {
+        $curlData = array(
+            "esbSaltaServiceRequest" => array(
+                "checkZipRequest" => array(
+                    "zipCode" => $zipCode
+                )
+            )
+        );
+        $curlData = json_encode($curlData);
+
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL, $this->_check_zip_service_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'X-IBM-Client-Id:' . $this->_client_id,
+            'X-IBM-Client-Secret:' . $this->_client_secret
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        $getResult = json_decode($result);
+
+        return $getResult;
+    } catch (Exception $ex) {
+
+        return $ex->getMessage();
+
+    }
+}*/
+
 function isCartKeyExist(cart_key, callback){
 
   dbModel.findOne("cart", "cart_key", cart_key, function(error, result){
