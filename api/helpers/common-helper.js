@@ -342,6 +342,107 @@ this.getCustomDeliveryDate = function ($countryiso_code, $currencydetails, $prod
     });
 
 }
+
+//Check Order Can be delivered on specified Date
+this.checkAvailability = function ($countryiso_code, $productSku, $deliveryDate, $zipCode, callback) {
+    if (!$countryiso_code && $productSku && !$deliveryDate && !$zipCode) return callback(false);
+    
+    //console.log($countryiso_code + ", "+ $productSku + ", "+$deliveryDate + ", "+$zipCode);
+
+    $curlData = {
+        "getDlvrCalRequest": {
+            "partnerId": "123",
+            "customerId": config.atlas_order.customer_id,
+            "customerType": config.atlas_order.customer_type,
+            //"country": "IRE",
+            "country" : $countryiso_code,
+            "deliveryDate": $deliveryDate,
+            "locationType": "1",
+           // "productSku": "1120RD",
+            "productSku" : $productSku,
+            "backupSku": "",
+            "backupSkuBrandCode": "",
+            "siteId": config.atlas_order.site_id,
+            "startDate": "",
+            "sourceSystem": config.atlas_order.source_system,
+            //"zipCode": "11514",
+            "zipCode" : $zipCode,
+            "brandCode": config.atlas_order.brand_code
+        }
+    };
+
+    //console.log($curlData);
+
+    $curlData = JSON.stringify($curlData);
+    //$Authorization = 'Bearer ' + base64.encode(config.atlas_order.client_id + ':' + config.atlas_order.client_secret);
+    // Set the headers
+    var headers = {
+        // 'Authorization': $Authorization,
+        // 'SOAPAction': 'getDeliveryCalendar',
+        'Content-Type': 'application/json',
+        'X-IBM-Client-Id': config.atlas_order.client_id,
+        'X-IBM-Client-Secret': config.atlas_order.client_secret
+        //'Accept-Language:en-US'
+    }
+
+    // Configure the request
+    var options = {
+        url: config.atlas_order.check_availability_url,
+        method: 'POST',
+        headers: headers,
+        body: $curlData
+    }
+    // Start the request
+    request(options, function(error, response, body) {
+        if (error) callback(error);
+        else {
+            callback(null, body);
+        }
+    });
+
+}
+
+//Check valid Zip Code
+this.checkZipService = function ($zipCode, callback) {
+    if (!$zipCode) return callback(false);
+     
+    $curlData = {
+        "esbSaltaServiceRequest": {
+            "checkZipRequest": {
+                "zipCode": $zipCode
+            }
+        }
+    };
+
+    $curlData = JSON.stringify($curlData);
+    //$Authorization = 'Bearer ' + base64.encode(config.atlas_order.client_id + ':' + config.atlas_order.client_secret);
+    // Set the headers
+    var headers = {
+        // 'Authorization': $Authorization,
+        // 'SOAPAction': 'getDeliveryCalendar',
+        'Content-Type': 'application/json',
+        'X-IBM-Client-Id': config.atlas_order.client_id,
+        'X-IBM-Client-Secret': config.atlas_order.client_secret
+        //'Accept-Language:en-US'
+    }
+
+    // Configure the request
+    var options = {
+        url: config.atlas_order.check_zip_service_url,
+        method: 'POST',
+        headers: headers,
+        body: $curlData
+    }
+    // Start the request
+    request(options, function(error, response, body) {
+        if (error) callback(error);
+        else {
+            callback(null, body);
+        }
+    });
+
+}
+
 ///convert with conversion rate
 this.getSurchargeConverted = function ($amount, callback) {
 
@@ -1117,6 +1218,57 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
                 else return callback(null, '');
             }
         });
+    }
+
+    // Get Country details by country_id
+    this.getCountryDetails = function($country_id, callback){
+
+        sql = "SELECT * FROM country_list WHERE id = "+$country_id+ " AND status = 1";
+
+        dbModel.rawQuery(sql, function(error, result) {
+            if (error) return callback(error);
+            else {
+                if (result.length > 0) callback(null, result);
+                else return callback(null, '');
+            }
+        });
+
+    }    
+
+    // Get Product variant deatils
+    this.getProductDetails = function($product_id, $product_variant_id, callback){
+
+        sql  = "SELECT p.vendor_id, pp.sku FROM products p JOIN product_prices pp ON (p.id = pp.product_id)";
+        sql += " WHERE p.id = "+$product_id;
+        sql += " AND pp.id = "+$product_variant_id;
+
+        dbModel.rawQuery(sql, function(err, $result) {
+            if (err) return callback(err);
+            else {
+                if ($result.length > 0) callback(null, $result);
+                else return callback(null, '');
+            }
+        });
+
+    }
+
+    this.getCartProduct = function($cart_id, $row_id, callback){
+        
+        sql  = "SELECT DATE_FORMAT(cp.delivery_date,'%y-%m-%d') AS delivery_date, cp.zip_code, cp.prod_delivery_method_id";
+        sql += " FROM cart c JOIN cart_products cp ON (c.id = cp.cart_id)";
+        sql += " WHERE c.id = "+$cart_id;
+        sql += " AND cp.id = "+$row_id;
+
+        //console.log(sql);
+
+        dbModel.rawQuery(sql, function(err, $result) {
+            if (err) return callback(err);
+            else {
+                if ($result.length > 0) callback(null, $result);
+                else return callback(null, []);
+            }
+        });
+
     }
 
    

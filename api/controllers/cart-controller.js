@@ -89,7 +89,7 @@ function CartController() {
           //console.log("Existing cart : "+ cart_key);
           
           // Update cart product quantity if product exist
-          var isUpdated = updateCartProductQuantity.sync(null, cartId, product_id, product_variant_id, delivery_date);
+          var isUpdated = updateCartProductColumn.sync(null, cartId, product_id, product_variant_id, delivery_date, null, null);
 
           // If unable to updated cart product quantity show error.
           if(isUpdated){
@@ -640,6 +640,9 @@ function CartController() {
     var cardMessage = req.body.cardMessage;
     var deliveryInformation = req.body.deliveryInformation;
 
+    var calErrors = {};
+    var finalErrors = [];
+
     Sync(function(){
 
         if(token != '' && token != undefined){
@@ -668,6 +671,7 @@ function CartController() {
 
                 cart_key = userCart[0].cart_key;
                 cart_id = userCart[0].id;
+                country_id = userCart[0].country_id;
 
             }else{
 
@@ -683,6 +687,7 @@ function CartController() {
 
             cart_id = cartData[0].id; 
             cart_key = cartData[0].cart_key;
+            country_id = cartData[0].country_id;
 
           }else{
 
@@ -733,6 +738,58 @@ function CartController() {
             var cartId = isCartProductExist.sync(null, cart_key, product_id, product_variant_id, '');
             if(cartId == 0) continue;
 
+            // Check if product can be delivered on selected date
+            var product = commonHelper.getProductDetails.sync(null, product_id, product_variant_id);
+            var cartProduct = commonHelper.getCartProduct.sync(null, cart_id, row_id);
+            var countryDetails = commonHelper.getCountryDetails.sync(null, country_id);
+/*
+            console.log(product);
+            console.log(cartProduct);*/
+
+            if(cartProduct[0].zip_code == "" || cartProduct[0].zip_code == null){
+              var zip_code = "00000";
+            }else{
+              var zip_code = cartProduct[0].zip_code
+            }
+
+            $newDt= cartProduct[0].delivery_date;
+            //console.log($newDt);
+
+            $dt = $newDt.split('-');
+            var monthname=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+            cartProduct[0].delivery_date = $dt[2]+'-'+monthname[parseInt($dt[1])-1]+'-'+$dt[0]; // Formatting date 27-JUL-2017            
+
+            //console.log(cartProduct[0].delvery_date);
+            //console.log(product[0].vendor_id+ ", "+ country_id+ ", "+ product_id);
+
+            //$currencydetails = commonHelper.getCurrencyDetails.sync(null, $currency_id, $currentCountry);
+            adminRestictedRates = commonHelper.adminRestictedRates.sync(null, product[0].vendor_id, country_id, product_id); // Get admin restricted dates
+            vendorHolidayList= commonHelper.vendorHolidayList.sync(null, product[0].vendor_id, country_id); // Get vendor restricted holidays*/
+/*            console.log(adminRestictedRates);
+            console.log(vendorHolidayList);
+            console.log(cartProduct[0].delivery_date);*/
+
+            if(adminRestictedRates.indexOf(cartProduct[0].delivery_date) >= 0 ){
+              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+                continue; //admin date found
+            } 
+
+            if(vendorHolidayList.indexOf(cartProduct[0].delivery_date) >= 0 ){
+              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+                continue; //vendor date found
+            }                       
+
+            //console.log(countryDetails[0].iso_code + ", "+ product[0].sku + ", "+cartProduct[0].delivery_date + ", "+cartProduct[0].zip_code);
+
+            var response = commonHelper.checkAvailability.sync(null, countryDetails[0].iso_code, product[0].sku, cartProduct[0].delivery_date, cartProduct[0].zip_code);
+
+            body = JSON.parse(response);
+            //console.log(body["getDlvrCalResponse"]["responseStatus"]);
+
+            if(body["getDlvrCalResponse"]["responseStatus"] != 'SUCCESS'){
+              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+            }
+
             var sql = "UPDATE cart_products SET prefer_message ='"+prefer_message+"', gift_occassion = '"+gift_occassion+"', gift_message = '"+gift_message+"'";
             sql += " WHERE id ="+row_id+" AND product_id = "+product_id+" AND product_variant_id = "+product_variant_id;
 
@@ -741,6 +798,10 @@ function CartController() {
             // Update Cart Product
             var response = dbModel.rawQuery.sync(null, sql);
 
+          }
+
+          if(calErrors != undefined && Object.keys(calErrors).length > 0){
+            finalErrors.push(calErrors);            
           }
 
         }
@@ -809,11 +870,22 @@ function CartController() {
           
         }
 
-        return res.status(config.HTTP_SUCCESS).send({
-            status: config.SUCCESS, 
-            code : config.HTTP_SUCCESS,          
-            message: "Information saved!"
-        });
+        if(finalErrors.length > 0){
+          return res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS, 
+              code : config.HTTP_SUCCESS,          
+              message: "Unable to process request!",
+              errors: finalErrors
+          });
+        }else{
+
+          return res.status(config.HTTP_SUCCESS).send({
+              status: config.SUCCESS, 
+              code : config.HTTP_SUCCESS,          
+              message: "Information saved!"
+          });
+        }
+
 
     });
 
@@ -1827,7 +1899,7 @@ function isCartKeyExist(cart_key, callback){
 
 function getUserCart(user_id, callback){
 
-  var sql = "SELECT id,cart_key FROM cart WHERE user_id ="+user_id;
+  var sql = "SELECT id,cart_key,country_id FROM cart WHERE user_id ="+user_id;
   //console.log(sql);
   dbModel.rawQuery(sql, function(error, result){
     if(error){
