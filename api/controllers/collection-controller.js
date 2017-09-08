@@ -358,7 +358,7 @@ function CollectionController() {
             status: config.SUCCESS, 
             code : config.HTTP_SUCCESS, 
             //message: $result.length + " products found out of "+$total_products.length,
-            message: $result.length + " products found",
+            message: "Showing "+$result.length + " products",
             result : final_data
         });
       }
