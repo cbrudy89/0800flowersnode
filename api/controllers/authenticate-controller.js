@@ -1,9 +1,10 @@
 var jwt=require('jsonwebtoken');
+var config = require('./../../config');
 
 function AuthenticateController() {
 
   this.isAuthenticated = function(req,res,next){
-
+    var newToken;
     var token=req.body.token || req.query.token || req.headers['token'];
     if(token){
         jwt.verify(token,process.env.SECRET_KEY,function(err,decoded){
@@ -14,8 +15,21 @@ function AuthenticateController() {
                     message: 'Token Invalid'
                 });
             }else{
+
                 req.decoded = decoded;
+
+                //Refresh: If the token needs to be refreshed gets the new refreshed token
+                newToken = refreshToken(decoded);
+                if(newToken) {
+
+                    res.set('Token', newToken);
+                } else {
+                    
+                    //res.set('Authorization', 'Bearer ' + token);
+                    res.set('Token', token);
+                }
                 next();
+
             }
         })
     }else{
@@ -27,6 +41,40 @@ function AuthenticateController() {
     }
 
   }
+
+}
+
+function refreshToken(decoded) {
+    var token_exp,
+        now,
+        newToken;
+
+    token_exp = decoded.exp;
+    now = Date.now();
+
+    if((token_exp - now) < config.JWT_REFRESH_TIME) {
+        newToken = createToken(decoded);
+        if(newToken) {
+            return newToken;
+        }
+    } else {
+       return null;
+    }
+}
+
+function createToken(decoded){
+
+    if(decoded.parent_id && decoded.parent_id != undefined){
+        var data = {id: decoded.id, parent_id: decoded.parent_id, role : decoded.role};
+    }else{
+        var data = {id: decoded.id, role : decoded.role};
+    }
+
+    var token=jwt.sign(data,process.env.SECRET_KEY,{
+      expiresIn:config.JWT_EXPIRATION_TIME
+    });
+
+    return token;
 
 }
 

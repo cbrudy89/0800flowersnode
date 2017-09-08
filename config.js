@@ -5,6 +5,9 @@ function Config() {
   this.SECRET_KEY = 'thisismysecretkey';
   this.PORT = 8080;
 
+  this.JWT_EXPIRATION_TIME = 60;
+  this.JWT_REFRESH_TIME = 30;
+
   this.SALT_ROUND = 10;
   this.SUCCESS = true;
   this.ERROR = false,

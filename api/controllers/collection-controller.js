@@ -8,6 +8,8 @@ var config = require('./../../config');
 var dbModel = require('./../models/db-model');
 var commonHelper = require('./../helpers/common-helper');
 
+var showCheckDisable = 0;
+
 function CollectionController() {
   // Collection page data
   this.collection_promotion = function(req, res){
@@ -293,12 +295,20 @@ function CollectionController() {
               //console.log(price_filter);
               if(price_filter.length > 0 && price_filter[0].aggregate > 0){
                   //item[key] = pfilter[key];
-                  priceFilter.push({
-                    "id" : key,
-                    "name" : pfilter[key],
-                    "checked": "false",
-                    "disabled": "false"
-                  });
+                  if(showCheckDisable){
+                    priceFilter.push({
+                      "id" : key,
+                      "name" : pfilter[key],
+                      "checked": false,
+                      "disabled": false
+                    });                    
+
+                  }else{
+                    priceFilter.push({
+                      "id" : key,
+                      "name" : pfilter[key]                      
+                    });
+                  }
               }          
               
             }
@@ -555,8 +565,13 @@ function getProductIds(data, callback){
 function getColorFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
   var sql = "SELECT `colors`.`id`, `language_types`.`name` as 'name', `colors`.`color_code`";
+
+  if(showCheckDisable){
+
     sql += " ,CASE colors.id WHEN colors.id > 0 THEN 'false' ELSE 'false' END AS 'checked'"; // Create Fake Columns 
     sql += " ,CASE colors.id WHEN colors.id > 0 THEN 'false' ELSE 'false' END AS 'disabled'"; // Create Fake Columns  
+  }
+
     sql += " FROM `products`"; 
     sql += " INNER JOIN `color_product` on `products`.`id` = `color_product`.`product_id`"; 
     sql += " INNER JOIN `colors` on `colors`.`id` = `color_product`.`color_id`"; 
@@ -599,8 +614,11 @@ function getColorFilterByCountryProvince(delivery_country_id, province_id, produ
 function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
 
   var sql = "SELECT `flower_types`.`id`, `language_types`.`name` as 'name'";
+  if(showCheckDisable){
+    
     sql += " ,CASE flower_types.id WHEN flower_types.id > 0 THEN 'false' ELSE 'false' END AS 'checked'"; // Create Fake Columns 
     sql += " ,CASE flower_types.id WHEN flower_types.id > 0 THEN 'false' ELSE 'false' END AS 'disabled'"; // Create Fake Columns
+  }
     sql += " FROM `products`"; 
     sql += " INNER JOIN `flower_type_product` on `products`.`id` = `flower_type_product`.`product_id`"; 
     sql += " INNER JOIN `flower_types` on `flower_types`.`id` = `flower_type_product`.`flower_type_id`"; 
@@ -644,8 +662,11 @@ function getFlowerTypeFilterByCountryProvince(delivery_country_id, province_id, 
 function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, product_ids,language_id, callback){
 
   var sql = "select `occasions`.`id`,`language_types`.`name` as 'name'";
+  if(showCheckDisable){
+
     sql += " ,CASE occasions.id WHEN occasions.id > 0 THEN 'false' ELSE 'false' END AS 'checked'"; // Create Fake Columns 
     sql += " ,CASE occasions.id WHEN occasions.id > 0 THEN 'false' ELSE 'false' END AS 'disabled'"; // Create Fake Columns  
+  }
     sql += " from `products`";
     sql += " inner join `occasion_product` on `products`.`id` = `occasion_product`.`product_id`";
     sql += " inner join `occasions` on `occasions`.`id` = `occasion_product`.`occasion_id` ";
@@ -693,8 +714,11 @@ function getOccasionsFilterByCountryProvince(delivery_country_id, province_id, p
 function getSympathyTypeFilterByCountryProvince(delivery_country_id, province_id, product_ids, language_id, callback){
 
   var sql = "SELECT `sympathy_types`.`id`, `language_types`.`name` as 'name'";
+  if(showCheckDisable){
+
     sql += " ,CASE sympathy_types.id WHEN sympathy_types.id > 0 THEN 'false' ELSE 'false' END AS 'checked'"; // Create Fake Columns 
     sql += " ,CASE sympathy_types.id WHEN sympathy_types.id > 0 THEN 'false' ELSE 'false' END AS 'disabled'"; // Create Fake Columns    
+  }
     sql += " FROM `products`";
     sql += " inner join `sympathy_type_product` on `products`.`id` = `sympathy_type_product`.`product_id`";
     sql += " inner join `sympathy_types` on `sympathy_types`.`id` = `sympathy_type_product`.`sympathy_type_id`";

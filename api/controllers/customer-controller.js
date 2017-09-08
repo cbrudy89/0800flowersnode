@@ -195,7 +195,7 @@ function UserController() {
               // Password Matched
               if(response == true){
                 var token=jwt.sign({id: results[0].id, role : config.ROLE_CUSTOMER},process.env.SECRET_KEY,{
-                    expiresIn:3000
+                    expiresIn:config.JWT_EXPIRATION_TIME
                 });
                 res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS,
