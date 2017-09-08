@@ -22,12 +22,8 @@ function AuthenticateController() {
                 newToken = refreshToken(decoded);
                 if(newToken) {
 
-                    res.set('Token', newToken);
-                } else {
-                    
-                    //res.set('Authorization', 'Bearer ' + token);
-                    res.set('Token', token);
-                }
+                    res.set('token', newToken);
+                } 
                 next();
 
             }
@@ -50,8 +46,13 @@ function refreshToken(decoded) {
         newToken;
 
     token_exp = decoded.exp;
-    now = Date.now();
-
+    now = (Date.now()/1000).toFixed();
+    /*console.log(token_exp);
+    console.log(now);
+    console.log('asdf');
+    console.log(token_exp - now);
+    console.log('asdf');
+    console.log(config.JWT_REFRESH_TIME);*/
     if((token_exp - now) < config.JWT_REFRESH_TIME) {
         newToken = createToken(decoded);
         if(newToken) {
