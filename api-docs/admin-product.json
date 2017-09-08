@@ -293,24 +293,10 @@
                   "type":"integer"
                },
                {
-                  "name":"product_name",
+                  "name":"description_arr",
                   "in":"formData",
-                  "description":"Product Name",
+                  "description":"Product name is required in array Example:  [{\"language_id\":\"1\", \"product_name\":\" name english\",\"product_description\":\"description english\",\"product_content\":\" content eng\",\"product_specification\":\" specification english\"},  {\"language_id\":\"2\", \"product_name\":\" name french\",\"product_description\":\"description french\",\"product_content\":\" content french\",\"product_specification\":\" specification french\"},{\"language_id\":\"3\", \"product_name\":\" name german\",\"product_description\":\"description german\",\"product_content\":\" content german\",\"product_specification\":\" specification german\"}]  ",
                   "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"product_description",
-                  "in":"formData",
-                  "description":"Description",
-                  "required":false,
-                  "type":"string"
-               },
-               {
-                  "name":"product_specification",
-                  "in":"formData",
-                  "description":"Product Specification",
-                  "required":false,
                   "type":"string"
                },
                {

@@ -113,7 +113,8 @@ function OccasionController() {
                                       
             var curr_date  = new Date();
             var id=0;
-            var country_flag_arr = req.body.country_name.split(',');
+            var country_flag_arr =[];
+                country_flag_arr = req.body.country_name.split(',');
             var country_flag="";
             
             if( country_flag_arr.length > 0 ){
@@ -325,7 +326,8 @@ function OccasionController() {
                 
                 var curr_date  = new Date();
                 var id= req.body.id;
-                var country_flag_arr = req.body.country_name.split(',');
+                var country_flag_arr =[];
+                    country_flag_arr = req.body.country_name.split(',');
                 var country_flag="";
                 
                 if( country_flag_arr.length > 0 ){
