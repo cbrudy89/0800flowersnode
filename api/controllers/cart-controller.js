@@ -531,6 +531,9 @@ function CartController() {
           for(var i=0,j=1; i < cartItems.length; i++){
               //console.log(cartItems);
 
+              var product = commonHelper.getProductDetails.sync(null, cartItems[i].product_id, cartItems[i].product_variant_id);
+              cartItems[i].sku = product[0].sku;
+
               var sub_total = '';
 
               if(currency_details[0].currency_code == 'INR'){

@@ -307,7 +307,7 @@ function CommonController() {
                   else 
                     if(continents.length > 0){
 
-                        sql = "SELECT continent_id, phone, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code, language_supported FROM country_list WHERE status = 1";
+                        sql = "SELECT continent_id, phone, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code, language_supported FROM country_list WHERE status = 1 ORDER BY country_name ASC";
                         //console.log(sql);
                           
                         dbModel.rawQuery(sql, function(err, countries) {
@@ -394,7 +394,7 @@ function CommonController() {
           function countriesprovinces(callback) {
             var country = [];
 
-              dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1", function(err, countries) {
+              dbModel.rawQuery("SELECT id, country_name, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1 ORDER BY country_name ASC", function(err, countries) {
                 if (err) return callback(err);
                 else 
                   if(countries.length > 0){
