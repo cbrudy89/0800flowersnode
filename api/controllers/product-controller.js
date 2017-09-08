@@ -23,6 +23,20 @@ function ProductController() {
         var $next_date = commonHelper.currentformatted_date('Y-m-d',1);
 
         async.parallel([
+            function deliverylocation(callback) {
+                commonHelper.getDeliveryLocation("locations", "id as 'location_id',name", "sort_order ASC",function(err, result) {
+                    if (err) return callback(err);
+                    else {
+                        if (result.length > 0 && result != null) {
+                            return_data.deliverylocation = result;
+                            callback();
+                        } else {
+                            return_data.deliverylocation = [];
+                            callback();
+                        }
+                    }
+                });
+            },            
             function topbanner(callback) {
                 commonHelper.getPromoBanner($sessLang, 'product_detail', function(err, result) {
                     if (err) return callback(err);

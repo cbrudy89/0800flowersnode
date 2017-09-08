@@ -74,11 +74,11 @@ function DbModel(){
 					}
 
 					if(orderBy != ''){
-						sql += "ORDER BY "+orderBy;
+						sql += " ORDER BY "+orderBy;
 					}
 
 					if(limit != ''){
-						sql += "LIMIT "+limit;
+						sql += " LIMIT "+limit;
 					}
 
 					//console.log(sql);

@@ -1271,6 +1271,17 @@ this.getSurcharge = function ($product_id, $country_id, $vendor_id, callback) {
 
     }
 
+    this.getDeliveryLocation = function(table, columns, sort_order, callback){
+
+        dbModel.find(table, columns,'', sort_order,'', function(error, result){
+            if (error) return callback(error);
+            else {
+                if (result.length > 0) callback(null, result);
+                else return callback(null, []);
+            }            
+        })
+    }
+
    
 }
 
