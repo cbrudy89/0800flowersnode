@@ -269,7 +269,7 @@ function OccasionController() {
                                                 status:config.ERROR,
                                                 code: config.HTTP_SERVER_ERROR,
                                                 message:'Unable to process request.',
-                                                error: error
+                                                //error: error
                                               });
                                             }else{
                                                res.status(config.HTTP_SUCCESS).send({
@@ -481,23 +481,13 @@ function OccasionController() {
 
                                                             var description_arr = JSON.parse(req.body.name_description_arr); 
                                                             if(description_arr.length > 0){
-
+                                                               
                                                                for (var j = 0; j < description_arr.length; j++) {
                                                                   sql += "INSERT INTO language_types SET language_id="+description_arr[j].language_id+", type_id="+occasion_id+",type='occasion',name='"+description_arr[j].occasion_name+"',description='"+description_arr[j].occasion_description+"';";
                                                                }
                                                             }    
 
                                                             dbModel.transactionQuery(con, sql, function (error, result) {
-                                                           if (error) {
-                                                             res.status(config.HTTP_SERVER_ERROR).send({
-                                                               status:config.ERROR,
-                                                               code: config.HTTP_SERVER_ERROR,
-                                                               message:'Unable to process request!',
-                                                               //error: error
-                                                             });
-                                                           }else{
-
-                                                             dbModel.commit(con, function(error, response){
                                                                if (error) {
                                                                  res.status(config.HTTP_SERVER_ERROR).send({
                                                                    status:config.ERROR,
@@ -506,16 +496,26 @@ function OccasionController() {
                                                                    //error: error
                                                                  });
                                                                }else{
-                                                                  res.status(config.HTTP_SUCCESS).send({
-                                                                     status:config.SUCCESS,
-                                                                     code: config.HTTP_SUCCESS,
-                                                                     message:'Occasion updated successfully.'
+
+                                                                 dbModel.commit(con, function(error, response){
+                                                                   if (error) {
+                                                                     res.status(config.HTTP_SERVER_ERROR).send({
+                                                                       status:config.ERROR,
+                                                                       code: config.HTTP_SERVER_ERROR,
+                                                                       message:'Unable to process request!',
+                                                                       //error: error
+                                                                     });
+                                                                   }else{
+                                                                      res.status(config.HTTP_SUCCESS).send({
+                                                                         status:config.SUCCESS,
+                                                                         code: config.HTTP_SUCCESS,
+                                                                         message:'Occasion updated successfully.'
+                                                                     });
+                                                                   }                                  
+
                                                                  });
-                                                               }                                  
 
-                                                             });
-
-                                                           }    
+                                                               }    
                                                          });
 
                                                        }
@@ -539,7 +539,7 @@ function OccasionController() {
                               code : config.HTTP_NOT_FOUND, 
                               message: "No occasion found."
                             });
-                         }
+                        }
                     }
 
                  });
@@ -553,11 +553,11 @@ function OccasionController() {
         
       if(req.decoded.role != config.ROLE_ADMIN){
           
-        res.status(config.HTTP_FORBIDDEN).send({
-          status: config.ERROR, 
-          code : config.HTTP_FORBIDDEN, 
-          message: "You dont have permission to delete occasion!"
-        });       
+         res.status(config.HTTP_FORBIDDEN).send({
+           status: config.ERROR, 
+           code : config.HTTP_FORBIDDEN, 
+           message: "You dont have permission to delete occasion!"
+         });       
         
       }else{
 
@@ -567,12 +567,12 @@ function OccasionController() {
             // Select occasion based on Id
             dbModel.rawQuery(sql, function (error, occasionsResult) {
               if (error) {
-                    res.status(config.HTTP_SERVER_ERROR).send({
-                      status:config.ERROR,
-                      code: config.HTTP_SERVER_ERROR,
-                      message:'Unable to process result!',
-                      //error : error
-                    });
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status:config.ERROR,
+                    code: config.HTTP_SERVER_ERROR,
+                    message:'Unable to process result!',
+                    //error : error
+                  });
               }
               else{
 

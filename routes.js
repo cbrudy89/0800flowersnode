@@ -12,6 +12,8 @@ var occasionController = require('./api/controllers/admin/occasion-controller');
 var cmsController = require('./api/controllers/admin/cms-controller');
 var ordersController = require('./api/controllers/admin/orders-controller');
 var adminProductController = require('./api/controllers/admin/admin-product-controller');
+var translationController = require('./api/controllers/admin/translation-controller');
+
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -39,7 +41,7 @@ var occasionValidation = require('./api/validation/admin/occasion-validation');
 var cmsValidation = require('./api/validation/admin/cms-validation');
 var ordersValidation = require('./api/validation/admin/orders-validation');
 var adminProductValidation = require('./api/validation/admin/admin-product-validation');
-
+var translationValidation = require('./api/validation/admin/translation-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -369,7 +371,37 @@ module.exports = {
         cmsController.getSelectedCms(req, res);
     }); 
     
-    /************************  END Occasion  ****************************/      
+    /************************  END Cms  ****************************/      
+
+
+    /************************  START Translation  ****************************/
+
+    // listing
+    app.post('/admin/getTranslationList', authenticateController.isAuthenticated,validate(translationValidation.getTranslationList), function(req, res) {
+        translationController.getTranslationList(req, res);
+    });
+    
+    // create new
+    app.post('/admin/createTranslation', authenticateController.isAuthenticated, validate(translationValidation.createTranslation),function(req, res) {
+        translationController.createTranslation(req, res);
+    });
+        
+    // update 
+    app.post('/admin/updateTranslation', authenticateController.isAuthenticated,validate(translationValidation.updateTranslation), function(req, res) {
+        translationController.updateTranslation(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteTranslation', authenticateController.isAuthenticated, validate(translationValidation.deleteTranslation),function(req, res) {
+        translationController.deleteTranslation(req, res);
+    });
+        
+    // get selected one
+    app.post('/admin/viewTranslation', authenticateController.isAuthenticated,validate(translationValidation.viewTranslation) ,function(req, res) {
+        translationController.viewTranslation(req, res);
+    }); 
+    
+    /************************  END Translation  ****************************/   
       
     /************************  START Orders   ****************************/
    
