@@ -28,8 +28,10 @@ function TranslationController() {
             var page = req.body.page;
             var limit = req.body.limit;
             var order_by = req.body.order_by;
-            var search_original_text = req.body.search_original_text;
-                       
+           
+            //var search_original_text = (req.body.search_original_text) ? (req.body.search_original_text.trim() !='' ? req.body.search_original_text :"" ):"";
+            
+            var search_original_text = req.body.search_original_text;             
             if(search_original_text == undefined || search_original_text == ''){
               search_original_text = '';
             }
@@ -110,7 +112,7 @@ function TranslationController() {
             
             var curr_date  = new Date();
             var id = 0;
-            var original_text = req.body.original_text;            
+            var original_text = req.body.original_text;              
             var created_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
             var updated_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);   
            
