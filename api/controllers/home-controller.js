@@ -282,7 +282,7 @@ function HomeController() {
             },
             function topcountries(callback){
 
-                sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id, (SELECT currency_code FROM currency WHERE id = cl.preferred_currency_id) as preferred_currency_code,cl.language_id, (SELECT short_code2 FROM languages WHERE id = cl.language_id AND status = 1) as language_code FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
+                sql = "SELECT CONCAT('"+config.RESOURCE_URL+"', REPLACE(tc.product_image, '+','%2B')) as product_image, tc.country_id, cl.country_name, REPLACE(LCASE(cl.country_name), ' ','-')) as country_slug, cl.redirect_url, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.country_flag, '+','%2B')) as country_flag, CONCAT('"+config.RESOURCE_URL+"', REPLACE(cl.company_logo, '+','%2B')) as company_logo, cl.country_domain, cl.preferred_currency_id, (SELECT currency_code FROM currency WHERE id = cl.preferred_currency_id) as preferred_currency_code,cl.language_id, (SELECT short_code2 FROM languages WHERE id = cl.language_id AND status = 1) as language_code FROM top_country tc JOIN country_list cl ON(tc.country_id = cl.id) WHERE tc.status = 1 ORDER BY tc.order_by ASC LIMIT 5";
 
                 dbModel.rawQuery(sql, function(err, result) {
                    if (err) return callback(err);
@@ -362,6 +362,7 @@ function HomeController() {
                                               country.push({
                                                 "country_id": countries[j].id,
                                                 "country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
+                                                "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                                 "alias": countries[j].alias,
                                                 "short_code": countries[j].short_code,
                                                 "iso_code": countries[j].iso_code,
@@ -383,6 +384,7 @@ function HomeController() {
                                             country.push({
                                               "country_id": countries[j].id,
                                               "country_name": countries[j].country_name,
+                                              "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                               "alias": countries[j].alias,
                                               "short_code": countries[j].short_code,
                                               "iso_code": countries[j].iso_code,

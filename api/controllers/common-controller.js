@@ -349,6 +349,7 @@ function CommonController() {
                                             country.push({
                                               "country_id": countries[j].id,
                                               "country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
+                                              "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                               "alias": countries[j].alias,
                                               "short_code": countries[j].short_code,
                                               "iso_code": countries[j].iso_code,
@@ -370,6 +371,7 @@ function CommonController() {
                                           country.push({
                                             "country_id": countries[j].id,
                                             "country_name": countries[j].country_name,
+                                            "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                             "alias": countries[j].alias,
                                             "short_code": countries[j].short_code,
                                             "iso_code": countries[j].iso_code,
