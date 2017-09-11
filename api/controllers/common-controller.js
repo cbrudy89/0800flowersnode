@@ -301,47 +301,71 @@ function CommonController() {
           },
           function continentcountries(callback) {
                 
-                var continent = [];
-                dbModel.rawQuery("SELECT id, continent_name FROM continents WHERE status = 1", function(err, continents) {
-                  if (err) return callback(err);
-                  else 
-                    if(continents.length > 0){
+              var continent = [];
+              dbModel.rawQuery("SELECT id, continent_name FROM continents WHERE status = 1", function(err, continents) {
+                if (err) return callback(err);
+                else 
+                  if(continents.length > 0){
 
-                        sql = "SELECT continent_id, phone, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code, language_supported FROM country_list WHERE status = 1 ORDER BY country_name ASC";
-                        //console.log(sql);
-                          
-                        dbModel.rawQuery(sql, function(err, countries) {
-                          if (err) return callback(err);
-                          else 
-                            if(countries.length > 0){
+                      sql = "SELECT continent_id, phone, id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code, language_supported FROM country_list WHERE status = 1 ORDER BY country_name ASC";
+                      //console.log(sql);
+                        
+                      dbModel.rawQuery(sql, function(err, countries) {
+                        if (err) return callback(err);
+                        else 
+                          if(countries.length > 0){
 
-                              Sync(function(){
-                                for ( var i=0 ; i < continents.length; i++) {
-                                  var country = [];
+                            Sync(function(){
+                              for ( var i=0 ; i < continents.length; i++) {
+                                var country = [];
 
-                                  id = continents[i].id;
-                                  continent_name = continents[i].continent_name;
+                                id = continents[i].id;
+                                continent_name = continents[i].continent_name;
 
-                                    for ( var j=0 ; j < countries.length; j++) {
+                                  for ( var j=0 ; j < countries.length; j++) {
 
-                                      if(id == countries[j].continent_id){
-                                        
-                                        var supported_language_ids = '';
-                                        var supported_languages = [];
+                                    if(id == countries[j].continent_id){
+                                      
+                                      var supported_language_ids = '';
+                                      var supported_languages = [];
 
-                                        if(countries[j].language_supported != null && countries[j].language_supported != ''){
-                                          supported_language_ids =  countries[j].language_id + "," + countries[j].language_supported;
-                                        }else if(countries[j].language_id != null && countries[j].language_id != ''){
-                                          supported_language_ids = countries[j].language_id
+                                      if(countries[j].language_supported != null && countries[j].language_supported != ''){
+                                        supported_language_ids =  countries[j].language_id + "," + countries[j].language_supported;
+                                      }else if(countries[j].language_id != null && countries[j].language_id != ''){
+                                        supported_language_ids = countries[j].language_id
+                                      }
+
+                                        //console.log(supported_language_ids);
+                                        if(supported_language_ids != ''){
+                                          supported_languages = getSupportedLanguages.sync(null, supported_language_ids );
                                         }
 
-                                          //console.log(supported_language_ids);
-                                          if(supported_language_ids != ''){
-                                            supported_languages = getSupportedLanguages.sync(null, supported_language_ids );
+                                        //console.log(supported_languages);
+
+                                        if(supported_languages.length > 0){
+
+                                          for(var k=0; k < supported_languages.length; k++){
+
+                                            country.push({
+                                              "country_id": countries[j].id,
+                                              "country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
+                                              "alias": countries[j].alias,
+                                              "short_code": countries[j].short_code,
+                                              "iso_code": countries[j].iso_code,
+                                              "country_flag": countries[j].country_flag,
+                                              "show_state": countries[j].show_state,
+                                              "redirect_url": countries[j].redirect_url,
+                                              "preferred_currency_id": countries[j].preferred_currency_id,
+                                              "preferred_currency_code": countries[j].preferred_currency_code,
+                                              "language_id": supported_languages[k].language_id,
+                                              "language_code": supported_languages[k].language_code,
+                                              "company_logo": countries[j].company_logo,
+                                              "phone": countries[j].phone
+                                            });                                            
                                           }
 
-                                          //console.log(supported_languages);
-                                         
+                                        }else{
+
                                           //console.log(countries[j]);
                                           country.push({
                                             "country_id": countries[j].id,
@@ -358,37 +382,38 @@ function CommonController() {
                                             "language_code": countries[j].language_code,
                                             "language_supported": countries[j].language_supported,
                                             "company_logo": countries[j].company_logo,
-                                            "phone": countries[j].phone,
-                                            "supported_languages": supported_languages
+                                            "phone": countries[j].phone
                                           });
+                                        
+                                        }                                        
 
-                                          //console.log(supported_languages);
+                                        //console.log(supported_languages);
 
-                                      }
-                                    }                              
+                                    }
+                                  }                              
 
-                                    continent.push({
-                                      "continent_id": id, 
-                                      "continent_name": continent_name,
-                                      "countries": country
-                                    });
-                                }
+                                  continent.push({
+                                    "continent_id": id, 
+                                    "continent_name": continent_name,
+                                    "countries": country
+                                  });
+                              }
 
-                                return_data.continents_and_countries = continent;
-                                callback();
+                              return_data.continents_and_countries = continent;
+                              callback();
 
-                            });
+                          });
 
-                           }                        
+                         }                        
 
-                        });
-                     
+                      });
+                   
 
-                   }else{
-                      callback(null, []);
-                   }
+                 }else{
+                    callback(null, []);
+                 }
 
-                });
+              });
 
           },     
           function countriesprovinces(callback) {

@@ -906,52 +906,216 @@ function CartController() {
 
   }
 
-  // Get all saved credit cards for customer
-  this.getSavedCards = function(req, res, next){
+  this.orderSummary = function(req ,res){
+
+    var language_code = req.query.language_code;
+    var country_id = req.query.country_id;
+    var currency_id = req.query.currency_id;
 
     var token = req.headers['token'] || '' ;
-    var customer_id = 0;
+    var cart_key = req.headers['cart_key'] || '';
+    var user_id = cartCount = 0;
+    var cart_id = current_currency = '';
+    var total = 0.00;
+
+    //var cart_total = {};
+
+    //var cartProducts = [];
+    //var total = '';
+    
+    var tax = ''; // Total Tax
+    var service_charge = ''; // Service Charge
+    var delivery_charge = ''; //Shipping Charge
+    var discount = ''; // Promo Discount
+    var addons_charge = '';
+    var surcharge = ''; // Surcharge
+
+    var total_amount_before_tax = ''; // Total Amount Before Tax
+    var total_with_tax = ''; // In Current Currency if not USD
+    var usd_order_total = '' // In USD    
+
     Sync(function(){
 
         if(token != '' && token != undefined){
           var decoded = commonHelper.getUserId.sync(null, token);
           //console.log('i am hrere');
           if(decoded != '' && decoded != undefined && decoded.id > 0){
-            customer_id = decoded.id;
+            user_id = decoded.id;
           }
-        }  
-
-        if(customer_id > 0){
-            dbModel.find('customer_cards','id,name_on_card,card_last4digits,card_expiry', 'customer_id='+customer_id, '', '', function(error, result) {
-              if (error) {              
-                  res.status(config.HTTP_SERVER_ERROR).send({
-                    status:config.ERROR,
-                    code: config.HTTP_SERVER_ERROR,
-                    message:'Unable to process result!'
-                  });
-              }else{
-                  res.status(config.HTTP_SUCCESS).send({
-                      status: config.SUCCESS,
-                      code: config.HTTP_SUCCESS,
-                      message: result.length+" customer cards found",
-                      result: result
-                  });
-              }
-          });
-        } else {
-            res.status(config.HTTP_BAD_REQUEST).send({
-                status:config.ERROR,
-                code: config.HTTP_BAD_REQUEST, 
-                message:"Invalid customer id"
-            }); 
+        }      
+        
+        var cartData = 0;
+        if(cart_key != '' && cart_key != undefined){
+            
+            // Check if cart is exist
+            cartData = isCartKeyExist.sync(null, cart_key);      
         }
-    }); 
-    
+
+        if(cartData || user_id > 0){
+
+          // Logged In User
+          if(user_id != '' && user_id != undefined && user_id > 0){
+
+            // Check User has cart
+            var userCart = getUserCart.sync(null, user_id);
+            if(userCart){
+
+              cart_key = userCart[0].cart_key;
+              cart_id = userCart[0].id;
+
+            }
+
+          }
+
+          if (cartData[0].id > 0){
+
+            cart_id = cartData[0].id; 
+            cart_key = cartData[0].cart_key;
+
+          }
+
+          if((cart_id == '' || cart_id == undefined)){
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+          }
+          
+        }else{
+
+            return res.status(config.HTTP_SERVER_ERROR).send({
+                status: config.ERROR, 
+                code : config.HTTP_SERVER_ERROR,          
+                message: "Unable to get cart product"
+            });
+
+        }
+
+        // Getting Currency Details from current country
+        var currency_details = commonHelper.getCurrencyDetails.sync(null, currency_id, 0);
+
+        // Get Cart Products
+        var cartItems = getCartProdcuts.sync(null, cart_id, language_code);
+
+        if(cartItems.length > 0 && currency_details.length > 0){
+
+          for(var i=0,j=1; i < cartItems.length; i++){
+              //console.log(cartItems);
+
+              var product = commonHelper.getProductDetails.sync(null, cartItems[i].product_id, cartItems[i].product_variant_id);
+              cartItems[i].sku = product[0].sku;
+
+              var sub_total = '';
+
+              if(currency_details[0].currency_code == 'INR'){
+
+                sub_total = cartItems[i].price_value * cartItems[i].quantity;              
+                total += sub_total;
+
+                 //console.log($variantdetails[i].price_value);
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+              }else{
+
+                var actPrice = commonHelper.number_format.sync(null, (cartItems[i].price_value * currency_details[0].exchange_rate), 2, '.', ',');
+
+                //var $current_currency = price_data.currency_result[0].symbol+" "+price_data.currency_result[0].currency_code;
+                var current_currency = currency_details[0].currency_code;
+
+                var currentCurrSymbl = currency_details[0].symbol;
+                if(current_currency !== "USD"){ 
+                    actPrice = commonHelper.roundToNineNine.sync(null, actPrice, current_currency);
+                }
+
+                sub_total = actPrice * cartItems[i].quantity;              
+                total += sub_total;                
+                
+              }
+              
+              price = currentCurrSymbl + actPrice;
+              cartItems[i].price_value = price;
+
+              cartCount += j;
+          }
+
+          if(currency_details[0].currency_code == 'INR'){
+
+            total = commonHelper.number_format.sync(null, (total * currency_details[0].exchange_rate), 2, '.', ',');
+            if(currency_details[0].currency_code !== "USD"){ 
+                actPrice = commonHelper.roundToNineNine.sync(null, total, currency_details[0].currency_code);
+            }        
+
+            total = currency_details[0].symbol + total;
+            
+          }else{
+            total = currency_details[0].symbol + total;
+          }
+        }
+        //cart_total.total = current_currency + total;
+
+        //console.log(cartItems);
+
+
+/*        $cartItems = Cart::all();
+        $title = 'Shopping Cart - ' . Config::get('constants.site_title');
+
+        foreach ($cartItems as $items) {
+            $productMethod = MethodVendor::where('method_id', '=', $items->attributes['delivery_method_id'])
+                            ->where('vendor_id', '=', $items->attributes['vendor_id'])->first();
+
+            if (count($productMethod) == 0) {
+                //Get The Default Delivery Method Created By Admin
+                //------------------------------------------------
+                $productMethod = Method::where('id', $items->attributes['delivery_method_id'])->first();
+            }
+            $attributes = $items->attributes;
+            $attributes['productMethod'] = $productMethod;
+
+            Cart::update($items->__raw_id, array('attributes' => $attributes));
+        }*/
+
+
+
+        var resp = {
+          //"cartCount": cartCount,
+          //"cartItems": cartItems,
+          "sub_total": total,
+          "service_charge": service_charge, // Service Charge
+          "delivery_charge": delivery_charge, //Shipping Charge
+          "discount": discount, // Promo Discount
+          "addons_charge": addons_charge,
+          "surcharge": surcharge, // Surcharge
+          "total_amount_before_tax": total_amount_before_tax, // Total Amount Before Tax
+          "tax": tax, // Total Tax
+          "total_with_tax": total_with_tax, // In Current Currency if not USD
+          "usd_order_total": usd_order_total // In USD    
+        }
+
+        return res.status(config.HTTP_SUCCESS).send({
+            status: config.SUCCESS, 
+            code : config.HTTP_SUCCESS,          
+            message: "Order Summary",
+            result: resp
+        });      
+
+    });    
+
   }
 
-
-
 }
+
+
 /*
 public function getNextOrderNumber(){
         

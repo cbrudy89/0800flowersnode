@@ -354,26 +354,51 @@ function HomeController() {
                                           }
 
                                           //console.log(supported_languages);
-                                         
-                                          //console.log(countries[j]);
-                                          country.push({
-                                            "country_id": countries[j].id,
-                                            "country_name": countries[j].country_name,
-                                            "alias": countries[j].alias,
-                                            "short_code": countries[j].short_code,
-                                            "iso_code": countries[j].iso_code,
-                                            "country_flag": countries[j].country_flag,
-                                            "show_state": countries[j].show_state,
-                                            "redirect_url": countries[j].redirect_url,
-                                            "preferred_currency_id": countries[j].preferred_currency_id,
-                                            "preferred_currency_code": countries[j].preferred_currency_code,
-                                            "language_id": countries[j].language_id,
-                                            "language_code": countries[j].language_code,
-                                            "language_supported": countries[j].language_supported,
-                                            "company_logo": countries[j].company_logo,
-                                            "phone": countries[j].phone,
-                                            "supported_languages": supported_languages
-                                          });
+
+                                          if(supported_languages.length > 0){
+
+                                            for(var k=0; k < supported_languages.length; k++){
+
+                                              country.push({
+                                                "country_id": countries[j].id,
+                                                "country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
+                                                "alias": countries[j].alias,
+                                                "short_code": countries[j].short_code,
+                                                "iso_code": countries[j].iso_code,
+                                                "country_flag": countries[j].country_flag,
+                                                "show_state": countries[j].show_state,
+                                                "redirect_url": countries[j].redirect_url,
+                                                "preferred_currency_id": countries[j].preferred_currency_id,
+                                                "preferred_currency_code": countries[j].preferred_currency_code,
+                                                "language_id": supported_languages[k].language_id,
+                                                "language_code": supported_languages[k].language_code,
+                                                "company_logo": countries[j].company_logo,
+                                                "phone": countries[j].phone
+                                              });                                            
+                                            }
+
+                                          }else{
+
+                                            //console.log(countries[j]);
+                                            country.push({
+                                              "country_id": countries[j].id,
+                                              "country_name": countries[j].country_name,
+                                              "alias": countries[j].alias,
+                                              "short_code": countries[j].short_code,
+                                              "iso_code": countries[j].iso_code,
+                                              "country_flag": countries[j].country_flag,
+                                              "show_state": countries[j].show_state,
+                                              "redirect_url": countries[j].redirect_url,
+                                              "preferred_currency_id": countries[j].preferred_currency_id,
+                                              "preferred_currency_code": countries[j].preferred_currency_code,
+                                              "language_id": countries[j].language_id,
+                                              "language_code": countries[j].language_code,
+                                              "language_supported": countries[j].language_supported,
+                                              "company_logo": countries[j].company_logo,
+                                              "phone": countries[j].phone
+                                            });
+                                          
+                                          }                                        
 
                                           //console.log(supported_languages);
 

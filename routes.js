@@ -759,8 +759,8 @@ module.exports = {
         cartController.getCart(req, res);
     });
 
-    app.put('/getSavedCards', authenticateController.isAuthenticated, validate(cartValidation.getSavedCards), function(req, res){
-        cartController.getSavedCards(req, res);
+    app.get('/orderSummary', function(req, res){
+        cartController.orderSummary(req, res);
     });
 
 
