@@ -680,7 +680,13 @@ module.exports = {
     //fetch all customer saved cards
     app.put('/customer/getSavedCards', authenticateController.isAuthenticated, validate(customerValidation.getSavedCards), function(req, res){
         customerController.getSavedCards(req, res);
+    });    
+
+    app.put('/customer/changePassword', authenticateController.isAuthenticated, function(req, res){
+        customerController.changePassword(req, res);
     });
+
+
 
     /************************* END of Customer *****************/
 
