@@ -64,9 +64,9 @@
                   "type":"string"
                },  
                {
-                  "name":"search_original_text",
+                  "name":"search_language_key",
                   "in":"formData",
-                  "description":"Search Original Text Example: stringtext",
+                  "description":"search_language_key Example: stringtext",
                   "required":false,
                   "type":"string"
                }
@@ -120,9 +120,9 @@
                   "type":"string"
                },
                {
-                  "name":"original_text",
+                  "name":"language_key",
                   "in":"formData",
-                  "description":"Original Text Example: stringtext",
+                  "description":" Only Alphabet and max 15 character Example: abcthdgh",
                   "required":true,
                   "type":"string"
                },                              
@@ -155,11 +155,17 @@
                   }
                },
                "409":{
-                  "description":"The specified translation already exists.",
+                  "description":"The specified language_key already exists.",
                   "schema":{
                      "$ref":"#/definitions/409createTranslation"
                   }
-               }                                               
+               },
+               "400":{
+                  "description":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed.",
+                  "schema":{
+                     "$ref":"#/definitions/400createTranslation"
+                  }
+               }                                                              
             }
          }
       },
@@ -244,12 +250,12 @@
                   "type":"integer"
                },               
                {
-                  "name":"original_text",
+                  "name":"language_key",
                   "in":"formData",
-                  "description":"Original Text Example: stringtext",
+                  "description":" Only Alphabet and max 15 character Example: abcthdgh",
                   "required":true,
                   "type":"string"
-               },                              
+               },                                
                {
                   "name":"translated_text",
                   "in":"formData",
@@ -288,7 +294,13 @@
                   "schema":{
                      "$ref":"#/definitions/409updateTranslation"
                   }
-               }                                                              
+               },
+               "400":{
+                  "description":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed.",
+                  "schema":{
+                     "$ref":"#/definitions/400createTranslation"
+                  }
+               }                                                                             
             }
          }
       },
@@ -480,7 +492,23 @@
                "example":"The specified translation already exists."
             }
          }
-      },      
+      },    
+      "400createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed."
+            }
+         }
+      },            
       "200viewTranslation":{
          "properties":{
             "status":{
@@ -624,7 +652,23 @@
                "example":"The specified translation already exists."
             }
          }
-      },             
+      }, 
+      "400updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed."
+            }
+         }
+      },                   
       "200deleteTranslation":{
          "properties":{
             "status":{
