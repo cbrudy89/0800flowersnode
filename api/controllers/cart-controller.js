@@ -773,12 +773,12 @@ function CartController() {
             console.log(cartProduct[0].delivery_date);*/
 
             if(adminRestictedRates.indexOf(cartProduct[0].delivery_date) >= 0 ){
-              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+              calErrors[row_id] = "Unable to deliver sku "+ product[0].sku+" in this date choose another date";
                 continue; //admin date found
             } 
 
             if(vendorHolidayList.indexOf(cartProduct[0].delivery_date) >= 0 ){
-              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+              calErrors[row_id] = "Unable to deliver sku "+ product[0].sku+" in this date choose another date";
                 continue; //vendor date found
             }                       
 
@@ -790,7 +790,7 @@ function CartController() {
             //console.log(body["getDlvrCalResponse"]["responseStatus"]);
 
             if(body["getDlvrCalResponse"]["responseStatus"] != 'SUCCESS'){
-              calErrors[row_id] = "Unable to deliver the product sku "+ product[0].sku+" choose another date";
+              calErrors[row_id] = "Unable to deliver sku "+ product[0].sku+" in this date choose another date";
             }
 
             var sql = "UPDATE cart_products SET prefer_message ='"+prefer_message+"', gift_occassion = '"+gift_occassion+"', gift_message = '"+gift_message+"'";
