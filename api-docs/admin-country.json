@@ -64,6 +64,13 @@
                   "type":"integer"
                },
                {
+                  "name":"language_supported",
+                  "in":"formData",
+                  "description":"Choose supported languages for this country ( 2,3,1 )",
+                  "required":false,
+                  "type":"string"
+               },               
+               {
                   "name":"country_name",
                   "in":"formData",
                   "description":"Country Name",
@@ -293,7 +300,14 @@
                   "description":"Select a Language",
                   "required":true,
                   "type":"integer"
-               },               
+               }, 
+               {
+                  "name":"language_supported",
+                  "in":"formData",
+                  "description":"Choose supported languages for this country ( 2,3,1 )",
+                  "required":false,
+                  "type":"string"
+               },                             
                {
                   "name":"country_name",
                   "in":"formData",

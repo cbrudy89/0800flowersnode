@@ -60,7 +60,7 @@ function VendorController() {
                 if(response == true){
 
                   var token=jwt.sign({id: result[0].id, parent_id : result[0].parent_id, role: config.ROLE_VENDOR},process.env.SECRET_KEY,{
-                      expiresIn:3000
+                      expiresIn:config.JWT_EXPIRATION_TIME
                   });
 
                   res.status(config.HTTP_SUCCESS).send({

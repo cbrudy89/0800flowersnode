@@ -11,6 +11,7 @@ var fileHelper = require('./../../helpers/file-helper');
 var base64Img = require('base64-img');
 var DbModel = require('./../../models/db-model');
 var async = require('async');
+var Sync = require('sync');
 
 var confirmed = status = 1;
 
@@ -191,20 +192,27 @@ function adminProductController() {
                         message: "No records found"
                     });
                 } else {
-                    if (result.length > 0) {
-                        res.status(config.HTTP_SUCCESS).send({
-                            status: config.SUCCESS,
-                            code: config.HTTP_SUCCESS,
-                            message: "Products found",
-                            result: result
-                        });
-                    } else {
-                        res.status(config.HTTP_BAD_REQUEST).send({
-                            status: config.ERROR,
-                            code: config.HTTP_BAD_REQUEST,
-                            message: "Failed to get products"
-                        });
-                    }
+                    Sync(function(){
+                    
+                        if (result.length > 0) {
+
+                            var language_product  = getAllLanguageProduct.sync(null, result[0].id);                        
+                                result[0].name_description   = language_product;  
+
+                            res.status(config.HTTP_SUCCESS).send({
+                                status: config.SUCCESS,
+                                code: config.HTTP_SUCCESS,
+                                message: "Products found",
+                                result: result
+                            });
+                        } else {
+                            res.status(config.HTTP_BAD_REQUEST).send({
+                                status: config.ERROR,
+                                code: config.HTTP_BAD_REQUEST,
+                                message: "Failed to get products"
+                            });
+                        }
+                    })
                 }
             });
         }
@@ -306,7 +314,8 @@ function adminProductController() {
                                     message: 'Product has been not updated.'
                                 });
                             } else {
-
+                                                                
+                                                              
                                 if (data.colors) {
                                     DbModel.checkAndAddRecord('color_product', data.colors, id, 'color_id', function(err, color) {});
                                 } else {
@@ -441,7 +450,7 @@ function adminProductController() {
                                         }
                                     })
                                 }
-
+                                
                                 if (data.varient && data.compare_price && data.price) {
                                     let cond1 = [{
                                         'product_id': {
@@ -449,6 +458,7 @@ function adminProductController() {
                                             'cond': '='
                                         }
                                     }];
+                                
                                     DbModel.delete('product_prices', cond1, function(error, result) {
                                         let records = [];
                                         let oldImages = data.old_price_image || [];
@@ -491,8 +501,51 @@ function adminProductController() {
                                             });
                                         });
                                     })
+                                    
                                 }
+                               
+                                // language product table update                                 
+                                DbModel.delete('language_product', ' product_id='+id, function(error, deleteResult) {
+                                        
+                                        if(error){
+                                             res.status(config.HTTP_SERVER_ERROR).send({
+                                                status:config.ERROR,
+                                                code: config.HTTP_SERVER_ERROR,
+                                                message:'Product has been not updated.'
+                                             });
+                                        }else{
+                                            
+                                            var language_product_sql ="";                                   
+                                            var description_arr = JSON.parse(req.body.description_arr); 
+                                            //console.log(req.body.description_arr);
+                                            //process.exit();
+                                            if(description_arr.length > 0){
 
+                                               for (var m= 0; m < description_arr.length; m++) {
+                                                  language_product_sql += "INSERT INTO language_product SET product_id ='"+id+"',language_id="+description_arr[m].language_id+", product_name='"+description_arr[m].product_name+"',product_description='"+description_arr[m].product_description+"',product_content='"+description_arr[m].product_content+"',product_specification='"+description_arr[m].product_specification+"';";
+                                               }
+                                            }      
+                                            
+                                            //console.log(language_product_sql);
+                                            DbModel.rawQuery( language_product_sql, function(error, result) {
+                                                if (error) {
+                                                    res.status(config.HTTP_SERVER_ERROR).send({
+                                                        status:config.ERROR,
+                                                        code: config.HTTP_SERVER_ERROR,
+                                                        message:'Product has been not updated.'
+                                                    });
+                                                }else{
+                                                    res.status(config.HTTP_SUCCESS).send({
+                                                        status: config.SUCCESS,
+                                                        code: config.HTTP_SUCCESS,
+                                                        message: 'Product has been updated successfully.'
+                                                    });
+                                                }
+                                            }); 
+                                        }
+                                    })
+                                
+                                /*
                                 DbModel.findOne('language_product', 'product_id', id, function(err, result) {
                                     var languageProduct = {
                                         product_name: data.product_name,
@@ -516,6 +569,7 @@ function adminProductController() {
                                         }
                                     });
                                 })
+                                */
                             }
                         });
                     }
@@ -523,6 +577,20 @@ function adminProductController() {
             });
         }
     }
+}
+
+function getAllLanguageProduct(product_id, callback){
+
+  var sql = "SELECT language_product.product_id,language_product.language_id,language_product.product_name,language_product.product_description,language_product.product_content,language_product.product_specification ";
+      sql += " FROM `language_product`";       
+      sql += " WHERE `language_product`.`product_id`="+product_id; 
+ 
+    DbModel.rawQuery(sql, function(err, result) {
+      if (err) return callback(err);
+      else {
+        callback(null, result);                    
+      }
+    });            
 }
 
 module.exports = new adminProductController();

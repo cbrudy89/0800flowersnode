@@ -28,6 +28,8 @@ var adminProductController = require('./api/controllers/admin/admin-product-cont
 // For Vendor Controllers
 var vendorController = require('./api/controllers/vendor/vendor-controller');
 var cmsController = require('./api/controllers/admin/cms-controller');
+var ordersController = require('./api/controllers/admin/orders-controller');
+var adminProductController = require('./api/controllers/admin/admin-product-controller');
 
 
 // For Frontend Controllers
@@ -78,6 +80,8 @@ var adminValidation = require('./api/validation/admin/admin-validation');
 var calendarsettingValidation = require('./api/validation/admin/calendarsetting-validation');
 var occasionValidation = require('./api/validation/admin/occasion-validation');
 var cmsValidation = require('./api/validation/admin/cms-validation');
+var ordersValidation = require('./api/validation/admin/orders-validation');
+var adminProductValidation = require('./api/validation/admin/admin-product-validation');
 
 
 module.exports = {
@@ -542,7 +546,41 @@ module.exports = {
     }); 
     
     /************************  END Occasion  ****************************/      
+      
+    /************************  START Orders   ****************************/
+   
+    // listing all orders
+    app.post('/admin/getOrdersList', authenticateController.isAuthenticated, validate(ordersValidation.getOrdersList), function(req, res) {
+        ordersController.getOrdersList(req, res);
+    });
+    
+    // listing only atlas orders
+    app.post('/admin/getAtlasOrdersList', authenticateController.isAuthenticated, validate(ordersValidation.getAtlasOrdersList), function(req, res) {
+        ordersController.getAtlasOrdersList(req, res);
+    });
+      
+    /************************  END Restrict Calendar Date  ****************************/
+   
+    /************** Admin Product **********/
 
+    app.get('/admin/product/list', authenticateController.isAuthenticated, function(req, res) {
+        adminProductController.list(req, res);
+    });
+
+    app.get('/admin/product/search', authenticateController.isAuthenticated, validate(adminProductValidation.search), function(req, res) {
+        adminProductController.search(req, res);
+    });
+
+    app.get('/admin/product/view/:id', authenticateController.isAuthenticated, validate(adminProductValidation.view), function(req, res) {
+        adminProductController.view(req, res);
+    });
+
+    app.put('/admin/product/update', authenticateController.isAuthenticated, validate(adminProductValidation.update), function(req, res) {
+        adminProductController.update(req, res);
+    });
+    /************** Admin Product End **********/
+
+   
     /************************* Home Page Routes ************************/
 
     app.get('/curriencies', function(req, res) {
@@ -643,7 +681,13 @@ module.exports = {
     //fetch all customer saved cards
     app.put('/customer/getSavedCards', authenticateController.isAuthenticated, validate(customerValidation.getSavedCards), function(req, res){
         customerController.getSavedCards(req, res);
+    });    
+
+    app.put('/customer/changePassword', authenticateController.isAuthenticated, function(req, res){
+        customerController.changePassword(req, res);
     });
+
+
 
     /************************* END of Customer *****************/
 
@@ -702,28 +746,28 @@ module.exports = {
 
     /************************ Cart Functionality ********************************/
 
-    app.post('/addToCart', function(req, res){
+    app.post('/addToCart', validate(cartValidation.addToCart), function(req, res){
         cartController.addToCart(req, res);
     });
 
-    app.put('/updateCartProductQuantity', function(req, res){
-        cartController.updateCartProductQuantity(req, res);
+    app.put('/updateCartProductColumn', validate(cartValidation.updateCartProductColumn), function(req, res){
+        cartController.updateCartProductColumn(req, res);
     });
 
     app.put('/updateCart', function(req, res){
         cartController.updateCart(req, res);
     });
 
-    app.delete('/removeCartProduct', function(req, res){
+    app.delete('/removeCartProduct', validate(cartValidation.removeCartProduct), function(req, res){
         cartController.removeCartProduct(req, res);
     });
 
-    app.get('/getCart', function(req, res){
+    app.get('/getCart', validate(cartValidation.getCart), function(req, res){
         cartController.getCart(req, res);
     });
 
-    app.put('/updateCartProductdDate', validate(cartValidation.updateCartProductdDate), function(req, res){
-        cartController.updateCartProductdDate(req, res);
+    app.get('/orderSummary', function(req, res){
+        cartController.orderSummary(req, res);
     });
 
     /*********************** Cart Functionality Ends Here ************************/

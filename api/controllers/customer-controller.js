@@ -195,7 +195,7 @@ function UserController() {
               // Password Matched
               if(response == true){
                 var token=jwt.sign({id: results[0].id, role : config.ROLE_CUSTOMER},process.env.SECRET_KEY,{
-                    expiresIn:3000
+                    expiresIn:config.JWT_EXPIRATION_TIME
                 });
                 res.status(config.HTTP_SUCCESS).send({
                     status: config.SUCCESS,
@@ -703,6 +703,88 @@ function UserController() {
     }); 
     
   }
+
+  // change user password
+  this.changePassword = function(req,res){
+    
+    if(req.decoded.role != config.ROLE_CUSTOMER){
+      res.status(config.HTTP_FORBIDDEN).send({
+        status: config.ERROR, 
+        code : config.HTTP_FORBIDDEN, 
+        message: "You dont have permission to change password!"
+      });       
+    }else{
+      
+      var id = req.decoded.id;
+      var oldPassword = req.body.old_password;
+      var newPassword = req.body.new_password;
+      var newPasswordConfirmation = req.body.new_password_confirmation;
+
+      connection.acquire(function(err, con) {
+        con.query('SELECT * FROM customers WHERE id = ?',[id], function (error, results, fields) {
+          if (error) {
+              res.status(config.HTTP_SERVER_ERROR).send({
+                status:config.ERROR,
+                code: config.HTTP_SERVER_ERROR,
+                message:'Unable to process request'
+              })
+          }else{
+            if(results.length >0){
+              bcrypt.compare(oldPassword, results[0].password, function(err, response) {
+                if(err) {
+                  res.status(config.HTTP_BAD_REQUEST).send({
+                    status:config.ERROR,
+                    code: config.HTTP_BAD_REQUEST,             
+                    message:"Old Password not matched"
+                   });                    
+                }else{
+                  if(response == true){
+                    var hashedPassword = bcrypt.hashSync(newPassword, config.SALT_ROUND);
+                    var query = "UPDATE `customers` SET `password` = '"+hashedPassword+"' WHERE `id` = '"+id+"'";
+                    con.query(query, function (error, results, fields) {
+                      con.release();
+                      if (error) {
+                          res.status(config.HTTP_SERVER_ERROR).send({
+                            status:config.ERROR,
+                            code: config.HTTP_SERVER_ERROR,
+                            message:'Unable to update Password.'
+                          });
+                      }else{
+                        if(results.affectedRows >0){
+                           res.status(config.HTTP_SUCCESS).send({
+                                status:config.SUCCESS,
+                                code: config.HTTP_SUCCESS,
+                                message:"Password updated successfully!"
+                            });
+                         
+                        }
+                        else{
+                          res.send({
+                            status:config.ERROR,
+                            code:config.HTTP_FORBIDDEN,
+                            message:"Unable to update Password."
+                          });
+                        }
+                      }
+                    });
+
+                  } else{
+                    res.status(config.HTTP_BAD_REQUEST).send({
+                      status:config.ERROR,
+                      code: config.HTTP_BAD_REQUEST,             
+                      message:"Old Password not matched"
+                    }); 
+                  }
+                }
+              });
+            }
+          }
+        });
+      });
+
+    } // else close    
+
+  }  
 
 }
 

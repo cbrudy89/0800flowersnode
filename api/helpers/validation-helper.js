@@ -4,7 +4,9 @@ var Extend = require('extend');
 var options = {
   // return an error if body has an unrecognised property
   allowUnknown: false,
-  stripUnknown: true,
+  stripUnknown: { objects: true },
+  //stripUnknown: true,
+  
   // return all errors a payload contains, not just the first one Joi finds
   abortEarly: false      
 };  
