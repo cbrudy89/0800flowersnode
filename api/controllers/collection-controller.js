@@ -39,8 +39,19 @@ function CollectionController() {
         var month = date.getMonth() + 1;
         var day = date.getDate();
         var upcomings_data = [];
-        var upcomings = "SELECT occasion_name,occasion_day,occasion_month FROM `occasions` INNER JOIN `occasion_country` ON(`occasions`.`id` = `occasion_country`.`occasion_id`) WHERE `occasion_country`.`country_id` = '"+delivery_country_id+"' AND `occasion_status` = 1 AND `i_mark` = 1 AND `occasion_month` >= '"+month+"' ORDER BY `occasion_month` ASC, `occasion_day` ASC LIMIT 3";
-        dbModel.rawQuery(upcomings, function(err, result) {
+        var sql = "SELECT `language_types`.name as occasion_name,occasion_day,occasion_month FROM `occasions`";
+        sql += " INNER JOIN `occasion_country` ON(`occasions`.`id` = `occasion_country`.`occasion_id`)";
+        sql += " INNER JOIN `language_types` ON(`occasions`.`id` = `language_types`.`type_id`)";
+        sql += "  WHERE `occasion_country`.`country_id` = '"+delivery_country_id+"'";
+        sql += "  AND `language_types`.language_id = "+language_id;
+        sql += "  AND `occasion_status` = 1";
+        sql += "  AND `i_mark` = 1";
+        sql += "  AND `occasion_month` >= '"+month+"'";
+        sql += "  AND `type` = 'occasion'";
+        sql += "  ORDER BY `occasion_month` ASC, `occasion_day` ASC LIMIT 3";
+
+       // console.log(sql);
+        dbModel.rawQuery(sql, function(err, result) {
           if (err) return callback(err);
           else{
             if(result.length > 0){
