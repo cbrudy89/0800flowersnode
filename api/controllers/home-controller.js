@@ -455,7 +455,6 @@ function HomeController() {
                       language_code = countries[i].language_code;                    
                       company_logo = countries[i].company_logo;
 
-
                       country.push({
                         "country_id": country_id, 
                         "country_name": country_name,
