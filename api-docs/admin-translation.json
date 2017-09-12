@@ -1,0 +1,737 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Translation APIs",
+      "description":"All APIs related to the admin translation controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Translation",
+         "description":"API for admin translation usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getTranslationList/":{
+         "post":{
+            "tags":[
+               "Admin Translation"
+            ],
+            "description":"List all translation from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, id-asc",
+                  "required":false,
+                  "type":"string"
+               },  
+               {
+                  "name":"search_language_key",
+                  "in":"formData",
+                  "description":"search_language_key Example: stringtext",
+                  "required":false,
+                  "type":"string"
+               }
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Translation listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getTranslationList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getTranslationList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create translation.",
+                  "schema":{
+                     "$ref":"#/definitions/403getTranslationList"
+                  }
+               },                                               
+               "404":{
+                  "description":"No translation found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getTranslationList"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/createTranslation":{
+         "post":{
+            "tags":[
+               "Admin Translation"
+            ],
+            "description":"Create Translation",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"language_key",
+                  "in":"formData",
+                  "description":" Only Alphabet and max 15 character Example: abcthdgh",
+                  "required":true,
+                  "type":"string"
+               },                              
+               {
+                  "name":"translated_text",
+                  "in":"formData",
+                  "description":"Translation Text Example: [{\"language_id\":\"1\", \"translated_text\":\"Text eng\"},{ \"language_id\":\"2\",\"translated_text\":\"Text french\"},{\"language_id\":\"3\",\"translated_text\":\"Text german\"}] ",
+                  "required":true,
+                  "type":"string"
+               } 
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Translation inserted successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200createTranslation"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500createTranslation"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create translation.",
+                  "schema":{
+                     "$ref":"#/definitions/403createTranslation"
+                  }
+               },
+               "409":{
+                  "description":"The specified language_key already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409createTranslation"
+                  }
+               },
+               "400":{
+                  "description":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed.",
+                  "schema":{
+                     "$ref":"#/definitions/400createTranslation"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/viewTranslation/":{
+         "post":{
+            "tags":[
+               "Admin Translation"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The Translation ID.",
+                  "required":true,
+                  "type":"integer"                 
+               }               
+
+            ],
+             "responses":{
+               "200":{
+                  "description":"Translation found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewTranslation"
+                  }
+               },
+               "404":{
+                  "description":"No translation found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewTranslation"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get translation.",
+                  "schema":{
+                     "$ref":"#/definitions/403viewTranslation"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500viewTranslation"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateTranslation":{
+         "post":{
+            "tags":[
+               "Admin Translation"
+            ],
+            "description":"Update Translation",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Translation id Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },               
+               {
+                  "name":"language_key",
+                  "in":"formData",
+                  "description":" Only Alphabet and max 15 character Example: abcthdgh",
+                  "required":true,
+                  "type":"string"
+               },                                
+               {
+                  "name":"translated_text",
+                  "in":"formData",
+                  "description":"Translation Text Example: [{\"language_id\":\"1\", \"translated_text\":\"Text eng\"},{ \"language_id\":\"2\",\"translated_text\":\"Text french\"},{\"language_id\":\"3\",\"translated_text\":\"Text german\"}] ",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Translation updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateTranslation"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateTranslation"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to create translation.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateTranslation"
+                  }
+               },
+               "404":{
+                  "description":"No translation found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateTranslation"
+                  }
+               },
+               "409":{
+                  "description":"The specified translation already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409updateTranslation"
+                  }
+               },
+               "400":{
+                  "description":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed.",
+                  "schema":{
+                     "$ref":"#/definitions/400createTranslation"
+                  }
+               }                                                                             
+            }
+         }
+      },
+      "/admin/deleteTranslation":{
+         "delete":{
+            "tags":[
+               "Admin Translation"
+            ],
+            "description":"Delete Translation",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired translation to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Translation deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteTranslation"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete translation.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteTranslation"
+                  }
+               },
+               "404":{
+                  "description":"No translation found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteTranslation"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteTranslation"
+                  }
+               }                                               
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200getTranslationList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 Translation listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getTranslationList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getTranslationList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get translation."
+            }
+         }
+      },      
+      "404getTranslationList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No translation found."
+            }
+         }
+      },            
+      "200createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Translation inserted successfully."
+            }
+         }
+      },
+      "500createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to create translation."
+            }
+         }
+      },     
+      "409createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified translation already exists."
+            }
+         }
+      },    
+      "400createTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed."
+            }
+         }
+      },            
+      "200viewTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Translation found."
+            }
+         }
+      },
+      "404viewTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No translation found."
+            }
+         }
+      },
+      "500viewTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403viewTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get translation."
+            }
+         }
+      },      
+      "200updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Translation updated successfully."
+            }
+         }
+      },
+      "500updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update translation."
+            }
+         }
+      },
+      "404updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No translation found."
+            }
+         }
+      },
+      "409updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified translation already exists."
+            }
+         }
+      }, 
+      "400updateTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"400"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Enter valid language_key. Only Alphabet and maximum 15 characters allowed."
+            }
+         }
+      },                   
+      "200deleteTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Translation deleted successfully"
+            }
+         }
+      },
+      "403deleteTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete translation."
+            }
+         }
+      },
+      "404deleteTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No translation found."
+            }
+         }
+      },
+      "500deleteTranslation":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      }                  
+   }
+}
