@@ -124,7 +124,8 @@ function CommonHelper(){
 
 	  // Get price details from currency tables by country
 	  //var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
-      var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
+      if($currency_id ==null && $country_id == null) var sql = "SELECT * from `currency` WHERE status = 1";
+      else var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
 	  //console.log(sql);
 
@@ -225,34 +226,34 @@ function CommonHelper(){
 
 	/* Get all admin resticted dates  */
 
-    this.adminRestictedRates= function ($vendor_id, $country_id, $product_id, callback) {
-    $sql = "SELECT DATE_FORMAT(`restrict_calendar_dates`.`start_date`,'%y-%m-%d') AS start_date";
-    $sql += " FROM `restrict_calendar_dates`";
-    $sql += " INNER JOIN `product_restrict_calendar_date` on `product_restrict_calendar_date`.`restrict_calendar_date_id` = `restrict_calendar_dates`.`id`";
-    $sql += " WHERE `restrict_calendar_dates`.`vendor_id` = " + $vendor_id + "";
-    $sql += " AND `restrict_calendar_dates`.`country_id` = " + $country_id + "";
-    $sql += " AND `product_restrict_calendar_date`.`product_id` = " + $product_id + "";
-    $sql += " AND `restrict_calendar_dates`.`status` = 1";
-    //console.log($sql);
+this.adminRestictedRates= function ($vendor_id, $country_id, $product_id, callback) {
+        $sql = "SELECT DATE_FORMAT(`restrict_calendar_dates`.`start_date`,'%y-%m-%d') AS start_date";
+        $sql += " FROM `restrict_calendar_dates`";
+        $sql += " INNER JOIN `product_restrict_calendar_date` on `product_restrict_calendar_date`.`restrict_calendar_date_id` = `restrict_calendar_dates`.`id`";
+        $sql += " WHERE `restrict_calendar_dates`.`vendor_id` = " + $vendor_id + "";
+        $sql += " AND `restrict_calendar_dates`.`country_id` = " + $country_id + "";
+        $sql += " AND `product_restrict_calendar_date`.`product_id` = " + $product_id + "";
+        $sql += " AND `restrict_calendar_dates`.`status` = 1";
+        //console.log($sql);
 
-    dbModel.rawQuery($sql, function(err, $restrictCalDate) {
-        if (err) callback(err);
-        else {
-            var $restricted = [];
-            if ($restrictCalDate.length > 0) {
-                for(var i=0; i < $restrictCalDate.length; i++){
-                    $newDt= $restrictCalDate[i].start_date;
-                    $dt = $newDt.split('-');
-                    var monthname=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-                    $restrictCalDate[i].start_date = $dt[2]+'-'+monthname[parseInt($dt[1])-1]+'-'+$dt[0]; // Formatting date 27-JUL-2017
-                    $restricted.push($restrictCalDate[i].start_date);
+        dbModel.rawQuery($sql, function(err, $restrictCalDate) {
+            if (err) callback(err);
+            else {
+                var $restricted = [];
+                if ($restrictCalDate.length > 0) {
+                    for(var i=0; i < $restrictCalDate.length; i++){
+                        $newDt= $restrictCalDate[i].start_date;
+                        $dt = $newDt.split('-');
+                        var monthname=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+                        $restrictCalDate[i].start_date = $dt[2]+'-'+monthname[parseInt($dt[1])-1]+'-'+$dt[0]; // Formatting date 27-JUL-2017
+                        $restricted.push($restrictCalDate[i].start_date);
+                    }
+                    callback(null, $restricted);
+                } else {
+                    callback(null, []);
                 }
-                callback(null, $restricted);
-            } else {
-                callback(null, []);
             }
-        }
-    });
+        });
 }
 
 /* Get all vendor holiday list  */
@@ -469,6 +470,39 @@ this.getSurchargeConverted = function ($amount, callback) {
         }
         var convertedamount = result[1];
         convertedamount = convertedamount.trim();
+        callback(null, convertedamount);
+    });
+    // }
+}
+
+///convert with conversion rate
+this.getCurrencyConverted = function ($currency_code, callback) {
+
+    // if ($resAtlasDDOrg.totSurcharge == '0.0') {
+    //    $totSurcharge = $item.totSurcharge;
+    // } else {
+    //     $totSurcharge = number_format(currency(urlencode('USD'), urlencode('CAD'), $item.totSurcharge), 2);
+    var options = {
+        url: "http://www.google.com/finance/converter?a=1&from=USD&to="+$currency_code,
+        method: 'POST'
+    }
+    // Start the request
+    request(options, function(error, response, data) {
+       // console.log(data);
+        var startPos = data.search('<div id=currency_converter_result>');
+        var endPos = data.search('<input type=submit value="Convert">');
+        var result ='';
+        if (startPos > 0) {
+            result = data.substring(startPos, endPos);
+            result = result.replace('<div id=currency_converter_result>', '');
+            result = result.replace('<span class=bld>', '');
+            result = result.replace('</span>', '');
+            result = result.replace('CAD\n', '');
+            result = result.split('=');
+        }
+       // console.log('oooo---'+result);
+        var convertedamount = result[1];
+        //convertedamount = convertedamount.trim();
         callback(null, convertedamount);
     });
     // }

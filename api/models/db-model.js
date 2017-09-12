@@ -274,65 +274,6 @@ function DbModel(){
 
 	}
 
-        // Get connection object
-	this.getConnection = function(callback) {
-		connection.acquire(function(err, con) {
-			if (err) {
-				callback(err);
-			}
-			else {
-				callback(null, con);
-			}
-		});
-	}
-
-
-	this.beginTransaction = function(con, sql, callback){
-		con.beginTransaction(function(err){
-			if (err) {
-				callback(err);
-			}
-			con.query(sql, function (err, result) {
-	          	if (err) {
-	          		con.rollback(function() {
-				       callback(err);
-				    });
-	          	}else{
-	          		callback(null, result);
-	          	}
-	      	});
-		});
-	}
-
-
-	// Query to use when using transactions
-	this.transactionQuery = function(con, sql, callback) {
-
-		con.query(sql, function (err, result) {
-	      	if (err) {
-				con.rollback(function() {
-				   callback(err);
-				});
-	      	}else{
-	      		callback(null, result);
-	      	}
-	  	});
-	}
-
-
-	this.commit = function(con, callback){
-
-            con.commit(function(err) {
-                if (err) {
-                  con.rollback(function() {
-                    callback(err);
-                  });
-                }
-                con.release();
-                callback(null, 'Transaction Complete.');
-            });
-
-	}
 
 	this.checkAndAddRecord = function(table, newIds, product_id, field, callback) {
         connection.acquire(function(err, con) {

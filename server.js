@@ -5,6 +5,8 @@ var argv = require('minimist')(process.argv.slice(2));
 var bodyParser = require('body-parser');
 var jwt= require("jsonwebtoken");
 var config = require('./config');
+var cron = require('node-cron');
+var cronjobs = require('./cron');
 
 var app = express();
 var subpath = express();
@@ -69,7 +71,14 @@ db.acquire(function(err, con){
 
 		app.listen(port, function(){
 			console.log('0800Flowers API running on ' + applicationUrl);
+			/*cron.schedule('* * * * * *', function(){
+				//console.log('running a task every minute');
+				cronjobs.updateExchangeRate();
+				cronjobs.updateSubmitXML();  
+			});*/
+
 		});
+		
 		
 	}
 });
