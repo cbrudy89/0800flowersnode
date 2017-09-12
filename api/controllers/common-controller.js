@@ -348,6 +348,7 @@ function CommonController() {
 
                                             country.push({
                                               "country_id": countries[j].id,
+                                              "default_country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
                                               "country_name": countries[j].country_name + ' ('+supported_languages[k].name+')',
                                               "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                               "alias": countries[j].alias,
@@ -370,6 +371,7 @@ function CommonController() {
                                           //console.log(countries[j]);
                                           country.push({
                                             "country_id": countries[j].id,
+                                            "default_country_name": countries[j].country_name,
                                             "country_name": countries[j].country_name,
                                             "country_slug": countries[j].country_name.toLowerCase().replace(" ","-"),
                                             "alias": countries[j].alias,
@@ -451,6 +453,7 @@ function CommonController() {
 
                           country.push({
                             "country_id": country_id, 
+                            "default_country_name": country_name,
                             "country_name": alias_arr[k],
                             "country_slug": country_name.toLowerCase().replace(" ","-"),
                             "alias": alias_arr[k], 
@@ -472,6 +475,7 @@ function CommonController() {
 
                           country.push({
                             "country_id": country_id, 
+                            "default_country_name": country_name,
                             "country_name": country_name,
                             "country_slug": country_name.toLowerCase().replace(" ","-"),
                             "alias": alias, 
