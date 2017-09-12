@@ -430,11 +430,10 @@ function HomeController() {
 
                 });
 
-            },                
+            },
             function countriesprovinces(callback) {
               var country = [];
-              
-
+            
                 dbModel.rawQuery("SELECT id, country_name, redirect_url, TRIM(TRAILING ',' FROM CONCAT(country_name,',',country_alias)) as alias,short_code,iso_code,CONCAT('"+config.RESOURCE_URL+"', REPLACE(country_flag, '+','%2B')) as country_flag,CONCAT('"+config.RESOURCE_URL+"', REPLACE(company_logo, '+','%2B')) as company_logo, show_state, preferred_currency_id, (SELECT currency_code FROM currency WHERE id = preferred_currency_id) as preferred_currency_code,language_id, (SELECT short_code2 FROM languages WHERE id = language_id AND status = 1) as language_code FROM country_list WHERE status = 1 ORDER BY country_name ASC", function(err, countries) {
                   if (err) return callback(err);
                   else 
@@ -455,22 +454,55 @@ function HomeController() {
                       language_code = countries[i].language_code;                    
                       company_logo = countries[i].company_logo;
 
-                      country.push({
-                        "country_id": country_id, 
-                        "country_name": country_name,
-                        "country_slug": country_name.toLowerCase().replace(" ","-"),
-                        "alias": alias, 
-                        "short_code": short_code, 
-                        "iso_code": iso_code, 
-                        "country_flag": country_flag, 
-                        "show_state": show_state,
-                        "redirect_url": redirect_url,
-                        "preferred_currency_id": preferred_currency_id,
-                        "preferred_currency_code": preferred_currency_code,
-                        "language_id": language_id,
-                        "language_code": language_code,
-                        "company_logo": company_logo
-                      });
+                      var alias_arr = alias.split(',');
+
+                      if(alias_arr.length > 1){
+
+                        for(var k=0; k < alias_arr.length; k++){             
+
+                          country.push({
+                            "country_id": country_id, 
+                            "country_name": alias_arr[k],
+                            "country_slug": country_name.toLowerCase().replace(" ","-"),
+                            "alias": alias_arr[k], 
+                            "short_code": short_code, 
+                            "iso_code": iso_code, 
+                            "country_flag": country_flag, 
+                            "show_state": show_state,
+                            "redirect_url": redirect_url,
+                            "preferred_currency_id": preferred_currency_id,
+                            "preferred_currency_code": preferred_currency_code,
+                            "language_id": language_id,
+                            "language_code": language_code,
+                            "company_logo": company_logo
+                          });
+
+                        }
+
+                      } else {
+
+                          country.push({
+                            "country_id": country_id, 
+                            "country_name": country_name,
+                            "country_slug": country_name.toLowerCase().replace(" ","-"),
+                            "alias": alias, 
+                            "short_code": short_code, 
+                            "iso_code": iso_code, 
+                            "country_flag": country_flag, 
+                            "show_state": show_state,
+                            "redirect_url": redirect_url,
+                            "preferred_currency_id": preferred_currency_id,
+                            "preferred_currency_code": preferred_currency_code,
+                            "language_id": language_id,
+                            "language_code": language_code,
+                            "company_logo": company_logo
+                          });                        
+
+                      }
+
+
+
+
                     }
 
                         /*sql = "SELECT country_id,id,province_name FROM provinces WHERE status = 1";

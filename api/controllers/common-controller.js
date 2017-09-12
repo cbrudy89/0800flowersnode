@@ -443,22 +443,51 @@ function CommonController() {
                       company_logo = countries[i].company_logo;
 
 
-                      country.push({
-                        "country_id": country_id, 
-                        "country_name": country_name,
-                        "country_slug": country_name.toLowerCase().replace(" ","-"),
-                        "alias": alias, 
-                        "short_code": short_code, 
-                        "iso_code": iso_code, 
-                        "country_flag": country_flag, 
-                        "show_state": show_state,
-                        "redirect_url": redirect_url,
-                        "preferred_currency_id": preferred_currency_id,
-                        "preferred_currency_code": preferred_currency_code,
-                        "language_id": language_id,
-                        "language_code": language_code,                      
-                        "company_logo": company_logo
-                      });
+                      var alias_arr = alias.split(',');
+
+                      if(alias_arr.length > 1){
+
+                        for(var k=0; k < alias_arr.length; k++){             
+
+                          country.push({
+                            "country_id": country_id, 
+                            "country_name": alias_arr[k],
+                            "country_slug": country_name.toLowerCase().replace(" ","-"),
+                            "alias": alias_arr[k], 
+                            "short_code": short_code, 
+                            "iso_code": iso_code, 
+                            "country_flag": country_flag, 
+                            "show_state": show_state,
+                            "redirect_url": redirect_url,
+                            "preferred_currency_id": preferred_currency_id,
+                            "preferred_currency_code": preferred_currency_code,
+                            "language_id": language_id,
+                            "language_code": language_code,
+                            "company_logo": company_logo
+                          });
+
+                        }
+
+                      } else {
+
+                          country.push({
+                            "country_id": country_id, 
+                            "country_name": country_name,
+                            "country_slug": country_name.toLowerCase().replace(" ","-"),
+                            "alias": alias, 
+                            "short_code": short_code, 
+                            "iso_code": iso_code, 
+                            "country_flag": country_flag, 
+                            "show_state": show_state,
+                            "redirect_url": redirect_url,
+                            "preferred_currency_id": preferred_currency_id,
+                            "preferred_currency_code": preferred_currency_code,
+                            "language_id": language_id,
+                            "language_code": language_code,
+                            "company_logo": company_logo
+                          });                        
+
+                      }
                     }
 
                       /*sql = "SELECT country_id,id,province_name FROM provinces WHERE status = 1";
