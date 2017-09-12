@@ -39,6 +39,7 @@ var productController = require('./api/controllers/product-controller');
 var orderTrackingController = require('./api/controllers/order-tracking-controller');
 var wishlistController = require('./api/controllers/wishlist-controller');
 var cartController = require('./api/controllers/cart-controller');
+var paymentController = require('./api/controllers/payment-controller');
 
 // Validation Helper used for validation
 var validate = require('./api/helpers/validation-helper');
@@ -725,9 +726,15 @@ module.exports = {
         cartController.updateCartProductdDate(req, res);
     });
 
-
-
     /*********************** Cart Functionality Ends Here ************************/
+     /************************ Payment Functionality ********************************/
+
+    app.post('/braintreepay', function(req, res){
+        paymentController.braintreepay(req, res);
+    });
+
+    
+    /*********************** Payment Functionality Ends Here ************************/
 
     /************************ Vendor Functionality ********************************/
 
