@@ -38,7 +38,7 @@ host: 'email-smtp.us-west-2.amazonaws.com',
 
   this.SITE_LANGUAGE = 1; // For english
   this.SITE_TITLE = '1-800-FLOWERS.COM';
-  this.SITE_URL = 'https://www.0800flowers.com';
+  this.SITE_URL = 'https://qa.0800flowers.com';
 
   this.ITEMS_PER_PAGE = 30;
   this.DEFAULT_ZIPCODE = '00000';

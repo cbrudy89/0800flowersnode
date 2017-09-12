@@ -299,7 +299,7 @@ function UserController() {
                       var template = handlebars.compile(html);
                       var replacements = {
                            userName: results[0].first_name,
-                           verification_link : config.SITE_URL+"/forgetpassword/"+confirmation_code,
+                           verification_link : config.SITE_URL+"/reset-password/"+confirmation_code,
                       };
 
                       var htmlToSend = template(replacements);
