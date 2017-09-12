@@ -342,7 +342,7 @@ function CommonController() {
 
                                         //console.log(supported_languages);
 
-                                        if(supported_languages.length > 0){
+                                        if(supported_languages.length > 1){
 
                                           for(var k=0; k < supported_languages.length; k++){
 
