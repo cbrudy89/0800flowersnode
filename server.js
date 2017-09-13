@@ -71,11 +71,11 @@ db.acquire(function(err, con){
 
 		app.listen(port, function(){
 			console.log('0800Flowers API running on ' + applicationUrl);
-			/*cron.schedule('* * * * * *', function(){
-				//console.log('running a task every minute');
+			cron.schedule('* */2 * * *', function(){
+			  //console.log('running a task every minute');
 				cronjobs.updateExchangeRate();
-				cronjobs.updateSubmitXML();  
-			});*/
+				//cronjobs.updateSubmitXML();  
+			});
 
 		});
 		
