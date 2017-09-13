@@ -7,8 +7,8 @@ module.exports = {
 
     // First application
     {
-      name      : 'API',
-      script    : 'app.js',
+      name      : '1800flowersInt',
+      script    : 'server.js',
       env: {
         COMMON_VARIABLE: 'true'
       },
@@ -18,10 +18,10 @@ module.exports = {
     },
 
     // Second application
-    {
+    /*{
       name      : 'WEB',
       script    : 'web.js'
-    }
+    }*/
   ],
 
   /**
@@ -30,14 +30,15 @@ module.exports = {
    */
   deploy : {
     production : {
-      user : 'node',
-      host : '212.83.163.1',
+      key  : '/home/mistry/Downloads/nodejs.pem',
+      user : 'ubuntu',
+      host : '13.58.120.75',
       ref  : 'origin/master',
-      repo : 'git@github.com:repo.git',
-      path : '/var/www/production',
+      repo : 'https://prashant-mobikasa:Passw0rd@team.mobikasa.net/0800flowersIntNode.git',
+      path : '/home/ubuntu/18fInt',
       'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
-    },
-    dev : {
+},
+    /*dev : {
       user : 'node',
       host : '212.83.163.1',
       ref  : 'origin/master',
@@ -47,6 +48,7 @@ module.exports = {
       env  : {
         NODE_ENV: 'dev'
       }
-    }
+    }*/
   }
 };
+
