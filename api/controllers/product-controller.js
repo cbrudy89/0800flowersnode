@@ -258,7 +258,7 @@ function ProductController() {
                                         var $mobArray = [];
                                         var $dateArray = [];
                                         var $surchargeArray = [];
-                                        var $infoArray = {};
+                                        var $infoArray = [];
                                         var $deldate = '';
                                         for (var $item in $getDates) {
                                             $deldate = $getDates[$item].deliveryDate;
@@ -286,11 +286,11 @@ function ProductController() {
                                             
                                             $customtextdate = commonHelper.getCalenderCustomTextDates.sync(null, caldate, $vendorId, $currentCountry, $product[0].id);
                                             
-                                            $infoArray[$deldate] = {
+                                            $infoArray.push({
                                                 'deliveryDate': $deldate,
                                                 'totSurcharge': $totSurcharge,
                                                 'customtext' : $customtextdate
-                                            };
+                                            });
 
                                             $dateArray.push($deldate);
                                             $surchargeArray.push($totSurcharge);
