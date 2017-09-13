@@ -272,9 +272,10 @@ function ProductController() {
                                                 
                                             var $totSurcharge = '';
                                             $totSurcharge = $getDates[$item].totSurcharge;
-
+                                            //console.log($totSurcharge);
                                             if ($totSurcharge != '0.0') {
-                                                $totSurcharge = commonHelper.getSurchargeConverted.sync(null, $totSurcharge);
+                                                //$totSurcharge = commonHelper.getSurchargeConverted.sync(null, $totSurcharge);
+                                                $totSurcharge = $totSurcharge * $currencydetails[0].exchange_rate;
                                                 $totSurcharge = parseFloat($totSurcharge).toFixed(2);
                                             }
 
@@ -530,7 +531,7 @@ function ProductController() {
                                     'nextExtraCharge': parseFloat($nextExtraCharge).toFixed(2),
                                     'nextRestrict': $nextRestrict,
                                     'nextToNextEnableDate': $nextToNextEnableDate,
-                                    'datExtraCharge': $datExtraCharge,
+                                    'dayAfterTomorrowExtraCharge': $datExtraCharge,
                                     'deliveryCalendar': $deliveryCalendar,
                                     'AtlasDate': $AtlasDate
                                 };

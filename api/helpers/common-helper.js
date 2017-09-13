@@ -124,7 +124,8 @@ function CommonHelper(){
 
 	  // Get price details from currency tables by country
 	  //var sql = "SELECT c.* FROM country_list cl LEFT JOIN currency c ON(cl.preferred_currency_id = c.id) WHERE cl.id = "+$country_id+" AND c.status = 1";
-      if($currency_id ==null && $country_id == null) var sql = "SELECT * from `currency` WHERE status = 1";
+      //console.log($currency_id+'---------'+$country_id);
+      if($currency_id ==null && $country_id == null) var sql = "SELECT * from `currency`";
       else var sql = "SELECT * from `currency` WHERE id = "+$currency_id;
 
 	  //console.log(sql);
@@ -444,7 +445,7 @@ this.checkZipService = function ($zipCode, callback) {
 
 }
 
-///convert with conversion rate
+/*///convert with conversion rate
 this.getSurchargeConverted = function ($amount, callback) {
 
 
@@ -473,7 +474,7 @@ this.getSurchargeConverted = function ($amount, callback) {
         callback(null, convertedamount);
     });
     // }
-}
+}*/
 
 ///convert with conversion rate
 this.getCurrencyConverted = function ($currency_code, callback) {
@@ -488,7 +489,7 @@ this.getCurrencyConverted = function ($currency_code, callback) {
     }
     // Start the request
     request(options, function(error, response, data) {
-       // console.log(data);
+        //console.log(data);
         var startPos = data.search('<div id=currency_converter_result>');
         var endPos = data.search('<input type=submit value="Convert">');
         var result ='';
@@ -497,12 +498,16 @@ this.getCurrencyConverted = function ($currency_code, callback) {
             result = result.replace('<div id=currency_converter_result>', '');
             result = result.replace('<span class=bld>', '');
             result = result.replace('</span>', '');
-            result = result.replace('CAD\n', '');
+            result = result.replace($currency_code+'\n', '');
             result = result.split('=');
         }
-       // console.log('oooo---'+result);
         var convertedamount = result[1];
-        //convertedamount = convertedamount.trim();
+        //console.log('oooo---'+convertedamount);
+        if(convertedamount !=undefined){
+            convertedamount = convertedamount.trim();
+        } else {
+            convertedamount = '';
+        }
         callback(null, convertedamount);
     });
     // }
