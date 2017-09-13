@@ -6,7 +6,7 @@ module.exports = {
   createTranslation : {
         body: {
               token: Joi.string().required(),
-              language_key: Joi.string().required(), //  must be unique, stringtext    
+              language_key: Joi.string().regex(/^[a-zA-Z]{2,15}$/i, 'Please only use alphabet characters and maximum 15 characters'), //  must be unique, stringtext    
               translated_text: Joi.any().required(),
               // [{"language_id":"1", "translated_text":"Text eng"},{ "language_id":"2","translated_text":"Text french"},{"language_id":"3","translated_text":"Text german"}]
         }
@@ -16,7 +16,7 @@ module.exports = {
         body: {
               token: Joi.string().required(),
               id:Joi.number().integer().required(),
-              language_key: Joi.string().required(), //  must be unique, stringtext    
+              language_key: Joi.string().regex(/^[a-zA-Z]{2,15}$/i, 'Please only use alphabet characters and maximum 15 characters'), //  must be unique, stringtext       
               translated_text: Joi.any().required(),
               // [{"language_id":"1", "translated_text":"Text eng"},{ "language_id":"2","translated_text":"Text french"},{"language_id":"3","translated_text":"Text german"}]  
         }
@@ -38,11 +38,11 @@ module.exports = {
   
  getTranslationList : {
     body: {
-          token: Joi.string().required(),          
+          token: Joi.string().required(),
           page: Joi.number().integer(),
           limit: Joi.number().integer(),
           order_by: Joi.string(),
-          search_language_key:Joi.string()
+          search_language_key:Joi.string() 
     }
   },
   
