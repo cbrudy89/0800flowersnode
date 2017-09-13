@@ -13,7 +13,7 @@ var cmsController = require('./api/controllers/admin/cms-controller');
 var ordersController = require('./api/controllers/admin/orders-controller');
 var adminProductController = require('./api/controllers/admin/admin-product-controller');
 var translationController = require('./api/controllers/admin/translation-controller');
-
+var newsletterController = require('./api/controllers/admin/newsletter-controller');
 
 // For Frontend Controllers
 var homeController = require('./api/controllers/home-controller');
@@ -42,6 +42,7 @@ var cmsValidation = require('./api/validation/admin/cms-validation');
 var ordersValidation = require('./api/validation/admin/orders-validation');
 var adminProductValidation = require('./api/validation/admin/admin-product-validation');
 var translationValidation = require('./api/validation/admin/translation-validation');
+var newsletterValidation = require('./api/validation/admin/newsletter-validation');
 
 module.exports = {
   configure: function(app, router) {
@@ -403,6 +404,30 @@ module.exports = {
     
     /************************  END Translation  ****************************/   
       
+   
+    /************************  START Newsletter  *******************************/
+    
+    // listing
+    app.post('/admin/getNewsletterList', authenticateController.isAuthenticated,function(req, res) {
+        newsletterController.getNewsletterList(req, res);
+    });    
+
+    // update 
+    app.post('/admin/updateNewsletter', authenticateController.isAuthenticated,validate(newsletterValidation.updateNewsletter), function(req, res) {
+        newsletterController.updateNewsletter(req, res);
+    });  
+    
+    // get selected one
+    app.post('/admin/viewNewsletter', authenticateController.isAuthenticated,validate(newsletterValidation.viewNewsletter) ,function(req, res) {
+        newsletterController.viewNewsletter(req, res);
+    });
+    
+    // delete
+    app.delete('/admin/deleteNewsletter', authenticateController.isAuthenticated, validate(newsletterValidation.deleteNewsletter),function(req, res) {
+        newsletterController.deleteNewsletter(req, res);
+    });
+    /************************  END Newsletter  *******************************/   
+            
     /************************  START Orders   ****************************/
    
     // listing all orders

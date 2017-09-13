@@ -1,0 +1,560 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "version":"1.0.0",
+      "title":"Admin Newsletter Subscription APIs",
+      "description":"All APIs related to the admin Newsletter controller",
+      "termsOfService":"#"
+   },
+   "basePath":"/",
+   "tags":[
+      {
+         "name":"Admin Newsletter Subscription",
+         "description":"API for admin newsletter subcription usage"
+      }
+   ],
+   "schemes":[
+      "https",
+      "http"
+   ],
+   "consumes":[
+      "application/json"
+   ],
+   "produces":[
+      "application/json"
+   ],
+   "paths":{
+      "/admin/getNewsletterList/":{
+         "post":{
+            "tags":[
+               "Admin Newsletter Subscription"
+            ],
+            "description":"List all newsletter subcriptions from admin section",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },  
+               {
+                  "name":"page",
+                  "in":"formData",
+                  "description":"Page number Example: 1 ",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"limit",
+                  "in":"formData",
+                  "description":"Page limit Example: 10",
+                  "required":false,
+                  "type":"integer"
+               },  
+               {
+                  "name":"order_by",
+                  "in":"formData",
+                  "description":"Order by Example: id-desc, id-asc",
+                  "required":false,
+                  "type":"string"
+               },  
+               {
+                  "name":"search_email",
+                  "in":"formData",
+                  "description":"search_email Example: sandeepthakur@mobikasa.com",
+                  "required":false,
+                  "type":"string"
+               }
+
+            ],
+            "responses":{
+               "200":{
+                  "description":"Newsletter subcription listed.",
+                  "schema":{
+                      "$ref":"#/definitions/200getNewsletterList"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500getNewsletterList"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get newsletter subcription.",
+                  "schema":{
+                     "$ref":"#/definitions/403getNewsletterList"
+                  }
+               },                                               
+               "404":{
+                  "description":"No newsletter subcription found.",
+                  "schema":{
+                     "$ref":"#/definitions/404getNewsletterList"
+                  }
+               } 
+            }
+
+         }
+      },
+      "/admin/viewNewsletter/":{
+         "post":{
+            "tags":[
+               "Admin Newsletter Subscription"
+            ],
+            "description":"View single record during update",
+            "operationId":"get",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },               
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"The Newsletter subscription ID.",
+                  "required":true,
+                  "type":"integer"                 
+               }               
+
+            ],
+             "responses":{
+               "200":{
+                  "description":"Newsletter subscription found.",
+                  "schema":{
+                      "$ref":"#/definitions/200viewNewsletter"
+                  }
+               },
+               "404":{
+                  "description":"No newsletter subscription found.",
+                  "schema":{
+                     "$ref":"#/definitions/404viewNewsletter"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to get newsletter subscription.",
+                  "schema":{
+                     "$ref":"#/definitions/403viewNewsletter"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500viewNewsletter"
+                  }
+               }                                                              
+            }
+         }
+      },
+      "/admin/updateNewsletter":{
+         "post":{
+            "tags":[
+               "Admin Newsletter Subscription"
+            ],
+            "description":"Update Newsletter Subscription Email",
+            "operationId":"for the URL",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Subscription id Example: 24",
+                  "required":true,
+                  "type":"integer"
+               },
+               {
+                  "name":"subscribe_email",
+                  "in":"formData",
+                  "description":"Subscribe Email Example: sandeepthakur@mobikasa.com ",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Newsletter subscription updated successfully.",
+                  "schema":{
+                      "$ref":"#/definitions/200updateNewsletter"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500updateNewsletter"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to update newsletter subscription.",
+                  "schema":{
+                     "$ref":"#/definitions/403updateNewsletter"
+                  }
+               },
+               "404":{
+                  "description":"No newsletter subscription found.",
+                  "schema":{
+                     "$ref":"#/definitions/404updateNewsletter"
+                  }
+               },
+               "409":{
+                  "description":"The specified newsletter subscription email already exists.",
+                  "schema":{
+                     "$ref":"#/definitions/409updateNewsletter"
+                  }
+               }                                                                     
+            }
+         }
+      },
+      "/admin/deleteNewsletter":{
+         "delete":{
+            "tags":[
+               "Admin Newsletter Subscription"
+            ],
+            "description":"Delete newsletter subscription email",
+            "operationId":"delete",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"formData",
+                  "description":"Token get on login api response",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"formData",
+                  "description":"Id of the desired newsletter subscription to delete.",
+                  "required":true,
+                  "type":"integer"
+               }
+            ],
+             "responses":{
+               "200":{
+                  "description":"Newsletter subscription deleted successfully",
+                  "schema":{
+                      "$ref":"#/definitions/200deleteNewsletter"
+                  }
+               },
+               "403":{
+                  "description":"You dont have permission to delete newsletter subscription.",
+                  "schema":{
+                     "$ref":"#/definitions/403deleteNewsletter"
+                  }
+               },
+               "404":{
+                  "description":"No newsletter subscription found.",
+                  "schema":{
+                     "$ref":"#/definitions/404deleteNewsletter"
+                  }
+               },
+               "500":{
+                  "description":"Unable to process request!",
+                  "schema":{
+                     "$ref":"#/definitions/500deleteNewsletter"
+                  }
+               }                                               
+            }
+         }
+      }
+          
+   },
+   "definitions":{
+      "200getNewsletterList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":" 5 newsletter subscriptions listed."
+            },
+            "result":{
+               "type":"string",
+               "example":{}
+            }            
+         }
+      },
+      "500getNewsletterList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request."
+            }
+         }
+      },
+      "403getNewsletterList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get newsletter subscription."
+            }
+         }
+      },      
+      "404getNewsletterList":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No newsletter subscription found."
+            }
+         }
+      },                       
+      "200viewNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Newsletter subscription found."
+            }
+         }
+      },
+      "404viewNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No newsletter subscription found."
+            }
+         }
+      },
+      "500viewNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403viewNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to get newsletter subscription."
+            }
+         }
+      },      
+      "200updateNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Newsletter subscription updated successfully."
+            }
+         }
+      },
+      "500updateNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      },
+      "403updateNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to update newsletter subscription."
+            }
+         }
+      },
+      "404updateNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No newsletter subscription found."
+            }
+         }
+      },
+      "409updateNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"409"
+            },            
+            "message":{
+               "type":"string",
+               "example":"The specified newsletter subscription email already exists."
+            }
+         }
+      },                        
+      "200deleteNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"true"
+            },
+            "code":{
+               "type":"integer",
+               "example":"200"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Newsletter subscription deleted successfully"
+            }
+         }
+      },
+      "403deleteNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"403"
+            },            
+            "message":{
+               "type":"string",
+               "example":"You dont have permission to delete newsletter subscription."
+            }
+         }
+      },
+      "404deleteNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"404"
+            },            
+            "message":{
+               "type":"string",
+               "example":"No newsletter subscription found."
+            }
+         }
+      },
+      "500deleteNewsletter":{
+         "properties":{
+            "status":{
+               "type":"boolean",
+               "example":"false"
+            },
+            "code":{
+               "type":"integer",
+               "example":"500"
+            },            
+            "message":{
+               "type":"string",
+               "example":"Unable to process request!"
+            }
+         }
+      }                  
+   }
+}

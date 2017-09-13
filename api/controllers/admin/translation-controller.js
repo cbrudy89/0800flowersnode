@@ -122,19 +122,7 @@ function TranslationController() {
             var created_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
             var updated_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);  
             
-            var check_language_key = /^[a-zA-Z]{2,15}$/;
-            if (!check_language_key.test(language_key)) {
-               
-               res.status(config.HTTP_BAD_REQUEST).send({
-                  status:config.ERROR,
-                  code: config.HTTP_BAD_REQUEST,
-                  message:'language_key must be alphabet and maximum 15 character',
-                  //error: error
-                });    
-                
-            }else{
-           
-               dbModel.getConnection(function(error, con){
+            dbModel.getConnection(function(error, con){
                 if (error) {
                   res.status(config.HTTP_SERVER_ERROR).send({
                     status:config.ERROR,
@@ -278,8 +266,7 @@ function TranslationController() {
 
                 }
 
-            });
-            }                
+            });               
         });
       }    
     }
@@ -303,196 +290,183 @@ function TranslationController() {
             var created_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);
             var updated_at = commonHelper.formatDateToMysqlDateTime(curr_date,3);   
 
-            var check_language_key = /^[a-zA-Z]{2,15}$/;
-            if (!check_language_key.test(language_key)) {
-               
-                res.status(config.HTTP_BAD_REQUEST).send({
-                  status:config.ERROR,
-                  code: config.HTTP_BAD_REQUEST,
-                  message:'language_key must be alphabet and maximum 15 character',
-                  //error: error
-                });    
-                
-            }else{
-               
-                var checkSql ="SELECT * FROM translation WHERE id = "+id;                        
-                dbModel.rawQuery(checkSql, function(err, checkResult){
+            var checkSql ="SELECT * FROM translation WHERE id = "+id;                        
+            dbModel.rawQuery(checkSql, function(err, checkResult){
 
-                  if (err) {
-                      res.status(config.HTTP_SERVER_ERROR).send({
-                        status: config.ERROR, 
-                        code : config.HTTP_SERVER_ERROR, 
-                        message : "Unable to process request!", 
-                        //errors : err
-                      });
-                   }else{
+              if (err) {
+                  res.status(config.HTTP_SERVER_ERROR).send({
+                    status: config.ERROR, 
+                    code : config.HTTP_SERVER_ERROR, 
+                    message : "Unable to process request!", 
+                    //errors : err
+                  });
+               }else{
 
-                       if(checkResult.length >0 ){
-                            dbModel.getConnection(function(error, con){
-                              if (error) {
+                   if(checkResult.length >0 ){
+                        dbModel.getConnection(function(error, con){
+                          if (error) {
+                            res.status(config.HTTP_SERVER_ERROR).send({
+                              status:config.ERROR,
+                              code: config.HTTP_SERVER_ERROR,
+                              message:'Unable to process request.',
+                              //error : error
+                            });
+                          }else{
+
+                              var checkData = {
+                                  language_key:language_key,                        
+                              };
+
+                              var checkExistingTranslationSql = checkExisting(checkData,id); // check duplicate lkey in translation table                    
+
+                              dbModel.beginTransaction(con, checkExistingTranslationSql, function(error, checkExistingTranslationResult){
+                              if(error){
                                 res.status(config.HTTP_SERVER_ERROR).send({
                                   status:config.ERROR,
                                   code: config.HTTP_SERVER_ERROR,
-                                  message:'Unable to process request.',
-                                  //error : error
-                                });
-                              }else{
+                                  message:'Unable to process request!',
+                                  //error: error
+                                });                    
+                              }else{  
 
-                                  var checkData = {
-                                      language_key:language_key,                        
-                                  };
+                                  if(checkExistingTranslationResult.length > 0){
+                                      res.status(config.HTTP_ALREADY_EXISTS).send({
+                                        status: config.ERROR, 
+                                        code : config.HTTP_ALREADY_EXISTS, 
+                                        message: "The specified language_key already exists.",
+                                        //error: error
+                                      });                             
+                                  }else{
 
-                                  var checkExistingTranslationSql = checkExisting(checkData,id); // check duplicate lkey in translation table                    
+                                      var translation_id=id;
+                                      //var lkey = removeSpecialCharacterNumber(original_text);// only 15 character saved in db 
 
-                                  dbModel.beginTransaction(con, checkExistingTranslationSql, function(error, checkExistingTranslationResult){
-                                  if(error){
-                                    res.status(config.HTTP_SERVER_ERROR).send({
-                                      status:config.ERROR,
-                                      code: config.HTTP_SERVER_ERROR,
-                                      message:'Unable to process request!',
-                                      //error: error
-                                    });                    
-                                  }else{  
+                                      language_key = language_key.toLowerCase();
 
-                                      if(checkExistingTranslationResult.length > 0){
-                                          res.status(config.HTTP_ALREADY_EXISTS).send({
-                                            status: config.ERROR, 
-                                            code : config.HTTP_ALREADY_EXISTS, 
-                                            message: "The specified language_key already exists.",
-                                            //error: error
-                                          });                             
-                                      }else{
+                                      var updateTranslationSql = "UPDATE translation SET lkey='"+language_key+"', updated_at='"+updated_at+"' WHERE id="+translation_id+";";   
+                                      // update into translation.
+                                      dbModel.transactionQuery(con, updateTranslationSql, function (error, updateTranslationResult) {                       
+                                        if(error){
+                                           res.status(config.HTTP_SERVER_ERROR).send({
+                                             status:config.ERROR,
+                                             code: config.HTTP_SERVER_ERROR,
+                                             message:'Unable to process request!',
+                                             //error: error
+                                           });                    
+                                        }else{                                                
+                                           if(updateTranslationResult.affectedRows > 0 ){      
+                                              var translated_text = JSON.parse(req.body.translated_text); 
+                                              //var translated_text = req.body.translated_text; 
+                                              if(translated_text != undefined){
+                                                 if( translated_text !='' && (Array.isArray(translated_text) == true) && translated_text.length > 0 ){
 
-                                          var translation_id=id;
-                                          //var lkey = removeSpecialCharacterNumber(original_text);// only 15 character saved in db 
-                                          
-                                          language_key = language_key.toLowerCase();
-                                          
-                                          var updateTranslationSql = "UPDATE translation SET lkey='"+language_key+"', updated_at='"+updated_at+"' WHERE id="+translation_id+";";   
-                                          // update into translation.
-                                          dbModel.transactionQuery(con, updateTranslationSql, function (error, updateTranslationResult) {                       
-                                            if(error){
-                                               res.status(config.HTTP_SERVER_ERROR).send({
-                                                 status:config.ERROR,
-                                                 code: config.HTTP_SERVER_ERROR,
-                                                 message:'Unable to process request!',
-                                                 //error: error
-                                               });                    
-                                            }else{                                                
-                                               if(updateTranslationResult.affectedRows > 0 ){      
-                                                  var translated_text = JSON.parse(req.body.translated_text); 
-                                                  //var translated_text = req.body.translated_text; 
-                                                  if(translated_text != undefined){
-                                                     if( translated_text !='' && (Array.isArray(translated_text) == true) && translated_text.length > 0 ){
+                                                    var deletesql  ="DELETE FROM language_translation WHERE translation_id = "+translation_id+";";
+                                                    dbModel.transactionQuery(con, deletesql, function (error, deleteResult){
 
-                                                        var deletesql  ="DELETE FROM language_translation WHERE translation_id = "+translation_id+";";
-                                                        dbModel.transactionQuery(con, deletesql, function (error, deleteResult){
+                                                        if (error) {
+                                                           res.status(config.HTTP_SERVER_ERROR).send({
+                                                             status:config.ERROR,
+                                                             code: config.HTTP_SERVER_ERROR,
+                                                             message:'Unable to process request!',
+                                                             //error: error
+                                                           });
 
-                                                            if (error) {
-                                                               res.status(config.HTTP_SERVER_ERROR).send({
-                                                                 status:config.ERROR,
-                                                                 code: config.HTTP_SERVER_ERROR,
-                                                                 message:'Unable to process request!',
-                                                                 //error: error
-                                                               });
+                                                        }else{
 
-                                                            }else{
-
-                                                                var sql = ""; 
-                                                                for (let j = 0; j < translated_text.length; j++) {
-                                                                    sql += "INSERT INTO language_translation SET language_id="+translated_text[j].language_id+",translation_id="+translation_id+",translated_text='"+translated_text[j].translated_text+"',created_at='"+created_at+"', updated_at='"+updated_at+"';";
-                                                                }
-
-                                                                dbModel.transactionQuery(con, sql, function (error, result) {
-                                                                    if (error) {
-                                                                       res.status(config.HTTP_SERVER_ERROR).send({
-                                                                         status:config.ERROR,
-                                                                         code: config.HTTP_SERVER_ERROR,
-                                                                         message:'Unable to process request!',
-                                                                         //error: error
-                                                                       });
-                                                                    }else{
-                                                                       dbModel.commit(con, function(error, response){
-                                                                          if (error) {
-                                                                             res.status(config.HTTP_SERVER_ERROR).send({
-                                                                               status:config.ERROR,
-                                                                               code: config.HTTP_SERVER_ERROR,
-                                                                               message:'Unable to process request!',
-                                                                               //error: error
-                                                                             });
-                                                                          }else{
-                                                                             res.status(config.HTTP_SUCCESS).send({
-                                                                               status:config.SUCCESS,
-                                                                               code: config.HTTP_SUCCESS,
-                                                                               message:'Translation updated successfully.'
-                                                                             });
-                                                                          }                                  
-
-                                                                      });
-                                                                    }    
-                                                                });
+                                                            var sql = ""; 
+                                                            for (let j = 0; j < translated_text.length; j++) {
+                                                                sql += "INSERT INTO language_translation SET language_id="+translated_text[j].language_id+",translation_id="+translation_id+",translated_text='"+translated_text[j].translated_text+"',created_at='"+created_at+"', updated_at='"+updated_at+"';";
                                                             }
 
-                                                        });
+                                                            dbModel.transactionQuery(con, sql, function (error, result) {
+                                                                if (error) {
+                                                                   res.status(config.HTTP_SERVER_ERROR).send({
+                                                                     status:config.ERROR,
+                                                                     code: config.HTTP_SERVER_ERROR,
+                                                                     message:'Unable to process request!',
+                                                                     //error: error
+                                                                   });
+                                                                }else{
+                                                                   dbModel.commit(con, function(error, response){
+                                                                      if (error) {
+                                                                         res.status(config.HTTP_SERVER_ERROR).send({
+                                                                           status:config.ERROR,
+                                                                           code: config.HTTP_SERVER_ERROR,
+                                                                           message:'Unable to process request!',
+                                                                           //error: error
+                                                                         });
+                                                                      }else{
+                                                                         res.status(config.HTTP_SUCCESS).send({
+                                                                           status:config.SUCCESS,
+                                                                           code: config.HTTP_SUCCESS,
+                                                                           message:'Translation updated successfully.'
+                                                                         });
+                                                                      }                                  
 
-                                                     }else{
-                                                         res.status(config.HTTP_SERVER_ERROR).send({
+                                                                  });
+                                                                }    
+                                                            });
+                                                        }
+
+                                                    });
+
+                                                 }else{
+                                                     res.status(config.HTTP_SERVER_ERROR).send({
+                                                        status:config.ERROR,
+                                                        code: config.HTTP_SERVER_ERROR,
+                                                        message:'Unable to process request!',
+                                                        //error: error
+                                                     });    
+                                                 }
+                                              }else{
+                                                  dbModel.commit(con, function(error, response){
+                                                    if (error) {
+                                                        res.status(config.HTTP_SERVER_ERROR).send({
                                                             status:config.ERROR,
                                                             code: config.HTTP_SERVER_ERROR,
                                                             message:'Unable to process request!',
                                                             //error: error
-                                                         });    
-                                                     }
-                                                  }else{
-                                                      dbModel.commit(con, function(error, response){
-                                                        if (error) {
-                                                            res.status(config.HTTP_SERVER_ERROR).send({
-                                                                status:config.ERROR,
-                                                                code: config.HTTP_SERVER_ERROR,
-                                                                message:'Unable to process request!',
-                                                                //error: error
-                                                            });
-                                                        }else{
-                                                            res.status(config.HTTP_SUCCESS).send({
-                                                                status:config.SUCCESS,
-                                                                code: config.HTTP_SUCCESS,
-                                                                message:'Translation updated successfully.'
-                                                            });
-                                                        }  
-                                                     });                                                       
-                                                  }                                                    
+                                                        });
+                                                    }else{
+                                                        res.status(config.HTTP_SUCCESS).send({
+                                                            status:config.SUCCESS,
+                                                            code: config.HTTP_SUCCESS,
+                                                            message:'Translation updated successfully.'
+                                                        });
+                                                    }  
+                                                 });                                                       
+                                              }                                                    
 
-                                               }else{
-                                                  res.status(config.HTTP_SERVER_ERROR).send({
-                                                     status:config.ERROR,
-                                                     code: config.HTTP_SERVER_ERROR,
-                                                     message:'Unable to process request!',
-                                                     //error: error
-                                                  });    
-                                               }
-                                            }
+                                           }else{
+                                              res.status(config.HTTP_SERVER_ERROR).send({
+                                                 status:config.ERROR,
+                                                 code: config.HTTP_SERVER_ERROR,
+                                                 message:'Unable to process request!',
+                                                 //error: error
+                                              });    
+                                           }
+                                        }
 
-                                          });
-                                      }
-
+                                      });
                                   }
-
-                                });
 
                               }
 
-                          });
+                            });
 
-                        }else{                          
-                          res.status(config.HTTP_NOT_FOUND).send({
-                             status: config.ERROR, 
-                             code : config.HTTP_NOT_FOUND, 
-                             message: "No translation found."
-                          });
-                       }
+                          }
+
+                      });
+
+                    }else{                          
+                      res.status(config.HTTP_NOT_FOUND).send({
+                         status: config.ERROR, 
+                         code : config.HTTP_NOT_FOUND, 
+                         message: "No translation found."
+                      });
                    }
-               });
-            }                
+               }
+           });               
         });
       }    
     }
