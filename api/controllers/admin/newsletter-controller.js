@@ -379,7 +379,7 @@ function getAllSubscription(filters, find_total = false, callback) {
     sql += " FROM subscribe_newsletter ";    
         
     if(filters.search_email != undefined && filters.search_email != ''){
-        sqlWhere += " WHERE subscribe_newsletter.subscribe_email ='"+filters.search_email+"'";               
+        sqlWhere += " WHERE subscribe_newsletter.subscribe_email LIKE '%"+filters.search_email+"%'";               
     }
     
     sql +=sqlWhere;
